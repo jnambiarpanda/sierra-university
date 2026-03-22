@@ -4,6 +4,9 @@ import { createAgent } from "@sierra/agent/base";
 import { AbuseType, fetch, Goal, jsx, Rule, toolParam, tools } from "@sierra/agent";
 import { SierraUniversityAbuseDetection } from "./skills/abuse-detection";
 import integrationsRegistry from "./integrations-registry";
+import { getMusicRecommendations } from './skills/music-recomendations';
+import { getTalkRecommendations } from './skills/talk-recommendations';
+import { getTrendingContent } from './skills/trending-content';
 
 /**
  * Welcome to Sierra University. Below, you'll
@@ -12,6 +15,10 @@ import integrationsRegistry from "./integrations-registry";
  *
  * All configuration parameters that start with `use` are compatible with Sierra's SDK hooks.
  */
+
+// Simple memory for context (e.g., previous requests)
+let userMemory = { prefersMusic: false, lastRequest: null };
+
 export default createAgent({
     // General configurations for the agent are available here.
     config: {
@@ -27,13 +34,44 @@ export default createAgent({
     },
     // Client events are triggered by a sierra client
     // createAgent handles most of these for you.
-    onClientEvent: (props, next) => {
-        //eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onClientEvent: async (props, next) => {  // Made async for await
         const { event, conversation } = props;
         switch (event.type) {
             default:
-                next(props);
+                // Handle orchestration here if event matches
+                const { goals: eventGoals, message } = event;  // Assuming goals are in event
+                let recommendations = [];
+
+                // Orchestration based on goals
+                if (eventGoals?.includes('FOR_YOU') || eventGoals?.includes('SURPRISE_ME')) {
+                    recommendations = [
+                        ...(await getMusicRecommendations.execute()),
+                        ...(await getTrendingContent.execute()),
+                    ];
+                } else if (eventGoals?.includes('MUSIC_DISCOVERY')) {
+                    recommendations = await getMusicRecommendations.execute();
+                    userMemory.prefersMusic = true;
+                } else if (eventGoals?.includes('TALK_CONTENT')) {
+                    recommendations = await getTalkRecommendations.execute();
+                }
+
+                // Context awareness: Avoid repeats
+                if (userMemory.lastRequest === 'music' && eventGoals?.includes('MUSIC_DISCOVERY')) {
+                    recommendations = recommendations.filter(r => r.type !== 'station');
+                }
+                userMemory.lastRequest = eventGoals?.[0];
+
+                // Channel awareness
+                const isVoice = conversation.info?.isVoice;
+                const response = isVoice
+                    ? `Here are picks: ${recommendations.map(r => r.title).join(', ')}.`
+                    : `Here are some personalized picks for you:\n${recommendations.map(r => `- ${r.title} (${r.type})`).join('\n')}`;
+
+                // Send response via conversation
+                conversation.respond(response);
+                break;
         }
+        next(props);
     },
 
     // Goal agent props are the properties passed to the GoalAgent component under the hood
@@ -45,12 +83,26 @@ export default createAgent({
     // global state for your agent and its tools.
     useWrapper: agent => {
         return agent;
-    }, // Goal agent children are JSX components that can be used to add additional children to the underlying GoalAgent component.
+    },
+    // Goal agent children are JSX components that can be used to add additional children to the underlying GoalAgent component.
     useAdditionalGoalAgentChildren: () => {
         return (
             <>
                 <Goal description="Determine why the customer is reaching out to customer support.">
                     <Rule content="If unclear, ask the customer why they are reaching out to customer support." />
+                </Goal>
+                {/* Add new goals here */}
+                <Goal description="Play something for me">
+                    <Rule content="Call recommendation tools and provide personalized picks." />
+                </Goal>
+                <Goal description="I want music">
+                    <Rule content="Focus on music recommendations." />
+                </Goal>
+                <Goal description="I want talk/news">
+                    <Rule content="Focus on talk/news recommendations." />
+                </Goal>
+                <Goal description="Surprise me">
+                    <Rule content="Mix various recommendations." />
                 </Goal>
             </>
         );
@@ -132,5 +184,39 @@ tools.registerTool({
         return controls.result({
             data: { loyaltyInfo: result.body.data },
         });
+    },
+});
+
+// Register recommendation tools
+tools.registerTool({
+    name: "GetMusicRecommendations",
+    type: "lookup",
+    description: "Get personalized music recommendations",
+    params: {},
+    func: async (ctx, params, controls) => {
+        const recommendations = await getMusicRecommendations.execute();
+        return controls.result({ data: { recommendations } });
+    },
+});
+
+tools.registerTool({
+    name: "GetTalkRecommendations",
+    type: "lookup",
+    description: "Get talk/news recommendations",
+    params: {},
+    func: async (ctx, params, controls) => {
+        const recommendations = await getTalkRecommendations.execute();
+        return controls.result({ data: { recommendations } });
+    },
+});
+
+tools.registerTool({
+    name: "GetTrendingContent",
+    type: "lookup",
+    description: "Get trending content",
+    params: {},
+    func: async (ctx, params, controls) => {
+        const recommendations = await getTrendingContent.execute();
+        return controls.result({ data: { recommendations } });
     },
 });

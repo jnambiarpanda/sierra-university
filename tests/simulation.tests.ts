@@ -1,7 +1,6 @@
 // Copyright Sierra
 
 import { describe, test, type Scenario } from "@sierra/agent/test/api";
-
 const scenarios: Scenario[] = [
     {
         testId: "live-agent-transfer",
