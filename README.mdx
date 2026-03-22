@@ -1,0 +1,67 @@
+---
+title: Sierra University reference agent
+shortTitle: University agent
+---
+
+{/* Import path is relative to the generated output location: web/documentation/reference-agents/sierra-university/ */}
+import InstallationInstructions from "../../agent-sdk/installation-instructions.mdx";
+
+## Sierra University reference agent
+
+### Overview
+
+This reference agent serves as a foundational introduction to the Sierra Agent SDK, demonstrating
+core `createAgent` primitives and essential patterns for building conversational AI agents. It is
+the primary teaching tool for Sierra's in-person training program,
+[Sierra University](https://sierra.ai/blog/sierra-university).
+
+## Installation instructions
+
+### Download the agent code
+
+Download the Sierra University code by clicking the **Download agent** button on the top right of
+this page. Extract the zip file into your favorite development directory.
+
+<InstallationInstructions components={props.components} usesBaseAgent={props.usesBaseAgent} />
+
+## About this agent
+
+### Outline
+
+The foundation of a good starter agent is **understanding the `createAgent` abstraction**—mastering
+its configuration options, event handling, and extensibility points provides a solid base for
+building more complex agents.
+
+**Key architectural patterns:**
+
+1. **`createAgent` configuration** - The agent demonstrates how to configure core agent settings
+   including voice and text channel configurations, inactivity timeouts, and post-conversation
+   delays. These settings control the fundamental behavior of your agent across different
+   interaction modes.
+
+2. **Client event handling** - The `onClientEvent` callback shows how to intercept and respond to
+   client-triggered events like conversation start, messages, and inactivity. The pattern of
+   checking `conversation.info.isVoice` demonstrates channel-aware behavior.
+
+3. **Goal-oriented architecture** - Using `useAdditionalGoalAgentChildren`, the agent adds a simple
+   `Goal` with a `Rule` that guides the agent to understand why customers are reaching out. This
+   pattern scales to more complex goal hierarchies.
+
+4. **Abuse detection customization** - The `useCustomAbuseDetectionProps` hook demonstrates how to
+   override default abuse detection behavior with custom responses, using the custom
+   `SierraUniversityAbuseDetection` skill to handle detected abuse.
+
+5. **Wrapper composition** - The `useWrapper` hook provides a place to inject React-style context
+   providers, enabling global state management across your agent and its tools.
+
+### Skills demonstrated
+
+The agent includes a custom skill that demonstrates flow-oriented patterns within a goal-oriented
+agent:
+
+**`SierraUniversityAbuseDetection`** - Uses `Respond` with `mode="verbatim"` and the `useOutput`
+hook to send a completion event when abuse is detected. This shows how to:
+
+- Create reusable skill components
+- Use Sierra's hooks (`useOutput`) to access conversation controls
+- Send output events to end conversations programmatically

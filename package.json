@@ -1,0 +1,28 @@
+{
+    "name": "sierra-university-reference-agent",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "upload": "sierra upload",
+        "build": "sierra build",
+        "watch": "sierra watch",
+        "check": "sierra check"
+    },
+    "dependencies": {
+        "@sierra/integrations-builtin": "https://packages.sierra.ai/integrations-builtin-0.20260319.7020705.tgz",
+        "@sierra/integrations-sdk": "https://packages.sierra.ai/integrations-sdk-0.20260319.7020705.tgz",
+        "@sierra/turndown": "https://packages.sierra.ai/turndown-0.20260319.7020705.tgz",
+        "node-html-parser": "^6.1.13",
+        "@sierra/agent": "https://packages.sierra.ai/agent-0.20260319.7020705.tgz"
+    },
+    "devDependencies": {
+        "@sierra/content-schema": "https://packages.sierra.ai/content-schema-0.20260319.7020705.tgz",
+        "@sierra/cli": "https://packages.sierra.ai/cli-0.20260319.7020705.tgz"
+    },
+    "sierra": {
+        "integrationPackages": [
+            "@sierra/integrations-builtin/integrations",
+            "./integrations"
+        ]
+    }
+}

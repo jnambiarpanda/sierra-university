@@ -1,0 +1,53 @@
+#!/bin/bash
+#
+# Copyright Sierra
+#
+# Installs Homebrew and the few local dependencies required by our Makefile.
+
+function cmd_missing() {
+    if command -v "$1" &>/dev/null ; then
+        return 1
+    fi
+    echo "Command missing:" $1
+    return 0
+}
+
+# Homebrew
+if cmd_missing brew ; then
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    echo "Add brew to your PATH as instructed by the setup script and re-run this script."
+    exit 1
+fi
+
+# Force brew git to get past CVE-2024-32002.
+if ! printf "2.45.1\n%s\n" "$(git version | awk '{print $3}')" | sort -VC; then
+    brew install git
+fi
+
+# node for local web development
+# NOTE: when updating the version of node, be sure to also update the
+# node version of the github action (search for "actions/setup-node").
+NODE_VERSION=20
+install_node() {
+    brew install node@${NODE_VERSION}
+    brew link --overwrite node@${NODE_VERSION}
+}
+if cmd_missing node || \
+    [[ `node --version | grep -Eo "v[0-9]+"` != "v${NODE_VERSION}" ]]; then
+
+    install_node
+fi
+
+# pnpm for web package management
+# NOTE: when updating the version of pnpm, be sure to also update the
+# pnpm version of the github action (search for "pnpm/action-setup").
+PNPM_VERSION=10
+install_pnpm () {
+    npm install -g pnpm@${PNPM_VERSION}
+}
+if cmd_missing pnpm ; then
+    install_pnpm
+fi
+if ! [[ $(pnpm -v) =~ ^${PNPM_VERSION}\. ]] ; then
+    install_pnpm
+fi

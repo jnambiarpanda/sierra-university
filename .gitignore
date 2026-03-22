@@ -1,0 +1,24 @@
+# Standard OS files
+.DS_Store
+
+# pnpm / npm libraries
+node_modules/*
+
+# Agent SDK build artifacts
+*.js
+*.js.map
+**/.targets/*
+tsconfig.tsbuildinfo
+
+# Likely to contain your Sierra auth token
+.npmrc
+
+# web bundle build outputs
+**/web/build/*
+
+# Ignore a few auto-generated files
+content-types.ts*
+platform-types.ts*
+integrations.json
+integration-types.ts
+

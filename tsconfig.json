@@ -1,0 +1,6 @@
+{
+    "extends": "@sierra/agent/tsconfig",
+    "exclude": [
+        "./web/**"
+    ]
+}
