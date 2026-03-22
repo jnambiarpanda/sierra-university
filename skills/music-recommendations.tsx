@@ -1,16 +1,18 @@
-import { Skill } from '@sierra/agent';
-
-// Define types for recommendations
 interface Recommendation {
   title: string;
   type: string;
 }
 
-// Refactored as a function export (if Skill is not a class)
-export const getMusicRecommendations: Skill = {
+interface RecommendationSkill {
+  name: string;
+  description: string;
+  execute: () => Recommendation[];
+}
+
+export const getMusicRecommendations: RecommendationSkill = {
   name: 'getMusicRecommendations',
   description: 'Get personalized music recommendations',
-  execute: async (): Promise<Recommendation[]> => {
+  execute: (): Recommendation[] => {
     // Mock data
     return [
       { title: 'Chill Hits', type: 'station' },
