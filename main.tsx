@@ -7,6 +7,7 @@ import integrationsRegistry from "./integrations-registry";
 import { getMusicRecommendations } from './skills/music-recommendations';
 import { getTalkRecommendations } from './skills/talk-recommendations';
 import { getTrendingContent } from './skills/trending-content';
+import { getSimilarShowsRecommendations } from './skills/similar-shows-recommendations';
 
 /**
  * Welcome to Sierra University. Below, you'll
@@ -94,6 +95,17 @@ const GetTrendingContentTool = tools.registerTool({
     },
 });
 
+const GetSimilarShowsRecommendationsTool = tools.registerTool({
+    name: "GetSimilarShowsRecommendations",
+    type: "lookup",
+    description: "Get personalized show and podcast recommendations from the SiriusXM recommender service",
+    params: {},
+    func: (ctx, params, controls) => {
+        const recommendations = getSimilarShowsRecommendations();
+        return controls.result({ data: { recommendations } });
+    },
+});
+
 export default createAgent({
     // General configurations for the agent are available here.
     config: {
@@ -151,6 +163,7 @@ export default createAgent({
                 <GetMusicRecommendationsTool />
                 <GetTalkRecommendationsTool />
                 <GetTrendingContentTool />
+                <GetSimilarShowsRecommendationsTool />
             </>
         );
     },
