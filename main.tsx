@@ -52,6 +52,11 @@ export default createAgent({
                 <Goal description="Determine why the customer is reaching out to customer support.">
                     <Rule content="If unclear, ask the customer why they are reaching out to customer support." />
                 </Goal>
+                <Goal description="Answer questions about baseball rules and regulations using the official MLB Baseball Rules knowledge base.">
+                    <Rule content="Use the Baseball Rules knowledge base to answer any questions about official MLB baseball rules." />
+                    <Rule content="When citing a rule, include the rule number and section name (e.g., 'Rule 5 – Playing the Game') for clarity." />
+                    <Rule content="If the question is not covered by the baseball rules knowledge base, say so clearly rather than guessing." />
+                </Goal>
             </>
         );
     },

@@ -12,6 +12,18 @@ import {
 } from "@sierra/agent";
 import parse from "node-html-parser";
 import TurndownService from "@sierra/turndown";
+import baseballRulesData from "./baseball-rules-knowledge-base.json";
+
+type BaseballArticle = {
+    id: string;
+    title: string;
+    body: string;
+    metadata: {
+        rule_number: string;
+        category: string;
+        source_url: string;
+    };
+};
 
 type PokemonItem = {
     id: number;
@@ -148,6 +160,19 @@ ${
 }`;
 }
 
+function* fetchBaseballRules(_input: FetchKnowledgeInput): Generator<ArticleBatch> {
+    const articles = (baseballRulesData as { articles: BaseballArticle[] }).articles;
+    info(`Fetching ${articles.length} baseball rule articles`);
+    yield {
+        error: null,
+        articles: articles.map(article => ({
+            title: article.title,
+            sourceUrl: article.metadata.source_url,
+            body: article.body,
+        })),
+    };
+}
+
 class SierraOutfittersFaqScraper implements Scraper {
     targetPage = "https://gosierra.biz/api/v1/faq";
 
@@ -217,6 +242,10 @@ const knowledgeBases = [
         concurrency: 1,
         maxErrorRate: 0.1,
     }),
+    {
+        name: "Baseball Rules",
+        fetchKnowledge: fetchBaseballRules,
+    },
 ];
 
 export default knowledgeBases;

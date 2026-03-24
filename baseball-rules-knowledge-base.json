@@ -1,0 +1,176 @@
+{
+    "name": "MLB Official Baseball Rules",
+    "description": "Official Baseball Rules as published by Major League Baseball. Covers all rules governing the game including field dimensions, equipment, gameplay, pitching, umpiring, and official scoring.",
+    "source": "inline",
+    "crawl_frequency": "on_demand",
+    "minimum_crawl_coverage": 50,
+    "source_config": {},
+    "articles":
+        [
+            {
+                "id": "rule-1-objectives",
+                "title": "Rule 1 – Objectives of the Game",
+                "body": "Baseball is a game between two teams of nine players each, under the direction of a manager, played on an enclosed field in accordance with these rules, under the jurisdiction of one or more umpires.\n\nThe objective of each team is to win by scoring more runs than the opponent.\n\nThe winner of the game shall be that team which shall have scored, in accordance with these rules, the greater number of runs at the conclusion of a regulation game.\n\nA REGULATION GAME consists of nine innings, unless extended because of a tie score, or shortened (1) because the home team needs none of its half of the ninth inning or only a fraction of it, or (2) because the umpire calls the game.",
+                "metadata":
+                {
+                    "rule_number": "1",
+                    "category": "Objectives",
+                    "source_url": "https://img.mlbstatic.com/mlb-images/image/upload/mlb/atcjzj9j7wrgvsm8wnjq.pdf"
+                }
+            },
+            {
+                "id": "rule-2-playing-field",
+                "title": "Rule 2 – The Playing Field",
+                "body": "THE PLAYING FIELD. The field shall be laid out according to the instructions below, supplemented by the diagrams in the Appendix.\n\nThe infield shall be a 90-foot square. The outfield shall be the area between two foul lines formed by extending two sides of the square. The distance from home base to the nearest fence, stand or other obstruction on fair territory should be 250 feet or more. A distance of 320 feet or more along the foul lines and 400 feet or more to center field is recommended. The infield shall be graded so that the base lines and home plate are level.\n\nHOME BASE shall be marked by a five-sided slab of whitened rubber, 17 inches wide across the edge facing the pitcher's plate, and 8 and one-half inches wide along the two sides adjoining the first and third base lines.\n\nTHE PITCHER'S PLATE shall be a rectangular slab of whitened rubber, 24 inches by 6 inches. It shall be set in the ground as shown in the diagrams, so that the distance between the front edge of the pitcher's plate and the rear point of home base is 60 feet, 6 inches.\n\nBASES. Bases shall be 15 inches square, covered with white canvas or rubber and filled with soft material. First, second and third bases shall be marked by white canvas or rubber-filled bags, securely attached to the ground. The bags shall be 15 inches square, not less than 3 nor more than 5 inches thick.",
+                "metadata":
+                {
+                    "rule_number": "2",
+                    "category": "Playing Field",
+                    "source_url": "https://img.mlbstatic.com/mlb-images/image/upload/mlb/atcjzj9j7wrgvsm8wnjq.pdf"
+                }
+            },
+            {
+                "id": "rule-3-equipment-uniforms",
+                "title": "Rule 3 – Equipment and Uniforms",
+                "body": "THE BALL. The ball shall be a sphere formed by yarn wound around a small core of cork, rubber or similar material, covered with two stripes of white horsehide or cowhide, tightly stitched together. It shall weigh not less than five nor more than 5 and one-quarter ounces avoirdupois and measure not less than nine nor more than 9 and one-quarter inches in circumference.\n\nTHE BAT. The bat shall be a smooth, round stick not more than 2.61 inches in diameter at the thickest part and not more than 42 inches in length. The bat shall be one piece of solid wood. Cupped Bats: An indentation in the end of the bat up to one inch in depth is permitted and may be no wider than two inches and no less than one inch in diameter. The indentation must be curved with no foreign substance added. No laminated or experimental bats shall be used in a professional game.\n\nGLOVES AND MITTS. Each fielder, other than the first baseman and catcher, may use or not use a glove or mitt of any weight or size. The first baseman and catcher may use a mitt (a glove with a large, round single-piece facing on the thumb side). A fielder may use only a glove or mitt conforming to the guidelines set forth in this rule.\n\nHELMETS. All players shall wear a batting helmet while at bat. The batter shall keep the batting helmet on while running the bases. All batters must wear a batting helmet that has an ear flap covering the ear facing the pitcher.\n\nUNIFORMS. All players on a team shall wear uniforms identical in color, trim, and style, and all players' uniforms shall include minimal six-inch numbers on their backs. No glass buttons or polished metal may be used on a uniform.",
+                "metadata":
+                {
+                    "rule_number": "3",
+                    "category": "Equipment and Uniforms",
+                    "source_url": "https://img.mlbstatic.com/mlb-images/image/upload/mlb/atcjzj9j7wrgvsm8wnjq.pdf"
+                }
+            },
+            {
+                "id": "rule-4-game-preliminaries",
+                "title": "Rule 4 – Game Preliminaries",
+                "body": "LINEUPS. The home team shall take the field first for the start of the game. Each manager shall give the umpire-in-chief a lineup card before the start of the game.\n\nTHE BATTING ORDER. The batting order of each team shall be listed on a lineup card which shall be handed to the umpire-in-chief prior to the game. The batting order shall remain fixed throughout the game unless a player is substituted for another, in which case the substitute shall take the replaced player's position in the batting order.\n\nTHE DESIGNATED HITTER. A hitter may be designated to bat for the starting pitcher and all subsequent pitchers in any game without otherwise affecting the status of pitchers in the game. A Designated Hitter for the pitcher must be selected prior to the game and must be included in the lineup cards presented to the umpire-in-chief.\n\nDEFENSIVE SUBSTITUTIONS. A player in the batting order may be replaced for a new player at any time the ball is dead. A substitute batter or runner who is put out or reaches base, must bat and run until retired or the third out is made.\n\nPITCHING SUBSTITUTIONS. The pitcher named in the batting order handed to the umpire-in-chief shall pitch to the first batter or any substitute batter until such batter is put out or reaches first base, unless the pitcher sustains an injury or illness which, in the judgment of the umpire-in-chief, incapacitates the pitcher from pitching.",
+                "metadata":
+                {
+                    "rule_number": "4",
+                    "category": "Game Preliminaries",
+                    "source_url": "https://img.mlbstatic.com/mlb-images/image/upload/mlb/atcjzj9j7wrgvsm8wnjq.pdf"
+                }
+            },
+            {
+                "id": "rule-5-playing-the-game",
+                "title": "Rule 5 – Playing the Game",
+                "body": "THE GAME. A regular game consists of nine innings. A half-inning ends when the third out is made. In each half-inning, the visiting team bats first, and the home team takes the field.\n\nPUT OUTS. A batter is out when: (1) their fair or foul fly ball (other than a foul tip) is legally caught by a fielder; (2) a third strike is legally caught by the catcher; (3) a third strike is not caught by the catcher when first base is occupied before two are out; (4) they bunt foul on third strike; (5) an Infield Fly is declared; (6) they hit a fair ball and the ball is fielded and thrown to first base before the batter reaches first base; (7) after hitting a fair or foul ball, they intentionally deflect the course of the ball in any manner while running to first base; (8) after hitting a fair ball, they run to first base and the ball is tagged before the batter can touch first base.\n\nFORCED OUTS. A fielder may record a force out by touching the base to which a runner is forced to advance before the runner reaches such base.\n\nTAG OUTS. A fielder may tag a runner out by touching the runner with the ball while the runner is not in contact with a base and the runner is not protected by the three-foot lane or other rules.\n\nSTRIKES AND BALLS. A strike is charged when: (1) the batter swings at any pitch and misses; (2) any pitch passes through the strike zone without being struck at; (3) any pitch not struck at that touches a batter when the pitch is in the strike zone; (4) any bunt that goes foul. A ball is a pitch that does not enter the strike zone in flight and is not struck at by the batter.\n\nTHE STRIKE ZONE. The Strike Zone is that area over home plate the upper limit of which is a horizontal line at the midpoint between the top of the shoulders and the top of the uniform pants, and the lower level is a line at the hollow beneath the kneecap. The Strike Zone shall be determined from the batter's stance as the batter is prepared to swing at a pitched ball.",
+                "metadata":
+                {
+                    "rule_number": "5",
+                    "category": "Playing the Game",
+                    "source_url": "https://img.mlbstatic.com/mlb-images/image/upload/mlb/atcjzj9j7wrgvsm8wnjq.pdf"
+                }
+            },
+            {
+                "id": "rule-5-fair-foul-balls",
+                "title": "Rule 5 – Fair and Foul Balls",
+                "body": "FAIR BALL. A fair ball is a batted ball that settles on fair ground between home and first base, or between home and third base; or that is on or over fair territory when bounding to the outfield past first or third base; or that touches first, second or third base; or that first falls on fair territory on or beyond first base or third base; or that, while on or over fair territory, touches the person of an umpire or player; or that, while over fair territory, passes out of the playing field in flight.\n\nFOUL BALL. A foul ball is a batted ball that settles on foul territory between home and first base, or between home and third base; or that bounds past first or third base on or over foul territory; or that first falls on foul territory beyond first or third base; or that, while on or over foul territory, touches the person of an umpire or player, or any object foreign to the natural ground.\n\nHOME RUN. A fair ball that goes over the outfield fence in flight is a home run. When a batter hits a home run, all runners on base score as well as the batter.\n\nGROUND RULE DOUBLE. When a fair ball bounces into the stands or passes through or under a fence or scoreboard, it is considered a ground rule double. All runners advance two bases from where they were when the ball was pitched.",
+                "metadata":
+                {
+                    "rule_number": "5",
+                    "category": "Fair and Foul Balls",
+                    "source_url": "https://img.mlbstatic.com/mlb-images/image/upload/mlb/atcjzj9j7wrgvsm8wnjq.pdf"
+                }
+            },
+            {
+                "id": "rule-5-baserunning",
+                "title": "Rule 5 – Base Running",
+                "body": "RUNNING BASES. In advancing, a runner shall touch first, second, third and home base in order. If forced to return, runners shall retouch bases in reverse order. The runner's job is to advance around all bases and touch home plate to score a run.\n\nOVERRUNNING FIRST BASE. A batter who hits a fair ball may overrun first base without liability to be put out, provided they return immediately to first base after overrunning. However, if the batter-runner rounds first base and makes a turn toward second base, they may be put out if tagged before returning to first base.\n\nTAGGING UP. After a fly ball is caught, a baserunner must re-touch (tag up) their original base before advancing to the next base. If the runner leaves the base before the ball is caught, they must return to the base and re-touch it before advancing.\n\nFORCE PLAY. A force play is a play in which a runner legally loses the right to occupy a base by reason of the batter becoming a runner. Runners on first base, or first and second, or bases loaded situations create force outs at the next base.\n\nBALK. A balk is an illegal motion by the pitcher with runners on base, entitling each base runner to advance one base. A balk is called when the pitcher: (1) makes any motion naturally associated with the pitch and fails to make the delivery; (2) feints a throw to first base while in contact with the rubber; (3) makes an illegal pitch; (4) pitches while not facing the batter; (5) makes a quick return pitch; among other violations.\n\nOBSTRUCTION. Obstruction is the act of a fielder who, while not in possession of the ball and not in the act of fielding the ball, impedes the progress of any runner. If obstruction occurs, the umpire shall call or signal Obstruction and award the obstructed runner and each other runner affected by the obstruction the bases they would have, in the umpire's judgment, occupied had there been no obstruction.",
+                "metadata":
+                {
+                    "rule_number": "5",
+                    "category": "Base Running",
+                    "source_url": "https://img.mlbstatic.com/mlb-images/image/upload/mlb/atcjzj9j7wrgvsm8wnjq.pdf"
+                }
+            },
+            {
+                "id": "rule-6-improper-play",
+                "title": "Rule 6 – Improper Play, Illegal Action, and Misconduct",
+                "body": "INTERFERENCE. Offensive interference is an act by the team at bat which interferes with, obstructs, impedes, hinders or confuses any fielder attempting to make a play. Defensive interference is an act by a fielder which hinders or prevents a batter from hitting a pitch.\n\nCATCHER INTERFERENCE. If the catcher interferes with the batter, the batter is awarded first base. Each runner advances if forced by the batter going to first. The play stands if the batter reaches first base safely and all other runners advance at least one base.\n\nINFIELD FLY RULE. An Infield Fly is a fair fly ball (not a line drive nor an attempted bunt) which can be caught by an infielder with ordinary effort, when first and second, or first, second and third bases are occupied, before two are out. When it seems apparent that a batted ball will be an Infield Fly, the umpire shall immediately declare 'Infield Fly.' The batter is automatically out. Runners may advance at their own risk.\n\nDEAD BALL. A dead ball is a ball out of play because of a legally created stoppage. Among the situations creating a dead ball: (1) a balk is called; (2) the ball leaves the playing field; (3) a fair or foul ball hits a runner or umpire; (4) the pitcher or catcher is touched by a batted ball before it touches a fielder; (5) a fielder falls into a dugout while catching a ball; (6) any umpire calls Time.\n\nILLEGAL PITCH. An illegal pitch is (1) a pitch delivered to the batter when the pitcher does not have their pivot foot in contact with the pitcher's plate; (2) a quick return pitch; (3) a pitch that is thrown at a batter (intent to hit).",
+                "metadata":
+                {
+                    "rule_number": "6",
+                    "category": "Improper Play",
+                    "source_url": "https://img.mlbstatic.com/mlb-images/image/upload/mlb/atcjzj9j7wrgvsm8wnjq.pdf"
+                }
+            },
+            {
+                "id": "rule-7-ending-the-game",
+                "title": "Rule 7 – Ending the Game",
+                "body": "REGULATION GAME. A regulation game (also called an official game) consists of nine innings in which each team has had an equal number of turns at bat, except that if the home team scores the winning run in its half of an inning after the visiting team has completed its turn at bat, the game is terminated at that point.\n\nSHORTENED GAME. If a game is called by the umpire, it is a regulation game if: (1) five or more innings have been played; or (2) the home team has scored more runs in four or more innings than the visiting team has scored in five or more innings.\n\nTIED GAME. A tied game shall not count in the standing of the clubs and shall be replayed in its entirety unless both competing clubs are out of the pennant race.\n\nFORFEITED GAMES. A forfeited game shall be declared by the umpire-in-chief in favor of the team not at fault in the case of violations including: a team fails to appear on the field or fails to begin play within five minutes after the umpire has called 'Play' at the appointed hour for beginning the game; a team employs tactics purposely to delay or hasten the game; a team refuses to continue play after the game has been suspended; a team is unable or refuses to place nine players on the field.\n\nWALKOFF WIN. When the home team scores the winning run in the bottom of the ninth inning or any extra inning, the game ends immediately when that run crosses home plate. All runners who score on a walk-off hit must touch all bases in order.\n\nEXTRA INNINGS. If the score is tied after nine innings of play, the game continues until (1) the visiting team has scored more runs than the home team at the end of a complete inning, or (2) the home team scores the winning run in its half of the inning. At the start of each half-inning in extra innings, a runner is placed on second base.",
+                "metadata":
+                {
+                    "rule_number": "7",
+                    "category": "Ending the Game",
+                    "source_url": "https://img.mlbstatic.com/mlb-images/image/upload/mlb/atcjzj9j7wrgvsm8wnjq.pdf"
+                }
+            },
+            {
+                "id": "rule-8-pitcher",
+                "title": "Rule 8 – The Pitcher",
+                "body": "PITCHING REGULATIONS. The pitcher shall take the sign from the catcher while standing on the pitcher's plate. The pitcher shall not take a position in the pitcher's box to pitch unless the pitcher's box is clear.\n\nLEGAL PITCHING DELIVERY. There are two legal pitching positions: the Windup Position and the Set Position. Either position may be used at any time. In the Windup Position, the pitcher stands facing the batter, their pivot foot in contact with the pitcher's plate. In the Set Position, the pitcher shall come to a complete stop with the ball in front of the body, in view of the umpire, before delivering the ball to the batter.\n\nPITCH CLOCK. In Major League Baseball, a pitch timer is used to limit the time between pitches. With no runners on base, the pitcher has 15 seconds to start their windup after receiving the ball. With runners on base, the pitcher has 20 seconds. If the pitcher violates the pitch timer, an automatic ball is added to the count.\n\nSUBSTITUTE PITCHER. A pitcher once removed from the mound cannot return to pitch. A pitcher must face at least one batter or retire the side before being removed, unless the pitcher sustains an injury or illness as determined by the umpire-in-chief.\n\nFOREIGN SUBSTANCES. The pitcher shall not apply a foreign substance of any kind to the ball; expectorate on the ball, either hand or the glove; rub the ball on the glove, clothing or person; deface the ball in any manner; or deliver what is called the 'shine ball,' 'spit ball,' 'mud ball' or 'emery ball.'\n\nPITCH COUNT LIMITS. Major League Baseball enforces minimum pitch/batter requirements to protect pitchers' arms and prevent teams from using pitchers for extremely short outings purely for matchup purposes.",
+                "metadata":
+                {
+                    "rule_number": "8",
+                    "category": "The Pitcher",
+                    "source_url": "https://img.mlbstatic.com/mlb-images/image/upload/mlb/atcjzj9j7wrgvsm8wnjq.pdf"
+                }
+            },
+            {
+                "id": "rule-9-umpire",
+                "title": "Rule 9 – The Umpire",
+                "body": "UMPIRE AUTHORITY. The umpire-in-chief (home plate umpire) shall have general charge and superintendence of the game and is responsible for the proper execution of these rules. All decisions of the umpires are final.\n\nUMPIRE POSITIONS. For a full crew, four umpires are positioned: one behind home plate, one at first base, one at second base, and one at third base. For postseason play, six umpires are used, with two additional umpires positioned on the foul lines in the outfield.\n\nREVIEW OF CALLS. Umpires may confer with one another on any play. Either manager may request an Official Review of a specific call by umpires using instant replay. The Commissioner's office will review the call and instruct the crew chief to either confirm the call, overturn the call, or call the play unconfirmable. Each team receives one challenge per game. If a challenge is successful, the team retains its right to challenge.\n\nEJECTION. The umpire shall eject from the game any player, manager, or coach who intentionally delays the game, who uses offensive language, or who objects to decisions in an unsportsmanlike manner. Once a player, manager, or coach is ejected, they must leave the field immediately.\n\nCALLING TIME. The umpire shall call Time when an accident incapacitates a player or umpire; when weather or similar conditions make immediate play impossible; when a manager requests time to make a substitution; or in other cases as specified in these rules. No time shall be called when a fielder is in the act of fielding a batted ball or when a pitcher is ready to deliver the ball.",
+                "metadata":
+                {
+                    "rule_number": "9",
+                    "category": "The Umpire",
+                    "source_url": "https://img.mlbstatic.com/mlb-images/image/upload/mlb/atcjzj9j7wrgvsm8wnjq.pdf"
+                }
+            },
+            {
+                "id": "rule-10-official-scorer",
+                "title": "Rule 10 – The Official Scorer",
+                "body": "OFFICIAL SCORER ROLE. The Official Scorer shall observe the game from a position in the press box and shall have sole authority to make all decisions involving application of these rules. All decisions by the Official Scorer that involve judgment, such as whether a batted ball is a hit or an error, shall be final.\n\nHITS. A hit shall be scored when a batter reaches first base (or any subsequent base) safely: (1) on a fair ball that settles on the ground, that clears the outfield wall, or that hits the outfield wall, before it is touched by a fielder; (2) on a fair ball that is hit with such force, or so slowly, that a fielder has no opportunity to field it; (3) when a fielder unsuccessfully attempts to put out a preceding runner and, in the official scorer's judgment, the batter-runner would not have been put out at first base by perfect fielding.\n\nERRORS. An error shall be charged when a fielder muffs a batted ball, a thrown ball, or a fly ball which, if held, would have resulted in a putout; when a fielder drops a thrown ball which, if held, would have resulted in a putout; when a fielder holds a thrown ball so briefly that the baserunner is allowed to continue.\n\nPITCHING STATISTICS. A win shall be credited to the pitcher of record when the pitcher's team is in the lead at the time the pitcher is removed and remains in the lead for the remainder of the game. A save is credited to the relief pitcher who completes the winning team's game under certain conditions, including entering with a lead of three runs or fewer, or with the tying run on base.\n\nERNED RUNS AND ERA. An earned run is a run for which the pitcher is held accountable. Runs scored due to errors or passed balls are unearned. Earned Run Average (ERA) is calculated as (earned runs × 9) / innings pitched.",
+                "metadata":
+                {
+                    "rule_number": "10",
+                    "category": "Official Scorer",
+                    "source_url": "https://img.mlbstatic.com/mlb-images/image/upload/mlb/atcjzj9j7wrgvsm8wnjq.pdf"
+                }
+            },
+            {
+                "id": "definitions-key-terms",
+                "title": "Definitions of Key Baseball Terms",
+                "body": "APPEAL PLAY. An appeal play is a play on which an umpire cannot make a decision until requested by a manager or player. On appeal, an umpire may call a runner out for missing a base or for leaving a base before a fly ball is caught.\n\nATTEMPTED BUNT. An attempted bunt is a ball at which the batter strikes, even though it does not cross over the plate, when the batter squares around and holds the bat level over the plate.\n\nBATTED BALL. A batted ball is any ball that is struck, or partially struck, by the bat.\n\nBATTER-RUNNER. A batter-runner is a term that identifies the offensive player who has just finished their time at bat until that player is put out or until the play on which the player became a runner ends.\n\nCATCHER. The catcher is the fielder who takes their position back of the home base.\n\nDOUBLE PLAY. A double play is a play by the defense in which two offensive players are put out as a result of continuous action, providing there is no error between put-outs.\n\nFIELDER. A fielder is any defensive player.\n\nFLY BALL. A fly ball is a batted ball that goes high in the air in flight.\n\nFORCE PLAY. A force play is a play in which a runner legally loses the right to occupy a base by reason of the batter becoming a runner.\n\nGROUND BALL. A ground ball is a batted ball that rolls or bounces close to the ground.\n\nIN FLIGHT. A batted, thrown, or pitched ball is 'in flight' until it has touched the ground or some object other than a fielder.\n\nINFIELDER. An infielder is a fielder who occupies a position in the infield.\n\nLINE DRIVE. A line drive is a batted ball that goes sharp and direct from the bat to a fielder without touching the ground.\n\nOUTFIELDER. An outfielder is a fielder who occupies a position in the outfield, which is the area of the playing field most distant from home base.\n\nPASSED BALL. A passed ball is a statistic charged against a catcher whose failure to hold or control a pitch, which should have been held with ordinary effort, permits a runner or runners to advance.\n\nPITCHED BALL. A pitched ball is a ball delivered to the batter by the pitcher.\n\nRUN (SCORE). A run (score) is the score made by an offensive player who advances from batter to runner and touches first, second, third and home bases in that order.\n\nSACRIFICE BUNT. A sacrifice bunt is a play when a batter bunts the ball so that a runner on base can advance to the next base while the batter is put out at first.\n\nSACRIFICE FLY. A sacrifice fly is a fly ball hit by the batter that is caught by an outfielder allowing a runner on third base to tag up and score.\n\nTRIPLE PLAY. A triple play is a play by the defense in which three offensive players are put out as a result of continuous action.\n\nWILD PITCH. A wild pitch is a pitch so high, so wide, or so low that it cannot be handled with ordinary effort by the catcher, permitting a runner or runners to advance.",
+                "metadata":
+                {
+                    "rule_number": "definitions",
+                    "category": "Definitions",
+                    "source_url": "https://img.mlbstatic.com/mlb-images/image/upload/mlb/atcjzj9j7wrgvsm8wnjq.pdf"
+                }
+            },
+            {
+                "id": "scoring-runs",
+                "title": "How Runs Are Scored",
+                "body": "A run is scored when a baserunner successfully advances from home plate, around first, second, and third base, and returns to touch home plate before the third out of the inning is made — provided the third out is not a force play or the batter being put out before reaching first base.\n\nIF A RUNNER SCORES BEFORE THIRD OUT:\n- If the third out is recorded by a force play, no run scores even if a preceding runner crosses home plate before the force out.\n- If the third out is the batter being put out at first base on a ground ball, a run that scored before the out is recorded counts.\n- If the third out is a tag out (not a force), any runs that crossed home plate before the tag out are counted.\n\nWALK (BASE ON BALLS). A batter receives a base on balls (walk) when four pitches outside the strike zone are thrown and not struck at. The batter is awarded first base. If first base is occupied and there is a force situation, all forced runners advance.\n\nINTENTIONAL WALK. A manager may choose to intentionally walk a batter by signaling from the dugout, bypassing the four-pitch requirement. The batter is awarded first base directly.\n\nHIT BY PITCH. A batter who is hit by a pitched ball (that the batter did not swing at and made an attempt to avoid) is awarded first base.\n\nERROR. A runner who advances due to an error is not credited with a stolen base. Runs scored as a result of errors are unearned runs and do not count against a pitcher's ERA.",
+                "metadata":
+                {
+                    "rule_number": "5",
+                    "category": "Scoring",
+                    "source_url": "https://img.mlbstatic.com/mlb-images/image/upload/mlb/atcjzj9j7wrgvsm8wnjq.pdf"
+                }
+            },
+            {
+                "id": "special-rules-shift-restrictions",
+                "title": "Special Rules – Defensive Shift Restrictions and Pitch Timer",
+                "body": "DEFENSIVE POSITIONING RULE (2023). Starting in the 2023 season, MLB instituted a rule requiring all four infielders to have both feet inside the infield dirt when a pitch is thrown. Teams may not use a traditional 'Ted Williams shift' (overloading one side of the infield with three or more infielders). Two infielders must be positioned on each side of second base. Violation of the rule results in the offensive manager having the option to accept the result of the play or have the batter re-hit with an added ball to the count.\n\nPITCH CLOCK (2023). A pitch timer was introduced in the 2023 season to speed up the pace of play:\n- With no runners on base: pitcher has 15 seconds to begin their pitching motion after receiving the ball from the catcher.\n- With runners on base: pitcher has 20 seconds.\n- The batter must be in the batter's box and alert to the pitcher with 8 seconds remaining on the pitch clock.\n- Pitcher violation: automatic ball added to count.\n- Batter violation: automatic strike added to count.\n- Pitchers may disengage the rubber (step off) twice per plate appearance without penalty. Additional disengagements result in a balk if not resulting in an out or advance.\n\nBASE SIZE (2023). Base sizes were increased from 15 inches square to 18 inches square. This change was made to reduce collisions at the bases and to increase stolen base opportunities.\n\nSTEALING FIRST BASE. Batters may attempt to steal first base on any pitch that is not caught in flight by the catcher (wild pitch or passed ball). This is not an official rule in all leagues but is part of Atlantic League experiments.",
+                "metadata":
+                {
+                    "rule_number": "special",
+                    "category": "Special/Modern Rules",
+                    "source_url": "https://img.mlbstatic.com/mlb-images/image/upload/mlb/atcjzj9j7wrgvsm8wnjq.pdf"
+                }
+            }
+    ]
+}
