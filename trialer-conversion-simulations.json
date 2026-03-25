@@ -1,0 +1,208 @@
+{
+  "simulations": [
+    {
+      "name": "High-confidence match converts trialer",
+      "groupDescription": "Trialer Conversion Journey",
+      "categories": [
+        "trialer-conversion"
+      ],
+      "messages": [
+        "You are a SiriusXM trialer who has been enjoying your free trial. You love listening to Styx and are open to subscribing if the value is clear. Respond positively when the agent surfaces Styx content and accept the upgrade offer."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent identifies the user as a trialer.",
+        "Agent surfaces a Styx content moment before mentioning subscription.",
+        "Agent presents the upgrade offer after the user engages.",
+        "Conversation ends with the user converted to a paid subscriber."
+      ],
+      "isCritical": true,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Agent leads with content moment, not subscription pitch",
+      "groupDescription": "Trialer Conversion Journey",
+      "categories": [
+        "trialer-conversion"
+      ],
+      "messages": [
+        "You are a SiriusXM trialer who has been using the service for a few weeks. You enjoy music but haven't been asked about subscribing yet. Just chat naturally about your trial experience."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent mentions a specific artist, show, or event relevant to the user before any mention of subscribing.",
+        "Agent does not open with a subscription pitch."
+      ],
+      "isCritical": true,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Low confidence affinity triggers trial extension offer",
+      "groupDescription": "Trialer Conversion Journey",
+      "categories": [
+        "trialer-conversion"
+      ],
+      "messages": [
+        "You are a brand new SiriusXM trialer who signed up today. You are still exploring and do not have strong opinions about any specific artist or content type yet. Be vague about your preferences."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent does not pressure the user with an upgrade offer.",
+        "Agent offers to extend the trial instead of pushing a full subscription.",
+        "Conversation ends on a positive, low-pressure note."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Existing subscriber does not receive upgrade pitch",
+      "groupDescription": "Trialer Conversion Journey",
+      "categories": [
+        "trialer-conversion"
+      ],
+      "messages": [
+        "You are an existing SiriusXM self-pay subscriber reaching out about a billing question. You are not on a trial and have been a subscriber for two years."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent does not attempt to pitch a subscription upgrade.",
+        "Agent recognizes the user is not a trialer and handles the billing question instead.",
+        "No upgrade offer or trial extension is presented."
+      ],
+      "isCritical": true,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Declined offer is not repeated in the same conversation",
+      "groupDescription": "Trialer Conversion Journey",
+      "categories": [
+        "trialer-conversion"
+      ],
+      "messages": [
+        "You are a SiriusXM trialer. When the agent surfaces content or an upgrade offer, decline clearly by saying you are not ready to subscribe right now. If the agent repeats the offer, express frustration."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent presents the upgrade offer only once.",
+        "After the user declines, the agent does not repeat the upgrade pitch.",
+        "Agent closes the conversation gracefully without pressure."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": false,
+        "simulateIntegrations": false,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Deferred user receives correct outcome, not dropped off",
+      "groupDescription": "Trialer Conversion Journey",
+      "categories": [
+        "trialer-conversion"
+      ],
+      "messages": [
+        "You are a SiriusXM trialer who enjoys the service but is hesitant to commit financially right now. When the agent presents the offer say something like 'I like it but maybe next month' or 'I need to think about it.'"
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent acknowledges the user's hesitation without applying pressure.",
+        "Agent does not treat the hesitation as a hard decline.",
+        "Conversation ends with a follow-up signal, not a closed door."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": false,
+        "simulateIntegrations": false,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Missing affinity data exits journey cleanly",
+      "groupDescription": "Trialer Conversion Journey",
+      "categories": [
+        "trialer-conversion"
+      ],
+      "messages": [
+        "You are a SiriusXM trialer who just signed up and has not listened to anything yet. If asked about your preferences, say you haven't explored the app yet."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent does not attempt a generic upgrade pitch without personalization data.",
+        "Agent either offers a trial extension or gracefully explains it needs more listening history.",
+        "No conversion attempt is made without affinity data."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    }
+  ],
+  "version": 0
+}

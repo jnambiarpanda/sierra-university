@@ -1,0 +1,6 @@
+emailAddress,listenerID,profileID,segment,firstName,lastName
+sarah.mitchell@sxm-test.com,LID001,PID001,trialer,Sarah,Mitchell
+marcus.johnson@sxm-test.com,LID002,PID002,trialer,Marcus,Johnson
+priya.patel@sxm-test.com,LID003,PID003,trialer,Priya,Patel
+carlos.rivera@sxm-test.com,LID004,PID004,trialer,Carlos,Rivera
+alex.kim@sxm-test.com,LID005,PID005,trialer,Alex,Kim

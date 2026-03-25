@@ -12,6 +12,28 @@ import {
 } from "@sierra/agent";
 import parse from "node-html-parser";
 import TurndownService from "@sierra/turndown";
+import baseballRulesData from "./baseball-rules-knowledge-base.json";
+
+// Replace with your actual mock or production API base URL
+const TRIALER_API_BASE = "https://api.sxm.internal/v1";
+
+type BaseballArticle = {
+    id: string;
+    title: string;
+    body: string;
+    metadata: { rule_number: string; category: string; source_url: string };
+};
+
+type ContentItem = {
+    contentId: string;
+    title: string;
+    artistHost: string;
+    contentType: "music" | "podcast" | "sports" | "channel";
+    channel: string;
+    airTime: string;
+    imageUrl: string;
+    link: string;
+};
 
 type PokemonItem = {
     id: number;
@@ -148,6 +170,56 @@ ${
 }`;
 }
 
+// ── Baseball Rules knowledge base ─────────────────────────────────────────────
+function* fetchBaseballRules(_input: FetchKnowledgeInput): Generator<ArticleBatch> {
+    const articles = (baseballRulesData as { articles: BaseballArticle[] }).articles;
+    info(`Fetching ${articles.length} baseball rule articles`);
+    yield {
+        error: null,
+        articles: articles.map(article => ({
+            title: article.title,
+            sourceUrl: article.metadata.source_url,
+            body: article.body,
+        })),
+    };
+}
+
+// ── Content Catalog knowledge base ────────────────────────────────────────────
+function* fetchContentCatalog(_input: FetchKnowledgeInput): Generator<ArticleBatch> {
+    logging.info("Fetching content catalog from API");
+    const response = fetch.jsonSync<{ items: ContentItem[] }>(
+        `${TRIALER_API_BASE}/content/catalog`
+    );
+    if (response.status !== 200 || !response.body) {
+        yield { error: "Failed to fetch content catalog", articles: [] };
+        return;
+    }
+    yield {
+        error: null,
+        articles: response.body.items.map(item => ({
+            title: `${item.title} — ${item.artistHost}`,
+            sourceUrl: item.link,
+            body: generateContentArticleBody(item),
+        })),
+    };
+}
+
+function generateContentArticleBody(item: ContentItem): string {
+    return `# ${item.title}
+
+**Artist / Host:** ${item.artistHost}
+
+**Content Type:** ${item.contentType}
+
+**Channel:** ${item.channel}
+
+**Air Time:** ${item.airTime}
+
+**Link:** ${item.link}
+
+**Image:** ${item.imageUrl}`;
+}
+
 class SierraOutfittersFaqScraper implements Scraper {
     targetPage = "https://gosierra.biz/api/v1/faq";
 
@@ -217,6 +289,14 @@ const knowledgeBases = [
         concurrency: 1,
         maxErrorRate: 0.1,
     }),
+    {
+        name: "Baseball Rules",
+        fetchKnowledge: fetchBaseballRules,
+    },
+    {
+        name: "Upcoming Artist Content",
+        fetchKnowledge: fetchContentCatalog,
+    },
 ];
 
 export default knowledgeBases;

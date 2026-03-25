@@ -1,0 +1,10 @@
+profileID,contentID,title,contentType,favoritedAt
+PID001,CNT001,Styx Exclusive Interview,music,2026-03-20T18:45:00Z
+PID001,CNT010,Classic Rock Rewind,channel,2026-03-22T09:30:00Z
+PID002,CNT005,Mad Dog Sports Radio,sports,2026-03-24T14:30:00Z
+PID002,CNT006,NFL Radio Live,sports,2026-03-23T17:00:00Z
+PID002,CNT007,Howard Stern Show,podcast,2026-03-21T08:45:00Z
+PID003,CNT004,John Mayer & Harry Styles Joint Interview,music,2026-03-23T20:20:00Z
+PID003,CNT009,Pop Hits Weekly,channel,2026-03-22T17:30:00Z
+PID004,CNT002,Megadeth Exclusive Interview,music,2026-03-24T22:15:00Z
+PID004,CNT008,Metallica Radio,music,2026-03-23T21:30:00Z

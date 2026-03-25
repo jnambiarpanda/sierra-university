@@ -1,0 +1,16 @@
+profileID,rank,artistName,contentType,affinityScore,confidence
+PID001,1,Styx,music,0.97,0.97
+PID001,2,Classic Rewind,channel,0.85,0.85
+PID001,3,Led Zeppelin,music,0.72,0.72
+PID002,1,Mad Dog Sports Radio,sports,0.96,0.96
+PID002,2,NFL Radio,sports,0.88,0.88
+PID002,3,Howard Stern,podcast,0.74,0.74
+PID003,1,John Mayer,music,0.96,0.96
+PID003,2,Harry Styles,music,0.91,0.91
+PID003,3,Pop Hits,channel,0.82,0.82
+PID004,1,Megadeth,music,0.98,0.98
+PID004,2,Liquid Metal,channel,0.93,0.93
+PID004,3,Metallica,music,0.86,0.86
+PID005,1,Indie Rock,channel,0.48,0.48
+PID005,2,Pop Hits,channel,0.42,0.42
+PID005,3,Talk Radio,podcast,0.38,0.38

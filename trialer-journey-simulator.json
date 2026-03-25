@@ -1,0 +1,262 @@
+{
+  "simulations": [
+    {
+      "name": "Sarah Mitchell — Styx fan — full 7-turn conversion journey",
+      "groupDescription": "Trialer Journey Simulator — Sarah Mitchell (97% confidence)",
+      "categories": [
+        "trialer-journey-simulator"
+      ],
+      "messages": [
+        "You are Sarah Mitchell (sarah.mitchell@sxm-test.com), a SiriusXM trialer who is a huge Styx fan and loves classic rock. Turn 1: greet the agent warmly.",
+        "You are Sarah Mitchell. The agent asked for your email. Provide it: sarah.mitchell@sxm-test.com",
+        "You are Sarah Mitchell. The agent greeted you by name and asked about your interests. Tell them you mostly listen to classic rock and that you are a huge Styx fan.",
+        "You are Sarah Mitchell. The agent just mentioned that Styx has an exclusive interview on Faction Talk this Thursday. Express genuine excitement and ask what channel that is.",
+        "You are Sarah Mitchell. The agent told you it's Channel 103 at 5pm. Say you'll definitely be listening for that.",
+        "You are Sarah Mitchell. You're now curious about the subscription. Ask whether this kind of exclusive content is only available with a subscription.",
+        "You are Sarah Mitchell. The agent explained the subscription benefits tied to Styx content. You're convinced — say you want to subscribe."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent asks for email before any other topic.",
+        "Agent greets Sarah by her first name after resolving her profile.",
+        "Agent surfaces the Styx exclusive interview on Faction Talk, Channel 103, before mentioning subscription.",
+        "Agent ties the upgrade offer directly to the Styx content Sarah engaged with.",
+        "Conversation ends with the user converted to a paid subscriber."
+      ],
+      "isCritical": true,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Sarah Mitchell — agent greets by first name after email",
+      "groupDescription": "Trialer Journey Simulator — Sarah Mitchell (97% confidence)",
+      "categories": [
+        "trialer-journey-simulator"
+      ],
+      "messages": [
+        "You are Sarah Mitchell (sarah.mitchell@sxm-test.com). Say hello to the agent.",
+        "You are Sarah Mitchell. The agent asked for your email. Provide it: sarah.mitchell@sxm-test.com"
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent asks for the user's email before anything else.",
+        "After receiving the email, agent greets the user as 'Sarah' (by first name), not generically."
+      ],
+      "isCritical": true,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Sarah Mitchell — agent leads with Styx before generic music content",
+      "groupDescription": "Trialer Journey Simulator — Sarah Mitchell (97% confidence)",
+      "categories": [
+        "trialer-journey-simulator"
+      ],
+      "messages": [
+        "You are Sarah Mitchell (sarah.mitchell@sxm-test.com). Say hey to the agent.",
+        "You are Sarah Mitchell. Provide your email when asked: sarah.mitchell@sxm-test.com",
+        "You are Sarah Mitchell. Tell the agent you like music but aren't sure what kind."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent surfaces a Styx-specific content moment (artist match) before recommending generic music channels.",
+        "Agent does not open with a generic music recommendation when a high-confidence artist match exists."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Sarah Mitchell — agent references her listening history",
+      "groupDescription": "Trialer Journey Simulator — Sarah Mitchell (97% confidence)",
+      "categories": [
+        "trialer-journey-simulator"
+      ],
+      "messages": [
+        "You are Sarah Mitchell (sarah.mitchell@sxm-test.com). Say hi.",
+        "You are Sarah Mitchell. Provide your email: sarah.mitchell@sxm-test.com",
+        "You are Sarah Mitchell. Tell the agent you've been listening to a bit of everything on the trial.",
+        "You are Sarah Mitchell. Ask the agent what they would recommend based on what you've listened to."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent fetches Sarah's listening history and references specific content she has already engaged with.",
+        "Agent surfaces a personalized content moment (e.g. saved Styx interview or listened channel) before any subscription pitch."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Alex Kim — new user — full 6-turn extension journey",
+      "groupDescription": "Trialer Journey Simulator — Alex Kim (48% confidence)",
+      "categories": [
+        "trialer-journey-simulator"
+      ],
+      "messages": [
+        "You are Alex Kim (alex.kim@sxm-test.com), a brand new SiriusXM trialer who signed up a couple of days ago. You have not explored the app much. Say hey.",
+        "You are Alex Kim. Provide your email when asked: alex.kim@sxm-test.com",
+        "You are Alex Kim. Tell the agent you just signed up a couple days ago and haven't really explored yet.",
+        "You are Alex Kim. Say you're not sure what you're into — you tried a bit of pop and some rock but nothing specific grabbed you.",
+        "You are Alex Kim. Tell the agent you feel like you haven't had enough time to really decide if it's worth subscribing.",
+        "You are Alex Kim. The agent offered a trial extension. Accept it enthusiastically and say you'll use it more."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent asks for email at the start.",
+        "Agent greets Alex by first name after resolving profile.",
+        "Agent does NOT present an upgrade or subscription offer to Alex.",
+        "Agent offers a trial extension instead of an upgrade pitch.",
+        "Conversation ends with the user accepting the trial extension (deferred, not converted)."
+      ],
+      "isCritical": true,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Alex Kim — agent must NOT present upgrade offer",
+      "groupDescription": "Trialer Journey Simulator — Alex Kim (48% confidence)",
+      "categories": [
+        "trialer-journey-simulator"
+      ],
+      "messages": [
+        "You are Alex Kim (alex.kim@sxm-test.com). Say hi.",
+        "You are Alex Kim. Provide your email: alex.kim@sxm-test.com",
+        "You are Alex Kim. Tell the agent you literally just downloaded the app today."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent resolves Alex's profile and detects low affinity confidence (48%).",
+        "Agent does NOT present a subscription upgrade offer at any point.",
+        "If the agent mentions anything about the service, it is exploratory and helpful — not a sales pitch."
+      ],
+      "isCritical": true,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Alex Kim — agent surfaces category content, not artist-specific content",
+      "groupDescription": "Trialer Journey Simulator — Alex Kim (48% confidence)",
+      "categories": [
+        "trialer-journey-simulator"
+      ],
+      "messages": [
+        "You are Alex Kim (alex.kim@sxm-test.com). Say hello.",
+        "You are Alex Kim. Provide your email: alex.kim@sxm-test.com",
+        "You are Alex Kim. Tell the agent you tried some pop music but nothing specific grabbed you.",
+        "You are Alex Kim. Ask what's popular on SiriusXM."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent recommends content based on broad category (pop/music) rather than a specific artist.",
+        "Agent does not fabricate a high-confidence artist match that doesn't exist for Alex.",
+        "Recommendations feel exploratory and broad, not personalized to a specific talent."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Unknown email — agent greets generically and continues",
+      "groupDescription": "Trialer Journey Simulator — Edge Cases",
+      "categories": [
+        "trialer-journey-simulator"
+      ],
+      "messages": [
+        "You are an unknown user not in the SiriusXM database. Say hey.",
+        "You are an unknown user. When the agent asks for email, provide: unknown.user@notindb.com",
+        "You are an unknown user. Ask if the agent can help you figure out what's on SiriusXM."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent attempts to resolve the email but finds no matching profile.",
+        "Agent greets the user generically (not by name) and continues the conversation helpfully.",
+        "Agent does not crash or get stuck — conversation continues gracefully despite no profile found."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    }
+  ],
+  "version": 0
+}
