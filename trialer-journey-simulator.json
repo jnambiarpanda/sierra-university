@@ -1,0 +1,100 @@
+{
+  "simulations": [
+    {
+      "name": "Phase 0 — Happy Path: Phone Lookup",
+      "messages": [
+        "You are a SiriusXM customer named Phone Known. Your phone number is already on file in the system. Start by saying: Hi, I need some help with my SiriusXM account.",
+        "If the agent greets you by name without asking for your email, say: That's right, thanks for recognising me. Can you tell me about my subscription?"
+      ]
+    },
+    {
+      "name": "Phase 0 — Edge Case: Email Fallback",
+      "messages": [
+        "You are a SiriusXM customer named Email Only. You do not have a phone number on file. Start by saying: Hi, I need help with my SiriusXM account.",
+        "When the agent asks for your email address, provide: email.only@test.com",
+        "Once the agent acknowledges you by name, say: Great, can you tell me a bit about my account?"
+      ]
+    },
+    {
+      "name": "Phase 1 — Happy Path: All Access Trial",
+      "messages": [
+        "You are a SiriusXM trial subscriber with full access. When the agent asks for your email, provide: all.access@test.com. Start by saying: I want to know about my trial status.",
+        "When the agent tells you your trial expiry date, say: Good to know. What happens when the trial ends?",
+        "After the agent explains the subscription options, say: Thanks, I'll think about it."
+      ]
+    },
+    {
+      "name": "Phase 1 — Edge Case: Expired Trial",
+      "messages": [
+        "You are a former SiriusXM subscriber whose trial has expired. When the agent asks for your email, provide: expired.trialer@test.com. Start by saying: I'm trying to listen to SiriusXM but I can't access anything.",
+        "When the agent mentions your subscription has expired, say: Yes, it just ran out. Is there any way to get it back?",
+        "If the agent offers a reactivation option, say: What would that cost me per month?"
+      ]
+    },
+    {
+      "name": "Phase 2 — Happy Path: Hip-Hop Genre Affinity",
+      "messages": [
+        "You are a SiriusXM trial subscriber who loves hip-hop music. When the agent asks for your email, provide: hip.hop@test.com. Start by saying: Hi, I love hip-hop — what content do you have for me?",
+        "When the agent mentions hip-hop channels or content, say: That sounds great. Which channel has the most new releases?",
+        "After the agent answers, say: Perfect, I'll check that out."
+      ]
+    },
+    {
+      "name": "Phase 2 — Edge Case: Balanced Listener",
+      "messages": [
+        "You are a SiriusXM Premier subscriber with diverse listening habits across pop, country, jazz, and talk. When the agent asks for your email, provide: balanced.listener@test.com. Start by saying: Hi, I listen to a lot of different music — can you tell me what's available?",
+        "When the agent describes available content across multiple genres, say: I like all of those. Is there a way to set up favourites or presets?",
+        "After the agent responds, say: Thanks, that's helpful."
+      ]
+    },
+    {
+      "name": "Phase 3 — Happy Path: Live Event Match",
+      "messages": [
+        "You are a SiriusXM trial subscriber who loves Kendrick Lamar. When the agent asks for your email, provide: live.event@test.com. Start by saying: Hi, I'm hoping to catch some live performances — what's coming up for me?",
+        "When the agent mentions an upcoming Kendrick Lamar event, say: That's exactly what I wanted to hear. What channel will it be on?",
+        "After the agent provides details, say: I'll make sure to tune in."
+      ]
+    },
+    {
+      "name": "Phase 3 — Edge Case: No Content Match",
+      "messages": [
+        "You are a SiriusXM trial subscriber who loves jazz, especially Miles Davis. When the agent asks for your email, provide: no.content@test.com. Start by saying: Hi, I'm a big Miles Davis fan — is there anything available for me?",
+        "If the agent cannot find a specific Miles Davis event, ask: Are there any jazz channels I should check out?",
+        "After the agent pivots to jazz channels or general content, say: OK, I'll explore those — thanks."
+      ]
+    },
+    {
+      "name": "Phase 4 — Happy Path: Trial Upgrade Offer",
+      "messages": [
+        "You are a SiriusXM trial subscriber whose trial is expiring very soon. When the agent asks for your email, provide: trial.ends@test.com. Start by saying: Hi, I've been enjoying my trial — what happens when it ends?",
+        "When the agent mentions the trial is expiring and offers an upgrade, say: What would I get with a Premier subscription?",
+        "After the agent explains the Premier benefits, say: That sounds worth it. How do I sign up?"
+      ]
+    },
+    {
+      "name": "Phase 4 — Edge Case: Happy to Cancel",
+      "messages": [
+        "You are a SiriusXM trial subscriber who is NOT interested in subscribing. When the agent asks for your email, provide: happy.cancel@test.com. Start by saying: Hi, my trial is ending and I've decided I don't want to continue.",
+        "No matter what offer the agent makes, politely decline: I appreciate the offer but I'm really not interested right now.",
+        "If the agent makes a further offer, say: No thank you, I've made up my mind. I appreciate your time though."
+      ]
+    },
+    {
+      "name": "Phase 5 — Happy Path: Self-Served",
+      "messages": [
+        "You are a SiriusXM trial subscriber who just wants to know when your trial ends. When the agent asks for your email, provide: all.access@test.com. Start by saying: Hi, can you quickly tell me when my trial expires?",
+        "Once the agent tells you your trial expiry date, say: Perfect, that's all I needed — thank you so much!",
+        "If the agent asks if there is anything else, say: No, that was it. Have a great day!"
+      ]
+    },
+    {
+      "name": "Phase 5 — Edge Case: Billing Dispute Escalation",
+      "messages": [
+        "You are a former SiriusXM subscriber who sees an unexpected charge on your bank statement. When the agent asks for your email, provide: expired.trialer@test.com. Start by saying: I just got charged for SiriusXM but I cancelled my subscription months ago — I need this resolved immediately.",
+        "If the agent tries to help, say: I need to speak with someone who can actually process a refund. This needs to be escalated.",
+        "Once the agent indicates it will transfer you, say: Thank you. Please make sure whoever I speak to has my account details."
+      ]
+    }
+  ],
+  "version": 0
+}
