@@ -62,6 +62,57 @@ describe("Phase 0 — Caller Identification", "phase0", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Phase 1 — Subscription Awareness
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("Phase 1 — Subscription Awareness", "phase1", () => {
+    // Test: Select tier — agent surfaces tier and Premier upgrade path
+    test("phase1-select-tier", {
+        name: "Select Subscriber — surfaces tier and upgrade path",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM Select subscriber. " +
+            "When the agent asks for your email, provide: select.subscriber@test.com. " +
+            "Start by saying: Hi, can you tell me about my current subscription?",
+        expectedOutcomes: [
+            "Agent identifies the customer is on the Select tier.",
+            "Agent mentions Premier tier upgrade and the channels they're missing (e.g., Howard Stern, Liquid Metal).",
+        ],
+        assertions: ["stage:caller-identified-email", "stage:subscription-surfaced"],
+    });
+
+    // Test: All Access trial — agent surfaces trial status and expiry
+    test("phase1-all-access-trial", {
+        name: "All Access Trial — surfaces trial status and expiry date",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM trial subscriber with full access. " +
+            "When the agent asks for your email, provide: all.access@test.com. " +
+            "Start by saying: I want to know about my trial status.",
+        expectedOutcomes: [
+            "Agent acknowledges the customer is on a trial subscription.",
+            "Agent mentions the trial expiry date (April 1, 2026).",
+        ],
+        assertions: ["stage:caller-identified-email", "stage:subscription-surfaced"],
+    });
+
+    // Test: Expired trial — agent offers reactivation
+    test("phase1-expired-trial", {
+        name: "Expired Trialer — agent offers reactivation",
+        isSimulation: true,
+        messages:
+            "You are a former SiriusXM subscriber whose trial has expired. " +
+            "When the agent asks for your email, provide: expired.trialer@test.com. " +
+            "Start by saying: I'm trying to listen to SiriusXM but I can't access anything.",
+        expectedOutcomes: [
+            "Agent recognizes the subscription has expired.",
+            "Agent offers a reactivation path or subscription option.",
+        ],
+        assertions: ["stage:caller-identified-email", "stage:subscription-surfaced"],
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Live Agent Transfer
 // ─────────────────────────────────────────────────────────────────────────────
 

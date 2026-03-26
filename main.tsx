@@ -6,7 +6,7 @@ import { SierraUniversityAbuseDetection } from "./skills/abuse-detection";
 import integrationsRegistry from "./integrations-registry";
 import { DynamicCustomerInfo } from "./dynamic-customer-info";
 import { TAGS } from "./tags";
-import { getUserProfileByPhone, getUserProfileByEmail } from "./data/synthetic-data";
+import { getUserProfileByPhone, getUserProfileByEmail, getUserProfileById } from "./data/synthetic-data";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Phase 0 — Caller Identification Tools
@@ -128,6 +128,75 @@ const ResolveCallerByEmail = tools.registerTool({
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Phase 1 — Subscription Awareness Tool
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Premier+ channels not available on Select tier
+const PREMIER_PLUS_CHANNELS = ["LiquidMetal", "HowardStern", "Premier1"];
+const PREMIER_PLUS_NAMES = ["Liquid Metal", "Howard Stern", "SiriusXM Premier"];
+
+const GetSubscriptionDetails = tools.registerTool({
+    name: "GetSubscriptionDetails",
+    type: "lookup",
+    noCodeId: "get-subscription-details",
+    description:
+        "Get the caller's current subscription tier, trial expiry, and which channels they can " +
+        "and cannot access. Call this after identifying the caller to understand their plan.",
+    params: {
+        customerId: toolParam.string(
+            "The userId of the identified caller, as returned by ResolveCallerByPhone or ResolveCallerByEmail."
+        ),
+    },
+    func: (ctx, params, controls) => {
+        const profile = getUserProfileById(params.customerId);
+
+        if (!profile) {
+            return controls.error(`No profile found for customerId ${params.customerId}.`);
+        }
+
+        const tier = profile.subscriptionTier;
+
+        // Emit tier-specific tag
+        const tierTagMap: Record<string, string> = {
+            trial: TAGS.subscription.trial,
+            select: TAGS.subscription.select,
+            premier: TAGS.subscription.premier,
+            "all-access": TAGS.subscription.allAccess,
+            expired: TAGS.subscription.expired,
+        };
+        if (tierTagMap[tier]) {
+            addAgentTags([tierTagMap[tier]]);
+        }
+        addAgentTags([TAGS.subscription.surfaced]);
+
+        // Determine excluded channels based on tier
+        const excludedChannels =
+            tier === "select"
+                ? PREMIER_PLUS_NAMES
+                : tier === "expired"
+                  ? ["All channels — subscription inactive"]
+                  : [];
+
+        const upgradeAvailable = tier === "select" || tier === "trial" || tier === "expired";
+
+        return controls.result({
+            data: {
+                tier,
+                trialEndDate: profile.trialEndDate ?? null,
+                excludedChannels,
+                upgradeAvailable,
+                upgradeTarget:
+                    tier === "select"
+                        ? "Premier (unlocks Howard Stern, Liquid Metal, SiriusXM Premier)"
+                        : tier === "trial" || tier === "expired"
+                          ? "Paid subscription to keep access"
+                          : null,
+            },
+        });
+    },
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Pre-built loyalty tool (day-1 demo)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -219,6 +288,18 @@ export default createAgent({
                     <Rule content="If ResolveCallerByPhone returns found=false, ask the caller for their email address, then call ResolveCallerByEmail with that email." />
                     <Rule content="If ResolveCallerByEmail also returns found=false, proceed as an anonymous caller without asking for more identification." />
                     <Rule content="After identifying the caller, greet them by their first name if known, then ask why they are reaching out." />
+                </Goal>
+
+                {/* Phase 1: Subscription awareness tool */}
+                <GetSubscriptionDetails />
+
+                {/* Phase 1: Understand subscription before suggesting anything */}
+                <Goal description="Understand the customer's current subscription and identify upgrade paths.">
+                    <Rule content="After identifying the caller, call GetSubscriptionDetails with their userId to understand their subscription." />
+                    <Rule content="Always know what the caller has before suggesting what they might want." />
+                    <Rule content="If the caller is on a trial, acknowledge the trial and mention the expiry date." />
+                    <Rule content="If the caller is on Select tier, mention that Premier channels (Howard Stern, Liquid Metal) are available as an upgrade." />
+                    <Rule content="If the caller's subscription is expired, offer reactivation as the first suggestion." />
                 </Goal>
 
                 <Goal description="Determine why the customer is reaching out to customer support.">
