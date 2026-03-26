@@ -62,6 +62,16 @@ export const TAGS = {
         converted: "outcome:converted",
         cancelled: "outcome:cancelled",
     },
+
+    // ── Phase 5: Transfer Observability ───────────────────────────────────
+    transfer: {
+        reasonExplicitRequest: "transfer:reason:explicit-request",
+        reasonBillingDispute:  "transfer:reason:billing-dispute",
+        reasonUnresolved:      "transfer:reason:unresolved",
+        saveAttempted:         "transfer:save-attempted",
+        saveSucceeded:         "transfer:save-succeeded",
+        saveFailed:            "transfer:save-failed",
+    },
 } as const;
 
 export type TagValue = (typeof TAGS)[keyof typeof TAGS][keyof (typeof TAGS)[keyof typeof TAGS]];

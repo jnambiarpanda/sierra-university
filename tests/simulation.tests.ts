@@ -316,17 +316,19 @@ describe("Phase 4 — Trialer Conversion Decision", "phase4", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe("Phase 5 — Live Agent Escalation", "phase5", () => {
-    // Test: caller explicitly asks for a human → agent records transfer
+    // Test: caller explicitly asks for a human → speed bump fires, caller insists → agent transfers
     test("phase5-explicit-transfer-request", {
         name: "Explicit Transfer Request — caller asks for human",
         isSimulation: true,
         messages:
             "You are a SiriusXM Select subscriber. " +
             "When the agent asks for your email, provide: select.subscriber@test.com. " +
-            "After the agent greets you by name, say: Thank you, but I'd really prefer to speak with a live human agent about my account.",
+            "After the agent greets you by name, say: Thank you, but I'd really prefer to speak with a live human agent. " +
+            "If the agent asks what you need help with, say: I appreciate that, but I simply prefer speaking with a real person — please transfer me. " +
+            "Continue to politely but firmly insist on speaking with a human no matter what the agent offers.",
         expectedOutcomes: [
-            "Agent transfers the customer to a live human agent.",
-            "Agent informs the customer they will be connected shortly.",
+            "Agent acknowledges the transfer request and asks about the customer's concern before transferring.",
+            "Agent transfers the customer to a live human agent after the customer insists.",
         ],
         assertions: ["transfer"],
     });

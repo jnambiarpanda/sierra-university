@@ -481,18 +481,58 @@ const AcknowledgeCancellation = tools.registerTool({
 // Phase 5 — Live Agent Escalation Tools
 // ─────────────────────────────────────────────────────────────────────────────
 
+const RecordSaveAttempt = tools.registerTool({
+    name: "RecordSaveAttempt",
+    type: "lookup",
+    noCodeId: "record-save-attempt",
+    description:
+        "Record that a speed-bump save attempt is being made — the agent is acknowledging the " +
+        "transfer request and asking about the customer's concern before escalating. " +
+        "Call this BEFORE asking the customer what they need help with.",
+    params: {},
+    func: (_ctx, _params, controls) => {
+        addAgentTags([TAGS.transfer.saveAttempted]);
+        return controls.result({
+            data: { recorded: true },
+            instructions:
+                "Acknowledge the customer's request warmly (e.g. 'Of course, I can connect you with a team member.'). " +
+                "Then ask: 'Before I do, could you tell me what you're hoping to get resolved? " +
+                "I may be able to take care of it for you right now.' " +
+                "Attempt to resolve the issue using available tools. " +
+                "Only call RecordTransfer if the customer explicitly insists or the issue cannot be resolved.",
+        });
+    },
+});
+
 const RecordTransfer = tools.registerTool({
     name: "RecordTransfer",
     type: "lookup",
     noCodeId: "record-transfer",
     description:
         "Record that this conversation is being escalated to a live agent. " +
-        "Call this before initiating any live agent transfer.",
-    params: {},
-    func: (_ctx, _params, controls) => {
-        addAgentTags([TAGS.outcome.transferred]);
+        "Call this only after a save attempt has been made (or for billing disputes that cannot be resolved).",
+    params: {
+        reason: toolParam.string(
+            "Why the transfer is happening: 'explicit-request' (customer insisted on a human after save attempt), " +
+            "'billing-dispute' (charge or refund issue the agent cannot resolve), or " +
+            "'unresolved' (issue could not be resolved by available tools)."
+        ),
+        saveAttempted: toolParam.string(
+            "'true' if RecordSaveAttempt was called earlier in this conversation, otherwise 'false'."
+        ),
+    },
+    func: (_ctx, params, controls) => {
+        const tags: string[] = [TAGS.outcome.transferred];
+        const reasonMap: Record<string, string> = {
+            "explicit-request": TAGS.transfer.reasonExplicitRequest,
+            "billing-dispute":  TAGS.transfer.reasonBillingDispute,
+            "unresolved":       TAGS.transfer.reasonUnresolved,
+        };
+        if (reasonMap[params.reason]) tags.push(reasonMap[params.reason]);
+        if (params.saveAttempted === "true") tags.push(TAGS.transfer.saveFailed);
+        addAgentTags(tags);
         return controls.result({
-            data: { recorded: true },
+            data: { recorded: true, reason: params.reason },
             instructions:
                 "Proceed with transferring the customer to a live agent. " +
                 "Let them know they will be connected shortly.",
@@ -507,9 +547,15 @@ const RecordSelfServed = tools.registerTool({
     description:
         "Record that the customer's issue was fully resolved without a live agent transfer. " +
         "Call this when the customer confirms their question has been answered.",
-    params: {},
-    func: (_ctx, _params, controls) => {
-        addAgentTags([TAGS.outcome.selfServed]);
+    params: {
+        saveAttempted: toolParam.string(
+            "'true' if RecordSaveAttempt was called earlier in this conversation (i.e. the speed bump succeeded), otherwise 'false'."
+        ),
+    },
+    func: (_ctx, params, controls) => {
+        const tags: string[] = [TAGS.outcome.selfServed];
+        if (params.saveAttempted === "true") tags.push(TAGS.transfer.saveSucceeded);
+        addAgentTags(tags);
         return controls.result({
             data: { recorded: true },
             instructions:
@@ -660,14 +706,17 @@ export default createAgent({
                 </Goal>
 
                 {/* Phase 5: Escalation tools */}
+                <RecordSaveAttempt />
                 <RecordTransfer />
                 <RecordSelfServed />
 
-                {/* Phase 5: Escalate or close with full context */}
-                <Goal description="If the customer needs a human agent, transfer them with full context.">
-                    <Rule content="When the customer asks to speak with a live agent or human representative, your FIRST tool call MUST be RecordTransfer — do not initiate any transfer without calling RecordTransfer first." />
-                    <Rule content="If the customer has a billing dispute, account lock, or an issue that cannot be resolved, call RecordTransfer and initiate the transfer." />
-                    <Rule content="When the customer explicitly confirms their issue is resolved and they have no further questions, call RecordSelfServed." />
+                {/* Phase 5: Speed bump — understand concern before transferring */}
+                <Goal description="When a customer requests a live agent, apply the speed bump: gather context, attempt resolution, then transfer only if necessary.">
+                    <Rule content="When a customer requests a live agent or human representative, call RecordSaveAttempt FIRST, then acknowledge their request warmly and ask what they are hoping to get resolved. Attempt to help using available tools before escalating." />
+                    <Rule content="If the customer has a billing dispute or a charge they cannot explain — an issue you cannot resolve — call RecordTransfer with reason='billing-dispute' and saveAttempted='true'." />
+                    <Rule content="If the customer explicitly insists on speaking with a human after you have tried to help, call RecordTransfer with reason='explicit-request' and saveAttempted='true'." />
+                    <Rule content="If you cannot resolve the issue through any available tool, call RecordTransfer with reason='unresolved' and set saveAttempted based on whether you called RecordSaveAttempt." />
+                    <Rule content="When the customer confirms their issue is fully resolved, call RecordSelfServed and set saveAttempted='true' if you called RecordSaveAttempt during this conversation, otherwise 'false'." />
                 </Goal>
 
                 <Goal description="Determine why the customer is reaching out to customer support.">
