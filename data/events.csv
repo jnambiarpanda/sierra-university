@@ -1,0 +1,36 @@
+event_id,date,artist_guest,event_type,category,location,channels,start_time,end_time
+EVT001,2026-03-16,Diplo,interview+performance,Music,New York,Diplo's Revolution|BPM|Pandora,14:00,16:00
+EVT002,2026-03-16,Morgan Wallen,interview,Music,Nashville,Country Roads|Outlaw Country,10:00,11:00
+EVT003,2026-03-17,Drake,performance,Music,Toronto,SiriusXM Hits 1|BPM,20:00,22:00
+EVT004,2026-03-17,Howard Stern,interview,Talk,New York,Howard Stern,09:00,12:00
+EVT005,2026-03-18,Taylor Swift,interview+performance,Music,New York,SiriusXM Hits 1|The Pulse,19:00,21:00
+EVT006,2026-03-18,Luke Combs,performance,Music,Charlotte,Country Roads,20:00,22:00
+EVT007,2026-03-19,Kendrick Lamar,interview,Music,Los Angeles,SiriusXM Hits 1|Hip-Hop Nation,15:00,16:30
+EVT008,2026-03-19,Foo Fighters,performance,Music,Seattle,Alt Nation,21:00,23:00
+EVT009,2026-03-20,Zach Bryan,interview+performance,Music,Tulsa,Country Roads|Outlaw Country,18:00,20:00
+EVT010,2026-03-20,Calvin Harris,performance,Music,Las Vegas,BPM|Chill,22:00,00:00
+EVT011,2026-03-21,21 Savage,interview,Music,Atlanta,SiriusXM Hits 1|BPM,16:00,17:30
+EVT012,2026-03-21,Metallica,performance,Music,San Francisco,Liquid Metal|Octane,20:00,23:00
+EVT013,2026-03-22,Olivia Rodrigo,interview+performance,Music,Los Angeles,SiriusXM Hits 1|PopRocks,19:00,21:00
+EVT014,2026-03-22,Doja Cat,performance,Music,Los Angeles,SiriusXM Hits 1|BPM,21:00,23:00
+EVT015,2026-03-23,Future,interview,Music,Atlanta,SiriusXM Hits 1|BPM,14:00,15:30
+EVT016,2026-03-23,Morgan Wallen,performance,Music,Nashville,Country Roads,20:00,22:00
+EVT017,2026-03-24,Drake,interview,Music,Toronto,SiriusXM Hits 1,10:00,11:30
+EVT018,2026-03-24,Diplo,performance,Music,Miami,Diplo's Revolution|BPM,22:00,00:00
+EVT019,2026-03-25,Zach Bryan,performance,Music,Austin,Country Roads|Outlaw Country,20:00,22:00
+EVT020,2026-03-25,Howard Stern,interview,Talk,New York,Howard Stern,09:00,12:00
+EVT021,2026-03-26,Taylor Swift,performance,Music,New York,SiriusXM Hits 1,20:00,22:00
+EVT022,2026-03-26,Kendrick Lamar,performance,Music,Los Angeles,SiriusXM Hits 1|Hip-Hop Nation,21:00,23:00
+EVT023,2026-03-27,Luke Combs,interview+performance,Music,Nashville,Country Roads,18:00,20:00
+EVT024,2026-03-27,Calvin Harris,interview,Music,London,BPM|Chill,14:00,15:00
+EVT025,2026-03-27,21 Savage,performance,Music,Atlanta,SiriusXM Hits 1,21:00,23:00
+EVT026,2026-04-02,Diplo,performance,Music,Los Angeles,Diplo's Revolution|BPM,21:00,23:00
+EVT027,2026-04-03,Morgan Wallen,performance,Music,Nashville,Country Roads,20:00,22:00
+EVT028,2026-04-04,Drake,performance,Music,New York,SiriusXM Hits 1,21:00,23:00
+EVT029,2026-04-05,Howard Stern,interview,Talk,New York,Howard Stern,09:00,12:00
+EVT030,2026-04-05,Zach Bryan,performance,Music,Austin,Country Roads|Outlaw Country,20:00,22:00
+EVT031,2026-04-06,Taylor Swift,interview,Music,Nashville,SiriusXM Hits 1,14:00,15:30
+EVT032,2026-04-07,Kendrick Lamar,interview+performance,Music,Los Angeles,SiriusXM Hits 1,20:00,22:00
+EVT033,2026-04-08,Luke Combs,performance,Music,Charlotte,Country Roads,21:00,23:00
+EVT034,2026-04-09,Foo Fighters,interview,Music,Seattle,Alt Nation,16:00,17:30
+EVT035,2026-04-10,Doja Cat,interview+performance,Music,Los Angeles,SiriusXM Hits 1|BPM,19:00,21:00
