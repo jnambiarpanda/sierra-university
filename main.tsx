@@ -136,7 +136,7 @@ const ResolveCallerByEmail = tools.registerTool({
 // ─────────────────────────────────────────────────────────────────────────────
 
 // Premier+ channels not available on Select tier
-const PREMIER_PLUS_CHANNELS = ["LiquidMetal", "HowardStern", "Premier1"];
+const PREMIER_PLUS_CHANNELS = ["634ea01e-4ae2-c7e8-7567-138965e8a6fe", "5ad6890a-adaf-48bf-adbf-d0bf28def878", "a44e273d-a7e5-c358-a8ae-39dc91ca9c30"];
 const PREMIER_PLUS_NAMES = ["Liquid Metal", "Howard Stern", "SiriusXM Premier"];
 
 const GetSubscriptionDetails = tools.registerTool({
@@ -198,6 +198,7 @@ const GetSubscriptionDetails = tools.registerTool({
                 channelName: ch.channelName,
                 channelNumber: ch.channelNumber,
                 imageUrl: ch.imageUrl as string,
+                playerLandingPage: ch.playerLandingPage,
                 description: ch.description,
             }));
 
@@ -238,10 +239,6 @@ const GetSubscriptionDetails = tools.registerTool({
 // Phase 2 — Audience Affinity Segmentation Tool
 // ─────────────────────────────────────────────────────────────────────────────
 
-// Local alias: channel keys in user profiles that differ from canonical CSV keys
-const CHANNEL_KEY_ALIAS: Record<string, string> = {
-    RapCaviar: "HipHopNation",
-};
 
 const GENRE_TAG_MAP: Record<string, string> = {
     "Hip-Hop": TAGS.affinity.genreHipHop,
@@ -283,8 +280,7 @@ const GetAffinityProfile = tools.registerTool({
         const genreCounts: Record<string, number> = {};
         const superCategoryCounts: Record<string, number> = {};
 
-        for (const rawKey of profile.topChannels) {
-            const key = CHANNEL_KEY_ALIAS[rawKey] ?? rawKey;
+        for (const key of profile.topChannels) {
             const channel = getChannelByKey(key);
             if (!channel) continue;
 
@@ -418,7 +414,7 @@ const GetContentForUser = tools.registerTool({
 // Phase 4 — Trialer Conversion Decision Tools
 // ─────────────────────────────────────────────────────────────────────────────
 
-const PREMIER_PLUS_KEYS = ["HowardStern", "LiquidMetal", "Premier1"];
+const PREMIER_PLUS_KEYS = ["5ad6890a-adaf-48bf-adbf-d0bf28def878", "634ea01e-4ae2-c7e8-7567-138965e8a6fe", "a44e273d-a7e5-c358-a8ae-39dc91ca9c30"];
 
 const GetRetentionOffer = tools.registerTool({
     name: "GetRetentionOffer",

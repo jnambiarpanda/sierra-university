@@ -37,38 +37,11 @@ export type ChannelRecord = {
     description: string;
     packages: string; // "All" | "Select+" | "Premier+"
     imageUrl?: string;
-};
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Channel alias map: abbreviated CSV key → display name used in events
-// ─────────────────────────────────────────────────────────────────────────────
-const CHANNEL_ALIAS: Record<string, string> = {
-    Hits1: "SiriusXM Hits 1",
-    BPM: "BPM",
-    Diplo: "Diplo's Revolution",
-    CountryRoads: "Country Roads",
-    OutlawCountry: "Outlaw Country",
-    TheHighway: "The Highway",
-    AltNation: "Alt Nation",
-    LiquidMetal: "Liquid Metal",
-    Octane: "Octane",
-    HowardStern: "Howard Stern",
-    SiriusXMPatriot: "SiriusXM Patriot",
-    POTUS: "P.O.T.U.S.",
-    CNN: "CNN",
-    FoxNews: "Fox News",
-    Jazz: "Real Jazz",
-    ClassicVinyl: "Classic Vinyl",
-    Premier1: "SiriusXM Premier",
-    PopRocks: "Pop Rocks",
-    Venus: "Venus",
-    HipHopNation: "Hip-Hop Nation",
-    Chill: "Chill",
-    RapCaviar: "Hip-Hop Nation",
+    playerLandingPage?: string;
 };
 
 function resolveChannelName(key: string): string {
-    return CHANNEL_ALIAS[key] ?? key;
+    return CHANNELS.find(c => c.channelKey === key)?.channelName ?? key;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -83,7 +56,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         phone: "+15550010001",
         subscriptionTier: "trial",
         trialEndDate: "2026-04-10",
-        topChannels: ["Hits1", "BPM", "Diplo"],
+        topChannels: ["194adbca-34d6-cb94-b153-3488ee563308", "6adef1b5-d812-9c10-7c6c-f05af4e27077", "89c9bcb8-704a-435e-a047-30840e7ee70d"],
         topArtists: ["Drake", "Doja Cat", "Future"],
     },
     {
@@ -94,7 +67,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         phone: "",
         subscriptionTier: "trial",
         trialEndDate: "2026-04-15",
-        topChannels: ["CountryRoads", "OutlawCountry"],
+        topChannels: ["687f841b-a76e-35ef-98de-022afe72566e", "176daca5-6810-3a1c-49e9-39b69055e811"],
         topArtists: ["Morgan Wallen", "Luke Combs", "Zach Bryan"],
     },
     {
@@ -104,7 +77,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         email: "unknown.caller@test.com",
         phone: "",
         subscriptionTier: "select",
-        topChannels: ["AltNation", "LiquidMetal", "Octane"],
+        topChannels: ["fd5740ec-7f11-0ecf-f676-46f9dc056d2c", "634ea01e-4ae2-c7e8-7567-138965e8a6fe", "0fed9647-cc82-24d7-526d-98762e8a52cd"],
         topArtists: ["Foo Fighters", "Metallica", "Tool"],
     },
     {
@@ -114,7 +87,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         email: "phone.unknown@test.com",
         phone: "+15550010099",
         subscriptionTier: "premier",
-        topChannels: ["HowardStern", "POTUS", "CNN"],
+        topChannels: ["5ad6890a-adaf-48bf-adbf-d0bf28def878", "43993462-1c73-efb8-29e5-0c4652cf8e4f", "3c7b2421-7ce4-0ecb-bc70-7f60f15d3d29"],
         topArtists: ["Howard Stern"],
     },
     {
@@ -124,7 +97,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         email: "select.subscriber@test.com",
         phone: "+15550010005",
         subscriptionTier: "select",
-        topChannels: ["Hits1", "HowardStern", "PopRocks"],
+        topChannels: ["194adbca-34d6-cb94-b153-3488ee563308", "5ad6890a-adaf-48bf-adbf-d0bf28def878", "44f9129f-579a-3d23-218f-3c3518036fc6"],
         topArtists: ["Taylor Swift", "Olivia Rodrigo"],
     },
     {
@@ -135,7 +108,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         phone: "+15550010006",
         subscriptionTier: "trial",
         trialEndDate: "2026-04-01",
-        topChannels: ["Premier1", "Jazz", "ClassicVinyl"],
+        topChannels: ["a44e273d-a7e5-c358-a8ae-39dc91ca9c30", "e6333906-2e89-6c07-59d6-36d09248b8dc", "5ad8659a-414a-9e26-b973-f5a229d788dd"],
         topArtists: ["Miles Davis", "John Coltrane"],
     },
     {
@@ -145,7 +118,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         email: "expired.trialer@test.com",
         phone: "+15550010007",
         subscriptionTier: "expired",
-        topChannels: ["BPM", "Diplo", "Chill"],
+        topChannels: ["6adef1b5-d812-9c10-7c6c-f05af4e27077", "89c9bcb8-704a-435e-a047-30840e7ee70d", "834383dd-9a7e-d59e-81a2-dd13e0377af2"],
         topArtists: ["Calvin Harris", "Diplo"],
     },
     {
@@ -156,7 +129,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         phone: "+15550010008",
         subscriptionTier: "trial",
         trialEndDate: "2026-04-20",
-        topChannels: ["Hits1", "BPM", "RapCaviar"],
+        topChannels: ["194adbca-34d6-cb94-b153-3488ee563308", "6adef1b5-d812-9c10-7c6c-f05af4e27077", "bd54fc02-e063-0e3e-0cbb-4ceafef734e7"],
         topArtists: ["Drake", "Kendrick Lamar", "21 Savage"],
     },
     {
@@ -166,7 +139,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         email: "talk.radio@test.com",
         phone: "+15550010009",
         subscriptionTier: "select",
-        topChannels: ["POTUS", "CNN", "FoxNews", "SiriusXMPatriot"],
+        topChannels: ["43993462-1c73-efb8-29e5-0c4652cf8e4f", "3c7b2421-7ce4-0ecb-bc70-7f60f15d3d29", "5f8894e9-d615-21d0-a114-ecd08e7fa75c", "6739babb-7975-e60e-1835-fbacd4bbd855"],
         topArtists: ["Rachel Maddow", "Sean Hannity"],
     },
     {
@@ -177,7 +150,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         phone: "+15550010010",
         subscriptionTier: "trial",
         trialEndDate: "2026-04-08",
-        topChannels: ["CountryRoads", "OutlawCountry", "TheHighway"],
+        topChannels: ["687f841b-a76e-35ef-98de-022afe72566e", "176daca5-6810-3a1c-49e9-39b69055e811", "ffd94bb6-5368-67ae-91be-5b2bababeca0"],
         topArtists: ["Morgan Wallen", "Luke Combs"],
     },
     {
@@ -187,7 +160,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         email: "balanced.listener@test.com",
         phone: "+15550010011",
         subscriptionTier: "premier",
-        topChannels: ["Hits1", "CountryRoads", "Jazz", "POTUS"],
+        topChannels: ["194adbca-34d6-cb94-b153-3488ee563308", "687f841b-a76e-35ef-98de-022afe72566e", "e6333906-2e89-6c07-59d6-36d09248b8dc", "43993462-1c73-efb8-29e5-0c4652cf8e4f"],
         topArtists: ["Taylor Swift", "Morgan Wallen"],
     },
     {
@@ -198,7 +171,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         phone: "+15550010012",
         subscriptionTier: "trial",
         trialEndDate: "2026-04-12",
-        topChannels: ["Hits1", "BPM"],
+        topChannels: ["194adbca-34d6-cb94-b153-3488ee563308", "6adef1b5-d812-9c10-7c6c-f05af4e27077"],
         topArtists: ["Kendrick Lamar"],
     },
     {
@@ -209,7 +182,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         phone: "+15550010013",
         subscriptionTier: "trial",
         trialEndDate: "2026-04-18",
-        topChannels: ["BPM", "Chill"],
+        topChannels: ["6adef1b5-d812-9c10-7c6c-f05af4e27077", "834383dd-9a7e-d59e-81a2-dd13e0377af2"],
         topArtists: ["Calvin Harris"],
     },
     {
@@ -220,7 +193,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         phone: "+15550010014",
         subscriptionTier: "trial",
         trialEndDate: "2026-04-05",
-        topChannels: ["Hits1", "BPM"],
+        topChannels: ["194adbca-34d6-cb94-b153-3488ee563308", "6adef1b5-d812-9c10-7c6c-f05af4e27077"],
         topArtists: ["Drake", "Future"],
     },
     {
@@ -231,7 +204,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         phone: "+15550010015",
         subscriptionTier: "trial",
         trialEndDate: "2026-04-22",
-        topChannels: ["ClassicVinyl", "Jazz"],
+        topChannels: ["5ad8659a-414a-9e26-b973-f5a229d788dd", "e6333906-2e89-6c07-59d6-36d09248b8dc"],
         topArtists: ["Miles Davis"],
     },
     {
@@ -242,7 +215,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         phone: "+15550010016",
         subscriptionTier: "trial",
         trialEndDate: "2026-03-28",
-        topChannels: ["Hits1", "BPM", "Diplo"],
+        topChannels: ["194adbca-34d6-cb94-b153-3488ee563308", "6adef1b5-d812-9c10-7c6c-f05af4e27077", "89c9bcb8-704a-435e-a047-30840e7ee70d"],
         topArtists: ["Drake", "Doja Cat"],
     },
     {
@@ -252,7 +225,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         email: "budget.conscious@test.com",
         phone: "+15550010017",
         subscriptionTier: "select",
-        topChannels: ["Hits1", "PopRocks"],
+        topChannels: ["194adbca-34d6-cb94-b153-3488ee563308", "44f9129f-579a-3d23-218f-3c3518036fc6"],
         topArtists: ["Taylor Swift"],
     },
     {
@@ -262,7 +235,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         email: "feature.seeker@test.com",
         phone: "+15550010018",
         subscriptionTier: "select",
-        topChannels: ["HowardStern", "Premier1"],
+        topChannels: ["5ad6890a-adaf-48bf-adbf-d0bf28def878", "a44e273d-a7e5-c358-a8ae-39dc91ca9c30"],
         topArtists: ["Howard Stern"],
     },
     {
@@ -273,7 +246,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         phone: "+15550010019",
         subscriptionTier: "trial",
         trialEndDate: "2026-04-01",
-        topChannels: ["Hits1"],
+        topChannels: ["194adbca-34d6-cb94-b153-3488ee563308"],
         topArtists: ["Taylor Swift"],
     },
     {
@@ -283,7 +256,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         email: "select.upgrade@test.com",
         phone: "+15550010020",
         subscriptionTier: "select",
-        topChannels: ["HowardStern", "BPM", "Hits1"],
+        topChannels: ["5ad6890a-adaf-48bf-adbf-d0bf28def878", "6adef1b5-d812-9c10-7c6c-f05af4e27077", "194adbca-34d6-cb94-b153-3488ee563308"],
         topArtists: ["Howard Stern", "Drake"],
     },
 ];
@@ -463,24 +436,27 @@ export const EVENTS: EventRecord[] = [
 // Channels
 // ─────────────────────────────────────────────────────────────────────────────
 export const CHANNELS: ChannelRecord[] = [
-    { channelKey: "Hits1", channelName: "SiriusXM Hits 1", channelNumber: "2", superCategory: "Music", genre: "Pop", description: "Today's biggest pop hits", packages: "All", imageUrl: "https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJpZi8zMy8zM2FlMmNkNTAzODgzNjg5YTdiYjViYWE2YjY5YmU4Ml8xNzYxMDU5MTQ1LnBuZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjMwMCwiaGVpZ2h0IjozMDB9fV19" },
-    { channelKey: "BPM", channelName: "BPM", channelNumber: "51", superCategory: "Music", genre: "Electronic/Dance", description: "Non-stop dance and EDM", packages: "All", imageUrl: "https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJhZW0vOTAvOTBmNGZjYzg5YzQ3NmE3ZTYyNDgzN2E0Y2I2ZWI3MTNfMTczMjAzOTk0Mi5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6MzAwLCJoZWlnaHQiOjMwMH19XX0=" },
-    { channelKey: "Diplo", channelName: "Diplo's Revolution", channelNumber: "52", superCategory: "Music", genre: "Electronic/Dance", description: "Diplo's curated dance music", packages: "All" },
-    { channelKey: "CountryRoads", channelName: "Country Roads", channelNumber: "56", superCategory: "Music", genre: "Country", description: "Today's country hits", packages: "All" },
-    { channelKey: "OutlawCountry", channelName: "Outlaw Country", channelNumber: "60", superCategory: "Music", genre: "Country", description: "Outlaw and alternative country", packages: "All", imageUrl: "https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJhZW0vNjIvNjI4YmNmYmI0ZGVjODRkODE3MzQ5M2VlNjY3MjFiYjhfMTY5OTM3NTQ4NS5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6MzAwLCJoZWlnaHQiOjMwMH19XX0=" },
-    { channelKey: "TheHighway", channelName: "The Highway", channelNumber: "55", superCategory: "Music", genre: "Country", description: "New country hits", packages: "All", imageUrl: "https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJpZi9hOS9hOWZhODlmOGE4ODczODI0OGU5YzMwMTY0NjJiZDE3YV8xNzUwMTY4MTAyLmpwZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjMwMCwiaGVpZ2h0IjozMDB9fV19" },
-    { channelKey: "AltNation", channelName: "Alt Nation", channelNumber: "36", superCategory: "Music", genre: "Alternative Rock", description: "Alternative rock hits", packages: "All", imageUrl: "https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJhZW0vOTcvOTdiZmJjM2YzM2ZkMTQ0MTFmMjQyOWViYmRiYTc3YTJfMTczMjAzOTkzOS5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6MzAwLCJoZWlnaHQiOjMwMH19XX0=" },
-    { channelKey: "LiquidMetal", channelName: "Liquid Metal", channelNumber: "40", superCategory: "Music", genre: "Heavy Metal", description: "Metal and hard rock", packages: "Premier+", imageUrl: "https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJhZW0vZGQvZGQxN2M0NTc1YmQzMjdlMjY2MGJkNDVhODc0ZWY3ZWVfMTczMjAzOTkzMi5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6MzAwLCJoZWlnaHQiOjMwMH19XX0=" },
-    { channelKey: "Octane", channelName: "Octane", channelNumber: "37", superCategory: "Music", genre: "Hard Rock", description: "Hard rock and metal", packages: "All", imageUrl: "https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJpZi82Mi82MmVjOTIyOGQ2MzIzNTJjOWY4YjliZjI0YTQ4OTUzN18xNzUwMTY4MjU5LmpwZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjMwMCwiaGVpZ2h0IjozMDB9fV19" },
-    { channelKey: "HowardStern", channelName: "Howard Stern", channelNumber: "100", superCategory: "Howard Stern", genre: "Talk", description: "Howard Stern Show channels", packages: "Premier+", imageUrl: "https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJlbnRpdHktbWFuYWdlbWVudC9mMS9mMTkyZDk4YWEyZTU3ZjUzNWY3ZjU5Mzc1OWYxZTA2ZV8xNzAyMDA5MDkzODU2LnBuZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjMwMCwiaGVpZ2h0IjozMDB9fV19" },
-    { channelKey: "POTUS", channelName: "P.O.T.U.S.", channelNumber: "124", superCategory: "Talk", genre: "News", description: "Politics and government", packages: "Select+" },
-    { channelKey: "Jazz", channelName: "Real Jazz", channelNumber: "67", superCategory: "Music", genre: "Jazz", description: "Classic and contemporary jazz", packages: "All" },
-    { channelKey: "ClassicVinyl", channelName: "Classic Vinyl", channelNumber: "26", superCategory: "Music", genre: "Classic Rock", description: "Classic rock from the 60s-80s", packages: "All", imageUrl: "https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJhZW0vOGQvOGQ4Y2M2MmI4NWM4YTQ2YWQ5NmU4YWI3NTZiOGJhYzlfMTY5OTM3NTk2MS5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6MzAwLCJoZWlnaHQiOjMwMH19XX0=" },
-    { channelKey: "Premier1", channelName: "SiriusXM Premier", channelNumber: "1", superCategory: "Music", genre: "Pop", description: "Premium curated pop hits", packages: "Premier+", imageUrl: "https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJhZW0vYjgvYjgzZWMyMGI1YmI5NTFmOGNhOTE1N2I0NzI4NjY1YmVfMTcxMTk5NjM2MC5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6MzAwLCJoZWlnaHQiOjMwMH19XX0=" },
-    { channelKey: "PopRocks", channelName: "Pop Rocks", channelNumber: "14", superCategory: "Music", genre: "Pop", description: "Pop and rock crossover", packages: "All", imageUrl: "https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJhZW0vNDMvNDMyZDgxYjg2ODkzMzZhZWJiNjE5ZmY4MDYzNDljOGNfMTY5OTM3NTQyMi5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6MzAwLCJoZWlnaHQiOjMwMH19XX0=" },
-    { channelKey: "Venus", channelName: "Venus", channelNumber: "72", superCategory: "Music", genre: "Pop", description: "Music by women artists", packages: "All" },
-    { channelKey: "HipHopNation", channelName: "Hip-Hop Nation", channelNumber: "44", superCategory: "Music", genre: "Hip-Hop", description: "Hip-hop and rap", packages: "All", imageUrl: "https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJpZi9kYy9kYzNkMjkzYmIwMzYzY2U3YjY1ZmZlMTdhM2U5MzFkZl8xNzUwMTY4MDg3LmpwZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjMwMCwiaGVpZ2h0IjozMDB9fV19" },
-    { channelKey: "Chill", channelName: "Chill", channelNumber: "53", superCategory: "Music", genre: "Electronic", description: "Chill and ambient electronic", packages: "All", imageUrl: "https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJhZW0vNWEvNWE5NGU4OTk1MjM1MTIyMWM5YTJjNDY0MDBjYmZiMjNfMTcxMjY3NjQ3OC5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6MzAwLCJoZWlnaHQiOjMwMH19XX0=" },
+    { channelKey: "194adbca-34d6-cb94-b153-3488ee563308", channelName: "SiriusXM Hits 1", channelNumber: "2", superCategory: "Music", genre: "Pop", description: "Today's biggest pop hits", packages: "All", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJpZi8zMy8zM2RkZGExNDFlYjAzMTllYTJmMzY1Y2NlZmM5YzcxOV8xNzU2MzQ1OTQ1LnBuZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjYwMCwiaGVpZ2h0Ijo2MDB9fV19", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/194adbca-34d6-cb94-b153-3488ee563308" },
+    { channelKey: "6adef1b5-d812-9c10-7c6c-f05af4e27077", channelName: "BPM", channelNumber: "51", superCategory: "Music", genre: "Electronic/Dance", description: "Non-stop dance and EDM", packages: "All", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJhZW0vOTAvOTBmNGZjYzg5YzQ3NmE3ZTYyNDgzN2E0Y2I2ZWI3MTNfMTczMjAzOTk0Mi5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6NjAwLCJoZWlnaHQiOjYwMH19XX0=", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/6adef1b5-d812-9c10-7c6c-f05af4e27077" },
+    { channelKey: "89c9bcb8-704a-435e-a047-30840e7ee70d", channelName: "Diplo's Revolution", channelNumber: "52", superCategory: "Music", genre: "Electronic/Dance", description: "Diplo's curated dance music", packages: "All", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJlbnRpdHktbWFuYWdlbWVudC9mYS9mYTZjOWI1NTM2ZDg4OWY0NGU0MjA1NTkwMjY0MzVjZl8xNzAyMjMyNzk4NjkzLnBuZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjUzMCwiaGVpZ2h0Ijo1MzB9fV19", playerLandingPage: "https://www.siriusxm.com/player/talent/entity/89c9bcb8-704a-435e-a047-30840e7ee70d" },
+    { channelKey: "687f841b-a76e-35ef-98de-022afe72566e", channelName: "Country Roads", channelNumber: "56", superCategory: "Music", genre: "Country", description: "Today's country hits", packages: "All", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJwb2RjYXN0LzI0NzFiN2I5ODc1NTAzOWQ1YTdiMjFlNzUxN2M3NGFhZDk4ZGQ4MjE1M2ViZTZjNWYwMTliNzJjMjRhNTkzM2IiLCJlZGl0cyI6W3siZm9ybWF0Ijp7InR5cGUiOiJqcGVnIn19LHsicmVzaXplIjp7IndpZHRoIjo2MDAsImhlaWdodCI6NjAwfX1dfQ==", playerLandingPage: "https://www.siriusxm.com/player/show-podcast/entity/687f841b-a76e-35ef-98de-022afe72566e" },
+    { channelKey: "176daca5-6810-3a1c-49e9-39b69055e811", channelName: "Outlaw Country", channelNumber: "60", superCategory: "Music", genre: "Country", description: "Outlaw and alternative country", packages: "All", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJhZW0vNjIvNjI4YmNmYmI0ZGVjODRkODE3MzQ5M2VlNjY3MjFiYjhfMTY5OTM3NTQ4NS5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6NjAwLCJoZWlnaHQiOjYwMH19XX0=", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/176daca5-6810-3a1c-49e9-39b69055e811" },
+    { channelKey: "ffd94bb6-5368-67ae-91be-5b2bababeca0", channelName: "The Highway", channelNumber: "55", superCategory: "Music", genre: "Country", description: "New country hits", packages: "All", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJpZi80MS80MTU0MDczOWJiZmMzNzEwYjg2NDM4ODc1NDFmZmZiZV8xNzY4NDA1NjEzLnBuZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjYwMCwiaGVpZ2h0Ijo2MDB9fV19", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/ffd94bb6-5368-67ae-91be-5b2bababeca0" },
+    { channelKey: "fd5740ec-7f11-0ecf-f676-46f9dc056d2c", channelName: "Alt Nation", channelNumber: "36", superCategory: "Music", genre: "Alternative Rock", description: "Alternative rock hits", packages: "All", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJhZW0vOTcvOTdiZmJjM2YzM2ZkMTQ0MTFmMjQyOWViYmRiYTc3YTJfMTczMjAzOTkzOS5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6NjAwLCJoZWlnaHQiOjYwMH19XX0=", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/fd5740ec-7f11-0ecf-f676-46f9dc056d2c" },
+    { channelKey: "634ea01e-4ae2-c7e8-7567-138965e8a6fe", channelName: "Liquid Metal", channelNumber: "40", superCategory: "Music", genre: "Heavy Metal", description: "Metal and hard rock", packages: "Premier+", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJhZW0vZGQvZGQxN2M0NTc1YmQzMjdlMjY2MGJkNDVhODc0ZWY3ZWVfMTczMjAzOTkzMi5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6NjAwLCJoZWlnaHQiOjYwMH19XX0=", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/634ea01e-4ae2-c7e8-7567-138965e8a6fe" },
+    { channelKey: "0fed9647-cc82-24d7-526d-98762e8a52cd", channelName: "Octane", channelNumber: "37", superCategory: "Music", genre: "Hard Rock", description: "Hard rock and metal", packages: "All", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJhZW0vMjgvMjhmMDczY2JjZGY0YWVmNWE5MGMwNjNiNDcxZTkwNDhfMTczMjAzOTk2My5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6NjAwLCJoZWlnaHQiOjYwMH19XX0=", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/0fed9647-cc82-24d7-526d-98762e8a52cd" },
+    { channelKey: "5ad6890a-adaf-48bf-adbf-d0bf28def878", channelName: "Howard Stern", channelNumber: "100", superCategory: "Howard Stern", genre: "Talk", description: "Howard Stern Show channels", packages: "Premier+", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJhZW0vZDYvZDZmOGE1NTcwZjcxMGZhNzM1OGVmNWU3YjZmM2I0ZGNfMTcwMTM2MDU4OS5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6NjAwLCJoZWlnaHQiOjYwMH19XX0=", playerLandingPage: "https://www.siriusxm.com/player/show/entity/5ad6890a-adaf-48bf-adbf-d0bf28def878" },
+    { channelKey: "6739babb-7975-e60e-1835-fbacd4bbd855", channelName: "SiriusXM Patriot", channelNumber: "125", superCategory: "Talk", genre: "News/Talk", description: "Conservative talk radio", packages: "Select+", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJhZW0vMmMvMmM1NTM2MmJmYWNmY2Y2YmZkODIxODRkNTBmMDlmNGRfMTY5OTM3NTc2MS5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6NjAwLCJoZWlnaHQiOjYwMH19XX0=", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/6739babb-7975-e60e-1835-fbacd4bbd855" },
+    { channelKey: "43993462-1c73-efb8-29e5-0c4652cf8e4f", channelName: "P.O.T.U.S.", channelNumber: "124", superCategory: "Talk", genre: "News", description: "Politics and government", packages: "Select+", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJpZi9jNi9jNmJiNDg2ZTllNDEzYzY4YjhjYWNjZDAwYzBkNzZjMF8xNzUzODE3MzE5LmpwZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjYwMCwiaGVpZ2h0Ijo2MDB9fV19", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/43993462-1c73-efb8-29e5-0c4652cf8e4f" },
+    { channelKey: "3c7b2421-7ce4-0ecb-bc70-7f60f15d3d29", channelName: "CNN", channelNumber: "116", superCategory: "Talk", genre: "News", description: "CNN news coverage", packages: "Select+", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJhZW0vNWMvNWM2MmFjNDFmNDg2Yzc0OGE2YzU1MmI1Yzk0ZmQxMjFfMTczOTIwMzIxNy5wbmciLCJlZGl0cyI6W3siZm9ybWF0Ijp7InR5cGUiOiJqcGVnIn19LHsicmVzaXplIjp7IndpZHRoIjo2MDAsImhlaWdodCI6NjAwfX1dfQ==", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/3c7b2421-7ce4-0ecb-bc70-7f60f15d3d29" },
+    { channelKey: "5f8894e9-d615-21d0-a114-ecd08e7fa75c", channelName: "Fox News", channelNumber: "205", superCategory: "Talk", genre: "News", description: "Fox News coverage", packages: "Select+", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJhZW0vYWIvYWJjOTA1NzcxNjEwN2VkOWRmYzhjMzAyYzZiMzBjYzFfMTY5OTM3NTg3OS5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6NjAwLCJoZWlnaHQiOjYwMH19XX0=", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/5f8894e9-d615-21d0-a114-ecd08e7fa75c" },
+    { channelKey: "e6333906-2e89-6c07-59d6-36d09248b8dc", channelName: "Real Jazz", channelNumber: "67", superCategory: "Music", genre: "Jazz", description: "Classic and contemporary jazz", packages: "All", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJpZi82Mi82MmU4ZTkyZTIwYmEzMDAzODdhN2MyN2I5ODk0NTVjY18xNzcwNzQ5MTcxLmpwZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjYwMCwiaGVpZ2h0Ijo2MDB9fV19", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/e6333906-2e89-6c07-59d6-36d09248b8dc" },
+    { channelKey: "5ad8659a-414a-9e26-b973-f5a229d788dd", channelName: "Classic Vinyl", channelNumber: "26", superCategory: "Music", genre: "Classic Rock", description: "Classic rock from the 60s-80s", packages: "All", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJhZW0vZTgvZThkOGE4YzQ3ZmNjMTc2M2I4YWY1NjIwYTBiNTNmZTRfMTY5OTM3NTI1MC5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6NjAwLCJoZWlnaHQiOjYwMH19XX0=", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/5ad8659a-414a-9e26-b973-f5a229d788dd" },
+    { channelKey: "a44e273d-a7e5-c358-a8ae-39dc91ca9c30", channelName: "SiriusXM Premier", channelNumber: "1", superCategory: "Music", genre: "Pop", description: "Premium curated pop hits", packages: "Premier+", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJpZi9kMy9kM2RkNzY5Nzg4MGEzN2M5OWU5MTc2NjBkMmFkMzZiZV8xNzU5MjM2NDY0LmpwZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjYwMCwiaGVpZ2h0Ijo2MDB9fV19", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/PGA%20Radio/a44e273d-a7e5-c358-a8ae-39dc91ca9c30" },
+    { channelKey: "44f9129f-579a-3d23-218f-3c3518036fc6", channelName: "Pop Rocks", channelNumber: "14", superCategory: "Music", genre: "Pop", description: "Pop and rock crossover", packages: "All", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJhZW0vMmQvMmQ4YmYyNGIzNTZlODkzMDUzY2Q4NTdlMGY4MDAxZThfMTczMjAzOTk2Ni5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6NjAwLCJoZWlnaHQiOjYwMH19XX0=", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/44f9129f-579a-3d23-218f-3c3518036fc6" },
+    { channelKey: "84d0d860-f65a-3184-9e29-335d4da505e8", channelName: "Venus", channelNumber: "72", superCategory: "Music", genre: "Pop", description: "Music by women artists", packages: "All", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJwb2RjYXN0LzNlYTNlYWNiYTViNWZiZDNmNjMxMjY5ZTgxNWYzZTQ4YWU1YmQxOTc1NzUwNmMzMjdlMmJlNTQ5MjMxZWFiM2IiLCJlZGl0cyI6W3siZm9ybWF0Ijp7InR5cGUiOiJqcGVnIn19LHsicmVzaXplIjp7IndpZHRoIjo2MDAsImhlaWdodCI6NjAwfX1dfQ==", playerLandingPage: "https://www.siriusxm.com/player/show-podcast/entity/84d0d860-f65a-3184-9e29-335d4da505e8" },
+    { channelKey: "bd54fc02-e063-0e3e-0cbb-4ceafef734e7", channelName: "Hip-Hop Nation", channelNumber: "44", superCategory: "Music", genre: "Hip-Hop", description: "Hip-hop and rap", packages: "All", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJhZW0vOTcvOTc4M2EwY2Q3MzkzOWNmYzcyOWIwMTMyYmY3NWVkZmNfMTY5OTM3NjA4MC5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6NjAwLCJoZWlnaHQiOjYwMH19XX0=", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/bd54fc02-e063-0e3e-0cbb-4ceafef734e7" },
+    { channelKey: "834383dd-9a7e-d59e-81a2-dd13e0377af2", channelName: "Chill", channelNumber: "53", superCategory: "Music", genre: "Electronic", description: "Chill and ambient electronic", packages: "All", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJhZW0vNWEvNWE5NGU4OTk1MjM1MTIyMWM5YTJjNDY0MDBjYmZiMjNfMTcxMjY3NjQ3OC5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6NjAwLCJoZWlnaHQiOjYwMH19XX0=", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/834383dd-9a7e-d59e-81a2-dd13e0377af2" },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -22,6 +22,7 @@ type ChannelCardItem = {
     channelName: string;
     channelNumber: string;
     imageUrl: string;
+    playerLandingPage?: string;
     description?: string;
 };
 
@@ -40,12 +41,19 @@ const ChannelCardsAttachment = reactDeclaration<ChannelCardsPayload>({
         return (
             <div style={{ display: "flex", gap: 8 }}>
                 {props.channels.slice(0, 3).map((ch: ChannelCardItem) => (
-                    <img
+                    <a
                         key={ch.channelKey}
-                        src={ch.imageUrl}
-                        alt={ch.channelName}
-                        style={{ width: 40, height: 40, borderRadius: 6, objectFit: "cover" }}
-                    />
+                        href={ch.playerLandingPage}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ display: "block", lineHeight: 0 }}
+                    >
+                        <img
+                            src={ch.imageUrl}
+                            alt={ch.channelName}
+                            style={{ width: 40, height: 40, borderRadius: 6, objectFit: "cover" }}
+                        />
+                    </a>
                 ))}
             </div>
         );
@@ -61,40 +69,47 @@ const ChannelCardsAttachment = reactDeclaration<ChannelCardsPayload>({
                 )}
                 <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                     {props.channels.map((ch: ChannelCardItem) => (
-                        <div
+                        <a
                             key={ch.channelKey}
-                            style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                gap: 5,
-                                width: 72,
-                            }}
+                            href={ch.playerLandingPage}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: "none", color: "inherit" }}
                         >
-                            <img
-                                src={ch.imageUrl}
-                                alt={ch.channelName}
+                            <div
                                 style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    gap: 5,
                                     width: 72,
-                                    height: 72,
-                                    borderRadius: 10,
-                                    objectFit: "cover",
-                                    boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-                                }}
-                            />
-                            <span
-                                style={{
-                                    fontSize: 10,
-                                    textAlign: "center",
-                                    color: "#444",
-                                    lineHeight: 1.3,
-                                    wordBreak: "break-word",
                                 }}
                             >
-                                {ch.channelName}
-                            </span>
-                            <span style={{ fontSize: 9, color: "#999" }}>Ch. {ch.channelNumber}</span>
-                        </div>
+                                <img
+                                    src={ch.imageUrl}
+                                    alt={ch.channelName}
+                                    style={{
+                                        width: 72,
+                                        height: 72,
+                                        borderRadius: 10,
+                                        objectFit: "cover",
+                                        boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                                    }}
+                                />
+                                <span
+                                    style={{
+                                        fontSize: 10,
+                                        textAlign: "center",
+                                        color: "#444",
+                                        lineHeight: 1.3,
+                                        wordBreak: "break-word",
+                                    }}
+                                >
+                                    {ch.channelName}
+                                </span>
+                                <span style={{ fontSize: 9, color: "#999" }}>Ch. {ch.channelNumber}</span>
+                            </div>
+                        </a>
                     ))}
                 </div>
             </div>
