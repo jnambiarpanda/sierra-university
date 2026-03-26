@@ -1,22 +1,22 @@
-channel_key,channel_name,channel_number,super_category,genre,description,packages
-Hits1,SiriusXM Hits 1,2,Music,Pop,Today's biggest pop hits,All
-BPM,BPM,51,Music,Electronic/Dance,Non-stop dance and EDM,All
-Diplo,Diplo's Revolution,52,Music,Electronic/Dance,Diplo's curated dance music,All
-CountryRoads,Country Roads,56,Music,Country,Today's country hits,All
-OutlawCountry,Outlaw Country,60,Music,Country,Outlaw and alternative country,All
-TheHighway,The Highway,55,Music,Country,New country hits,All
-AltNation,Alt Nation,36,Music,Alternative Rock,Alternative rock hits,All
-LiquidMetal,Liquid Metal,40,Music,Heavy Metal,Metal and hard rock,Premier+
-Octane,Octane,37,Music,Hard Rock,Hard rock and metal,All
-HowardStern,Howard Stern,100,Howard Stern,Talk,Howard Stern Show channels,Premier+
-SiriusXMPatriot,SiriusXM Patriot,125,Talk,News/Talk,Conservative talk radio,Select+
-POTUS,P.O.T.U.S.,124,Talk,News,Politics and government,Select+
-CNN,CNN,116,Talk,News,CNN news coverage,Select+
-FoxNews,Fox News,205,Talk,News,Fox News coverage,Select+
-Jazz,Real Jazz,67,Music,Jazz,Classic and contemporary jazz,All
-ClassicVinyl,Classic Vinyl,26,Music,Classic Rock,Classic rock from the 60s-80s,All
-Premier1,SiriusXM Premier,1,Music,Pop,Premium curated pop hits,Premier+
-PopRocks,Pop Rocks,14,Music,Pop,Pop and rock crossover,All
-Venus,Venus,72,Music,Pop,Music by women artists,All
-HipHopNation,Hip-Hop Nation,44,Music,Hip-Hop,Hip-hop and rap,All
-Chill,Chill,53,Music,Electronic,Chill and ambient electronic,All
+channel_key,channel_name,channel_number,super_category,genre,description,packages,image_url
+Hits1,SiriusXM Hits 1,2,Music,Pop,Today's biggest pop hits,All,https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJpZi8zMy8zM2FlMmNkNTAzODgzNjg5YTdiYjViYWE2YjY5YmU4Ml8xNzYxMDU5MTQ1LnBuZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjMwMCwiaGVpZ2h0IjozMDB9fV19
+BPM,BPM,51,Music,Electronic/Dance,Non-stop dance and EDM,All,https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJhZW0vOTAvOTBmNGZjYzg5YzQ3NmE3ZTYyNDgzN2E0Y2I2ZWI3MTNfMTczMjAzOTk0Mi5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6MzAwLCJoZWlnaHQiOjMwMH19XX0=
+Diplo,Diplo's Revolution,52,Music,Electronic/Dance,Diplo's curated dance music,All,
+CountryRoads,Country Roads,56,Music,Country,Today's country hits,All,
+OutlawCountry,Outlaw Country,60,Music,Country,Outlaw and alternative country,All,https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJhZW0vNjIvNjI4YmNmYmI0ZGVjODRkODE3MzQ5M2VlNjY3MjFiYjhfMTY5OTM3NTQ4NS5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6MzAwLCJoZWlnaHQiOjMwMH19XX0=
+TheHighway,The Highway,55,Music,Country,New country hits,All,https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJpZi9hOS9hOWZhODlmOGE4ODczODI0OGU5YzMwMTY0NjJiZDE3YV8xNzUwMTY4MTAyLmpwZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjMwMCwiaGVpZ2h0IjozMDB9fV19
+AltNation,Alt Nation,36,Music,Alternative Rock,Alternative rock hits,All,https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJhZW0vOTcvOTdiZmJjM2YzM2ZkMTQ0MTFmMjQyOWViYmRiYTc3YTJfMTczMjAzOTkzOS5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6MzAwLCJoZWlnaHQiOjMwMH19XX0=
+LiquidMetal,Liquid Metal,40,Music,Heavy Metal,Metal and hard rock,Premier+,https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJhZW0vZGQvZGQxN2M0NTc1YmQzMjdlMjY2MGJkNDVhODc0ZWY3ZWVfMTczMjAzOTkzMi5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6MzAwLCJoZWlnaHQiOjMwMH19XX0=
+Octane,Octane,37,Music,Hard Rock,Hard rock and metal,All,https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJpZi82Mi82MmVjOTIyOGQ2MzIzNTJjOWY4YjliZjI0YTQ4OTUzN18xNzUwMTY4MjU5LmpwZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjMwMCwiaGVpZ2h0IjozMDB9fV19
+HowardStern,Howard Stern,100,Howard Stern,Talk,Howard Stern Show channels,Premier+,https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJlbnRpdHktbWFuYWdlbWVudC9mMS9mMTkyZDk4YWEyZTU3ZjUzNWY3ZjU5Mzc1OWYxZTA2ZV8xNzAyMDA5MDkzODU2LnBuZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjMwMCwiaGVpZ2h0IjozMDB9fV19
+SiriusXMPatriot,SiriusXM Patriot,125,Talk,News/Talk,Conservative talk radio,Select+,
+POTUS,P.O.T.U.S.,124,Talk,News,Politics and government,Select+,
+CNN,CNN,116,Talk,News,CNN news coverage,Select+,
+FoxNews,Fox News,205,Talk,News,Fox News coverage,Select+,
+Jazz,Real Jazz,67,Music,Jazz,Classic and contemporary jazz,All,
+ClassicVinyl,Classic Vinyl,26,Music,Classic Rock,Classic rock from the 60s-80s,All,https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJhZW0vOGQvOGQ4Y2M2MmI4NWM4YTQ2YWQ5NmU4YWI3NTZiOGJhYzlfMTY5OTM3NTk2MS5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6MzAwLCJoZWlnaHQiOjMwMH19XX0=
+Premier1,SiriusXM Premier,1,Music,Pop,Premium curated pop hits,Premier+,https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJhZW0vYjgvYjgzZWMyMGI1YmI5NTFmOGNhOTE1N2I0NzI4NjY1YmVfMTcxMTk5NjM2MC5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6MzAwLCJoZWlnaHQiOjMwMH19XX0=
+PopRocks,Pop Rocks,14,Music,Pop,Pop and rock crossover,All,https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJhZW0vNDMvNDMyZDgxYjg2ODkzMzZhZWJiNjE5ZmY4MDYzNDljOGNfMTY5OTM3NTQyMi5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6MzAwLCJoZWlnaHQiOjMwMH19XX0=
+Venus,Venus,72,Music,Pop,Music by women artists,All,
+HipHopNation,Hip-Hop Nation,44,Music,Hip-Hop,Hip-hop and rap,All,https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJpZi9kYy9kYzNkMjkzYmIwMzYzY2U3YjY1ZmZlMTdhM2U5MzFkZl8xNzUwMTY4MDg3LmpwZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjMwMCwiaGVpZ2h0IjozMDB9fV19
+Chill,Chill,53,Music,Electronic,Chill and ambient electronic,All,https://d17waft5a6sywo.cloudfront.net/eyJrZXkiOiJhZW0vNWEvNWE5NGU4OTk1MjM1MTIyMWM5YTJjNDY0MDBjYmZiMjNfMTcxMjY3NjQ3OC5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6MzAwLCJoZWlnaHQiOjMwMH19XX0=

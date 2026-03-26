@@ -94,7 +94,16 @@
         "If the agent tries to help, say: I need to speak with someone who can actually process a refund. This needs to be escalated.",
         "Once the agent indicates it will transfer you, say: Thank you. Please make sure whoever I speak to has my account details."
       ]
+    },
+    {
+      "name": "Channel Cards — Select subscriber sees Premier upgrade artwork",
+      "messages": [
+        "You are a SiriusXM Select subscriber. When the agent asks for your email provide: select.subscriber@test.com. Start by saying: Hi, can you tell me about my current plan?",
+        "When the agent describes your subscription, ask: What channels would I get if I upgraded to Premier?",
+        "After the agent shows the Premier channels, say: Those look great — especially Howard Stern. How do I upgrade?"
+      ]
     }
   ],
   "version": 0
 }
+

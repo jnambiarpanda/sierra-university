@@ -66,7 +66,7 @@ describe("Phase 0 — Caller Identification", "phase0", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe("Phase 1 — Subscription Awareness", "phase1", () => {
-    // Test: Select tier — agent surfaces tier and Premier upgrade path
+    // Test: Select tier — agent surfaces tier and Premier upgrade path with channel artwork
     test("phase1-select-tier", {
         name: "Select Subscriber — surfaces tier and upgrade path",
         isSimulation: true,
@@ -77,6 +77,7 @@ describe("Phase 1 — Subscription Awareness", "phase1", () => {
         expectedOutcomes: [
             "Agent identifies the customer is on the Select tier.",
             "Agent mentions Premier tier upgrade and at least one channel the customer is missing (e.g., Howard Stern).",
+            "Agent displays channel artwork images for the Premier channels (Howard Stern, Liquid Metal, SiriusXM Premier).",
         ],
         assertions: ["stage:caller-identified-email", "stage:subscription-surfaced"],
     });

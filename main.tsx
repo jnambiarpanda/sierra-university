@@ -179,6 +179,38 @@ const GetSubscriptionDetails = tools.registerTool({
 
         const upgradeAvailable = tier === "select" || tier === "trial" || tier === "expired";
 
+        // Build channel card attachment for channels with artwork
+        const channelKeysToShow: string[] =
+            tier === "select"
+                ? PREMIER_PLUS_CHANNELS                      // show what they're missing
+                : profile.topChannels.slice(0, 5);           // show their top channels
+
+        const channelCards = channelKeysToShow
+            .map(key => getChannelByKey(key))
+            .filter((ch): ch is NonNullable<typeof ch> => !!ch && !!ch.imageUrl)
+            .map(ch => ({
+                channelKey: ch.channelKey,
+                channelName: ch.channelName,
+                channelNumber: ch.channelNumber,
+                imageUrl: ch.imageUrl as string,
+                description: ch.description,
+            }));
+
+        const attachments = channelCards.length > 0
+            ? {
+                  id: "channel-cards",
+                  description: "SiriusXM channel artwork",
+                  data: [{
+                      type: "custom" as const,
+                      data: {
+                          type: "channel-cards" as const,
+                          title: tier === "select" ? "Channels unlocked with Premier" : "Your channels",
+                          channels: channelCards,
+                      },
+                  }],
+              }
+            : undefined;
+
         return controls.result({
             data: {
                 tier,
@@ -192,6 +224,7 @@ const GetSubscriptionDetails = tools.registerTool({
                           ? "Paid subscription to keep access"
                           : null,
             },
+            ...(attachments ? { attachments } : {}),
         });
     },
 });

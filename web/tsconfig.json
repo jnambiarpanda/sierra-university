@@ -1,0 +1,3 @@
+{
+    "extends": "@sierra/web-react/tsconfig"
+}
