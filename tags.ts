@@ -72,6 +72,12 @@ export const TAGS = {
         saveSucceeded:         "transfer:save-succeeded",
         saveFailed:            "transfer:save-failed",
     },
+
+    // ── Phase 9: Channel Observability ────────────────────────────────────
+    channel: {
+        voice: "channel:voice",
+        chat:  "channel:chat",
+    },
 } as const;
 
 export type TagValue = (typeof TAGS)[keyof typeof TAGS][keyof (typeof TAGS)[keyof typeof TAGS]];

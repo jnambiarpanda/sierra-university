@@ -1,10 +1,11 @@
 // Copyright Sierra
 
 import { createAgent } from "@sierra/agent/base";
-import { AbuseType, addAgentTags, fetch, Goal, jsx, Rule, toolParam, tools } from "@sierra/agent";
+import { AbuseType, addAgentTags, fetch, Goal, jsx, Rule, toolParam, tools, type VoiceCheckOutput } from "@sierra/agent";
 import { SierraUniversityAbuseDetection } from "./skills/abuse-detection";
 import integrationsRegistry from "./integrations-registry";
 import { DynamicCustomerInfo } from "./dynamic-customer-info";
+import { DynamicLanguageSwitching } from "./voice-swapper";
 import { TAGS } from "./tags";
 import { getUserProfileByPhone, getUserProfileByEmail, getUserProfileById, getChannelByKey, getEventsByArtist, type EventRecord } from "./data/synthetic-data";
 
@@ -25,6 +26,9 @@ const ResolveCallerByPhone = tools.registerTool({
         "MUST be called as the very first action at the start of every conversation, before saying anything to the customer.",
     params: {},
     func: (ctx, _params, controls) => {
+        const isVoice = ctx.conversationInfo.isVoice;
+        addAgentTags([isVoice ? TAGS.channel.voice : TAGS.channel.chat]);
+
         const phoneNumber = ctx.conversationInfo.clientPhoneNumber;
 
         if (!phoneNumber || phoneNumber === "Anonymous") {
@@ -148,6 +152,7 @@ const GetSubscriptionDetails = tools.registerTool({
         ),
     },
     func: (ctx, params, controls) => {
+        const isVoice = ctx.conversationInfo.isVoice;
         const profile = getUserProfileById(params.customerId);
 
         if (!profile) {
@@ -196,7 +201,7 @@ const GetSubscriptionDetails = tools.registerTool({
                 description: ch.description,
             }));
 
-        const attachments = channelCards.length > 0
+        const attachments = (!isVoice && channelCards.length > 0)
             ? {
                   id: "channel-cards",
                   description: "SiriusXM channel artwork",
@@ -643,6 +648,11 @@ tools.registerTool({
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default createAgent({
+    onVoiceCheck: _vcd => ({
+        voiceInputSupported: true,
+        persona: "daisy-jordan",
+    } satisfies VoiceCheckOutput),
+
     brand: {
         agentName: "SiriusXM Virtual Assistant",
         organizationName: "SiriusXM",
@@ -676,6 +686,17 @@ export default createAgent({
     useAdditionalGoalAgentChildren: () => {
         return (
             <>
+                {/* Phase 9: Language switching (EN ↔ FR) */}
+                <DynamicLanguageSwitching />
+
+                {/* Phase 9: Voice-curated demo journey */}
+                <Goal description="Voice channel: curated demo journey — identify silently, recommend content, close gracefully.">
+                    <Rule content="On voice (channel=voice_phone): before making any spoken response, silently call ResolveCallerByPhone, then GetSubscriptionDetails, then GetAffinityProfile, then GetContentForUser in sequence. Your first spoken message must combine the greeting and content recommendation in 2 sentences maximum." />
+                    <Rule content="On voice: do not make retention offers, do not suggest upgrades, and do not ask for billing information." />
+                    <Rule content="On voice: if the customer asks to speak to a human or raises a billing issue, respond with exactly: 'I'll have someone from our team follow up with you shortly' and close the conversation gracefully. Do not call RecordTransfer." />
+                    <Rule content="On voice: never use lists, bullet points, channel numbers, or markdown formatting. Speak naturally as if in a real phone conversation." />
+                </Goal>
+
                 {/* Phase 0: Render caller info as context for the LLM */}
                 <DynamicCustomerInfo />
 

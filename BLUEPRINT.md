@@ -228,6 +228,40 @@
 
 ### Done when all phase5 tests pass
 
+### Speed Bump & Transfer Observability Enhancement
+
+**Goal:** Reduce unnecessary escalations by attempting resolution before transferring. Provide granular Insights into why and how transfers occur.
+
+#### Speed bump pattern
+- When a customer requests a live agent, agent calls `RecordSaveAttempt` first, acknowledges the request, asks what the customer needs, and attempts resolution
+- Only calls `RecordTransfer` if the customer explicitly insists or the issue cannot be resolved
+
+#### New tool
+- `RecordSaveAttempt` — emits `transfer:save-attempted`; instructs agent to apply speed bump before escalating
+
+#### Updated tools
+- `RecordTransfer` — accepts `reason` (`explicit-request` | `billing-dispute` | `unresolved`) and `saveAttempted` (`true`/`false`); emits reason tag + optionally `transfer:save-failed`
+- `RecordSelfServed` — accepts `saveAttempted` (`true`/`false`); emits optionally `transfer:save-succeeded`
+
+#### New tags (`tags.ts` — `transfer` section)
+| Tag | Meaning |
+|-----|---------|
+| `transfer:reason:explicit-request` | Customer insisted on a human after save attempt |
+| `transfer:reason:billing-dispute` | Charge/refund issue unresolvable by agent |
+| `transfer:reason:unresolved` | Agent tried but could not fix the issue |
+| `transfer:save-attempted` | Speed bump fired |
+| `transfer:save-succeeded` | Speed bump worked — no transfer needed |
+| `transfer:save-failed` | Speed bump tried but customer still escalated |
+
+#### Insights funnel enabled
+```
+outcome:transferred → transfer:reason:* → transfer:save-failed (if attempted)
+outcome:self-served → transfer:save-succeeded (if speed bump preceded resolution)
+```
+
+#### Simulation test update
+- `phase5-explicit-transfer-request` persona updated to insist on a human after speed bump attempt
+
 ---
 
 ## Phase 6 — Synthetic Test User Library
@@ -276,3 +310,103 @@ At minimum one simulation per phase (7+ simulations), covering the happy path an
 - File is valid JSON
 - Covers Phases 0–5 with representative multi-turn simulations
 - File can be imported into Sierra Agent Studio without errors
+
+---
+
+## Phase 8 — Channel Card Attachments (Web UI Layer)
+
+**Goal:** Display SiriusXM channel artwork inline in web chat when the agent references channels, making upgrade pitches and content recommendations visual.
+
+### New files
+| File | Purpose |
+|------|---------|
+| `web/main.tsx` | React web config; registers `ChannelCardsAttachment` alongside built-in Sierra types |
+
+### Data changes
+| File | Change |
+|------|--------|
+| `data/channel-catalog.csv` | Added `image_url` column; 13 channels populated with CloudFront URLs |
+| `data/synthetic-data.ts` | `ChannelRecord` type gets `imageUrl?: string`; `CHANNELS` array updated |
+
+### Agent changes (`main.tsx`)
+- `GetSubscriptionDetails` emits a `channel-cards` attachment after subscription lookup:
+  - **Select tier**: shows 3 Premier+ channels the caller is missing (Howard Stern, Liquid Metal, SiriusXM Premier) — visual upgrade pitch
+  - **Other tiers**: shows caller's top channels that have artwork
+- Attachment is **chat-only**: guarded by `ctx.conversationInfo.channel !== "voice_phone"`
+
+### Attachment payload schema
+```typescript
+type ChannelCardsPayload = {
+    type: "channel-cards";
+    title?: string;
+    channels: Array<{
+        channelKey: string;
+        channelName: string;
+        channelNumber: string;
+        imageUrl: string;
+    }>;
+};
+```
+
+### Test coverage
+- `phase1-select-tier` `expectedOutcomes` updated: agent displays channel artwork for Premier channels
+- `trialer-journey-simulator.json` — new simulation: "Channel Cards — Select subscriber sees Premier upgrade artwork"
+
+### Done when
+- `pnpm sierra build` passes
+- `pnpm sierra test --categories phase1` passes (exit 0)
+- Channel tiles render visually in `pnpm sierra dev` for a Select subscriber
+
+---
+
+## Phase 9 — Voice Enablement & Curated Demo Journey
+
+**Goal:** Enable voice calls with a safe, demo-ready journey. Phases 0–2 run silently before the first spoken word. Phase 3 delivers the content recommendation. Phases 4 and 5 are suppressed on voice to eliminate demo risk.
+
+### New capabilities
+| Capability | Implementation |
+|-----------|---------------|
+| Voice enabled | `onVoiceCheck` added to `createAgent` |
+| Default persona | `daisy-jordan` (English US) |
+| Language switching | `DynamicLanguageSwitching` wired in — EN (`daisy-jordan`) ↔ FR (`guillaume-lefevre`) |
+| Silent tool chain | Voice-curated `Goal` instructs agent to run all 4 lookups before first spoken word |
+| Phase 4/5 suppressed | Voice Rules: no retention offers, no transfers, graceful close only |
+| Attachment guard | Channel cards skipped on `voice_phone` channel |
+| Channel observability | `channel:voice` / `channel:chat` tags emitted on every conversation |
+
+### New tags (`tags.ts` — `channel` section)
+| Tag | Meaning |
+|-----|---------|
+| `channel:voice` | Conversation is on voice/phone channel |
+| `channel:chat` | Conversation is on web chat channel |
+
+### Voice-curated Goal (Rules)
+1. On voice: silently call `ResolveCallerByPhone` → `GetSubscriptionDetails` → `GetAffinityProfile` → `GetContentForUser` before speaking. First spoken message = greeting + content recommendation in ≤ 2 sentences.
+2. On voice: do not make retention offers or suggest upgrades.
+3. On voice: if billing issue or human request, say *"I'll have someone from our team follow up with you shortly"* and close gracefully. Do not call `RecordTransfer`.
+4. On voice: no lists, bullet points, channel numbers, or markdown. Speak naturally.
+
+### Files changed
+| File | Change |
+|------|--------|
+| `tags.ts` | Add `channel` section |
+| `main.tsx` | Add `onVoiceCheck`; add `VoiceCheckOutput` import; emit channel tags in `ResolveCallerByPhone`; add `isVoice` guard on attachment; add voice-curated Goal; wire `DynamicLanguageSwitching` |
+| `voice-swapper.tsx` | Trim to EN/FR only; remove Spanish; dedicated personas only |
+
+### Core voice metrics tracked via Insights
+| Metric | Tags |
+|--------|------|
+| Voice containment rate | `outcome:self-served` + `channel:voice` |
+| Voice escalation rate | `outcome:transferred` + `channel:voice` |
+| Chat vs voice split | `channel:voice` vs `channel:chat` |
+
+### Demo user & journey
+- **Phone**: `+15550010012` (Live Event — Kendrick Lamar affinity, EVT032 upcoming)
+- **Journey**: silent identify → subscription → affinity → live event recommendation → close
+- **Language demo bonus**: say *"en français"* mid-call to trigger French persona swap
+
+### Done when
+- `pnpm sierra build` passes
+- Agent responds to voice calls with correct persona
+- First spoken message combines greeting + content recommendation
+- French persona swap works mid-call

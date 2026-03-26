@@ -14,27 +14,20 @@ import {
 } from "@sierra/agent";
 
 const ENGLISH = { label: LanguageName.EnglishUS, id: "en-US" };
-const SPANISH = { label: LanguageName.SpanishLatam, id: "es-MX" };
 const FRENCH = { label: LanguageName.French, id: "fr-FR" };
 
 export function DynamicLanguageSwitching() {
     const voice = useVoice();
-    const detectedLanguage = useDetectLanguage([ENGLISH, SPANISH, FRENCH], true);
+    const detectedLanguage = useDetectLanguage([ENGLISH, FRENCH], true);
     const [activeLang, setActiveLang] = useState("en-US");
 
     useEffect(() => {
         setActiveLang(detectedLanguage.id);
     }, [detectedLanguage.id]);
 
-    // Apply voice settings whenever detected voice changes
+    // Apply voice settings whenever detected language changes
     useEffect(() => {
-        if (activeLang === "es-MX") {
-            voice.updateVoiceSettings({
-                persona: "isabel-rios",
-                transcriptionOptions: { locale: "es-MX" },
-            });
-            addAgentTags(["voice-switched:spanish"]);
-        } else if (activeLang === "en-US") {
+        if (activeLang === "en-US") {
             voice.updateVoiceSettings({
                 persona: "daisy-jordan",
                 transcriptionOptions: { locale: "en-US" },
@@ -49,37 +42,16 @@ export function DynamicLanguageSwitching() {
         }
     }, [activeLang]);
 
-    // Or... apply voice settings whenever the customer requests a language change
     return (
         <>
-            <Condition
-                when={when.some(
-                    when.fact(activeLang === "en-US", "currently_speaking_english"),
-                    when.fact(activeLang === "fr-FR", "currently_speaking_french")
-                )}
-            >
-                <Condition when={when.observation(["The customer requests Spanish or español."])}>
-                    {activeLang !== "es-MX" && <OnActivation fn={() => setActiveLang("es-MX")} />}
+            <Condition when={when.fact(activeLang === "en-US", "currently_speaking_english")}>
+                <Condition when={when.observation(["The customer requests French or français."])}>
+                    {activeLang !== "fr-FR" && <OnActivation fn={() => setActiveLang("fr-FR")} />}
                 </Condition>
             </Condition>
-            <Condition
-                when={when.some(
-                    when.fact(activeLang === "es-MX", "currently_speaking_spanish"),
-                    when.fact(activeLang === "fr-FR", "currently_speaking_french")
-                )}
-            >
+            <Condition when={when.fact(activeLang === "fr-FR", "currently_speaking_french")}>
                 <Condition when={when.observation(["The customer requests English."])}>
                     {activeLang !== "en-US" && <OnActivation fn={() => setActiveLang("en-US")} />}
-                </Condition>
-            </Condition>
-            <Condition
-                when={when.some(
-                    when.fact(activeLang === "en-US", "currently_speaking_english"),
-                    when.fact(activeLang === "es-MX", "currently_speaking_spanish")
-                )}
-            >
-                <Condition when={when.observation(["The customer requests French."])}>
-                    {activeLang !== "fr-FR" && <OnActivation fn={() => setActiveLang("fr-FR")} />}
                 </Condition>
             </Condition>
         </>
