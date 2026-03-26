@@ -113,6 +113,72 @@ describe("Phase 1 — Subscription Awareness", "phase1", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Phase 2 — Audience Affinity Segmentation
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("Phase 2 — Audience Affinity Segmentation", "phase2", () => {
+    // Test: hip-hop listener — genre tag emitted
+    test("phase2-hip-hop-segment", {
+        name: "Hip Hop Fan — genre tag emitted",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM trial subscriber who loves hip-hop music. " +
+            "When the agent asks for your email, provide: hip.hop@test.com. " +
+            "Start by saying: Hi, I love hip-hop — what content do you have for me?",
+        expectedOutcomes: [
+            "Agent identifies the caller's hip-hop genre preference.",
+            "Agent mentions hip-hop related content or channels.",
+        ],
+        assertions: ["stage:subscription-surfaced", "affinity:genre:hip-hop"],
+    });
+
+    // Test: talk radio listener — super-category tag emitted
+    test("phase2-talk-super-category", {
+        name: "Talk Radio Fan — super-category tag emitted",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM subscriber who listens mostly to talk and news channels. " +
+            "When the agent asks for your email, provide: talk.radio@test.com. " +
+            "Start by saying: Hi, what talk and news content do you have for me?",
+        expectedOutcomes: [
+            "Agent identifies the caller's preference for talk or news content.",
+            "Agent mentions talk or news channels.",
+        ],
+        assertions: ["stage:subscription-surfaced", "affinity:super-category:talk"],
+    });
+
+    // Test: country devotee — artist affinity tag emitted
+    test("phase2-artist-identified", {
+        name: "Country Devotee — artist affinity tag emitted",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM trial subscriber who loves country music, especially Morgan Wallen. " +
+            "When the agent asks for your email, provide: country.devotee@test.com. " +
+            "Start by saying: Hi, I'm a big Morgan Wallen fan — what can you tell me about my account?",
+        expectedOutcomes: [
+            "Agent identifies the caller's affinity for Morgan Wallen or country music.",
+            "Agent mentions country music content.",
+        ],
+        assertions: ["stage:subscription-surfaced", "affinity:artist:morgan-wallen"],
+    });
+
+    // Test: balanced listener — music super-category emitted, multiple genres mentioned
+    test("phase2-balanced-no-dominant", {
+        name: "Balanced Listener — music super-category emitted",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM Premier subscriber with diverse listening habits across pop, country, jazz, and talk. " +
+            "When the agent asks for your email, provide: balanced.listener@test.com. " +
+            "Start by saying: Hi, I listen to a lot of different music — can you tell me what's available?",
+        expectedOutcomes: [
+            "Agent acknowledges the caller's diverse listening preferences.",
+            "Agent mentions multiple genres or content types.",
+        ],
+        assertions: ["stage:subscription-surfaced", "affinity:super-category:music"],
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Live Agent Transfer
 // ─────────────────────────────────────────────────────────────────────────────
 
