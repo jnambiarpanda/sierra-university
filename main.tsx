@@ -377,6 +377,107 @@ const GetContentForUser = tools.registerTool({
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Phase 4 — Trialer Conversion Decision Tools
+// ─────────────────────────────────────────────────────────────────────────────
+
+const PREMIER_PLUS_KEYS = ["HowardStern", "LiquidMetal", "Premier1"];
+
+const GetRetentionOffer = tools.registerTool({
+    name: "GetRetentionOffer",
+    type: "lookup",
+    noCodeId: "get-retention-offer",
+    description:
+        "Determine the best retention offer for this customer based on their subscription tier, " +
+        "trial expiry, and channel affinity. Call this after GetSubscriptionDetails.",
+    params: {
+        customerId: toolParam.string("The userId of the identified caller."),
+    },
+    func: (_ctx, params, controls) => {
+        const profile = getUserProfileById(params.customerId);
+        if (!profile) {
+            return controls.error(`No profile found for customerId ${params.customerId}.`);
+        }
+
+        const tier = profile.subscriptionTier;
+        const today = new Date().toISOString().split("T")[0];
+        const missingChannels: string[] = [];
+        let offerType: string;
+        const talkingPoints: string[] = [];
+
+        if (tier === "trial") {
+            const daysLeft = profile.trialEndDate
+                ? Math.ceil(
+                      (new Date(profile.trialEndDate).getTime() - new Date(today).getTime()) /
+                          (1000 * 60 * 60 * 24)
+                  )
+                : 999;
+            if (daysLeft <= 7) {
+                offerType = "upgrade-premier";
+                talkingPoints.push(
+                    `Trial ends in ${daysLeft} day(s) — upgrade now to keep full access.`
+                );
+            } else {
+                offerType = "extend-trial";
+                talkingPoints.push(`Extend your trial to keep exploring before committing.`);
+            }
+        } else if (tier === "select") {
+            const wantsPremier = profile.topChannels.some(ch => PREMIER_PLUS_KEYS.includes(ch));
+            if (wantsPremier) {
+                offerType = "upgrade-premier";
+                for (const ch of profile.topChannels) {
+                    if (PREMIER_PLUS_KEYS.includes(ch)) {
+                        const record = getChannelByKey(ch);
+                        if (record) missingChannels.push(record.channelName);
+                    }
+                }
+                talkingPoints.push(`Upgrade to Premier to unlock: ${missingChannels.join(", ")}.`);
+            } else {
+                offerType = "promotional";
+                talkingPoints.push("Special promotional rate available for you today.");
+            }
+        } else if (tier === "expired") {
+            offerType = "upgrade-premier";
+            talkingPoints.push("Reactivate with a Premier subscription to restore access.");
+        } else {
+            offerType = "no-offer";
+        }
+
+        const tagMap: Record<string, string> = {
+            "upgrade-premier": TAGS.offer.upgradePremier,
+            "extend-trial": TAGS.offer.extendTrial,
+            "promotional": TAGS.offer.promotional,
+            "no-offer": TAGS.offer.noOffer,
+        };
+        addAgentTags([tagMap[offerType]]);
+
+        return controls.result({
+            data: {
+                offerType,
+                talkingPoints,
+                missingChannels: missingChannels.length > 0 ? missingChannels : undefined,
+            },
+        });
+    },
+});
+
+const AcknowledgeCancellation = tools.registerTool({
+    name: "AcknowledgeCancellation",
+    type: "lookup",
+    noCodeId: "acknowledge-cancellation",
+    description:
+        "Record that the customer has declined all offers and does not wish to subscribe or continue. " +
+        "Call this when the customer explicitly says they are not interested or want to cancel.",
+    params: {},
+    func: (_ctx, _params, controls) => {
+        addAgentTags([TAGS.outcome.cancelled]);
+        return controls.result({
+            data: { recorded: true },
+            instructions: "Thank the customer warmly for their time and wish them well.",
+        });
+    },
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Pre-built loyalty tool (day-1 demo)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -502,6 +603,18 @@ export default createAgent({
                     <Rule content="If upcomingEvents are present, recommend them with specific dates and channel names." />
                     <Rule content="If only onDemandEvents are present, recommend the on-demand recording." />
                     <Rule content="If no content is found, pivot to the subscription value proposition instead of inventing content." />
+                </Goal>
+
+                {/* Phase 4: Retention offer tools */}
+                <GetRetentionOffer />
+                <AcknowledgeCancellation />
+
+                {/* Phase 4: Make a personalised retention offer */}
+                <Goal description="Determine the best offer to retain this customer.">
+                    <Rule content="After retrieving subscription details, call GetRetentionOffer with the caller's userId." />
+                    <Rule content="Only make an offer after you have confirmed their subscription status." />
+                    <Rule content="Present the offer naturally as part of the conversation — not as a hard sell." />
+                    <Rule content="If the customer explicitly declines all offers or says they are not interested in continuing, call AcknowledgeCancellation." />
                 </Goal>
 
                 <Goal description="Determine why the customer is reaching out to customer support.">

@@ -245,6 +245,73 @@ describe("Phase 3 — Content Awareness & Recommendations", "phase3", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Phase 4 — Trialer Conversion Decision
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("Phase 4 — Trialer Conversion Decision", "phase4", () => {
+    // Test: trial ending soon → agent offers Premier upgrade
+    test("phase4-trial-upgrade-offer", {
+        name: "Trial Ends Soon — agent offers Premier upgrade",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM trial subscriber whose trial is expiring very soon. " +
+            "When the agent asks for your email, provide: trial.ends@test.com. " +
+            "Start by saying: Hi, I've been enjoying my trial — what happens when it ends?",
+        expectedOutcomes: [
+            "Agent recognises the trial is expiring soon.",
+            "Agent offers a Premier subscription upgrade.",
+        ],
+        assertions: ["stage:subscription-surfaced", "offer:upgrade-premier"],
+    });
+
+    // Test: budget-conscious select subscriber → agent offers promotional rate
+    test("phase4-promo-offer", {
+        name: "Budget Conscious — agent offers promotional rate",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM Select subscriber who is price-sensitive and looking for a deal. " +
+            "When the agent asks for your email, provide: budget.conscious@test.com. " +
+            "Start by saying: Hi, I like SiriusXM but I'm trying to save money — is there anything you can do for me?",
+        expectedOutcomes: [
+            "Agent acknowledges the subscriber is on Select tier.",
+            "Agent offers a promotional or discounted rate.",
+        ],
+        assertions: ["stage:subscription-surfaced", "offer:promotional"],
+    });
+
+    // Test: select subscriber who wants Premier channels → agent mentions missing channels
+    test("phase4-feature-upgrade", {
+        name: "Feature Seeker — agent mentions missing Premier channels",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM Select subscriber who really wants access to Howard Stern. " +
+            "When the agent asks for your email, provide: feature.seeker@test.com. " +
+            "Start by saying: Hi, I keep hearing about Howard Stern on SiriusXM but I can't seem to access it.",
+        expectedOutcomes: [
+            "Agent explains that Howard Stern requires a Premier subscription.",
+            "Agent offers an upgrade to Premier to unlock the missing channels.",
+        ],
+        assertions: ["stage:subscription-surfaced", "offer:upgrade-premier"],
+    });
+
+    // Test: customer declines all offers → agent acknowledges cancellation gracefully
+    test("phase4-graceful-exit", {
+        name: "Happy To Cancel — agent acknowledges gracefully",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM trial subscriber who is NOT interested in subscribing. " +
+            "When the agent asks for your email, provide: happy.cancel@test.com. " +
+            "No matter what offer the agent makes, politely decline and say you are not interested. " +
+            "Start by saying: Hi, my trial is ending and I've decided I don't want to continue.",
+        expectedOutcomes: [
+            "Agent gracefully accepts the customer's decision to cancel.",
+            "Agent thanks the customer for their time.",
+        ],
+        assertions: ["stage:subscription-surfaced", "outcome:cancelled"],
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Live Agent Transfer
 // ─────────────────────────────────────────────────────────────────────────────
 

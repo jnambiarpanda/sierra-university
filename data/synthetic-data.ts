@@ -251,7 +251,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         email: "budget.conscious@test.com",
         phone: "+15550010017",
         subscriptionTier: "select",
-        topChannels: ["Hits1", "Premier1"],
+        topChannels: ["Hits1", "PopRocks"],
         topArtists: ["Taylor Swift"],
     },
     {
