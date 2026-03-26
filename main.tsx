@@ -37,9 +37,7 @@ export default createAgent({
     },
 
     // Goal agent props are the properties passed to the GoalAgent component under the hood
-    useCustomGoalAgentProps: () => ({
-        transferToolProps: "none",
-    }),
+    useCustomGoalAgentProps: () => ({}),
 
     // Use `useWrapper` to add contexts needed by your agent and its tools. This enables
     // global state for your agent and its tools.

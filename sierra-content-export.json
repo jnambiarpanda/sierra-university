@@ -1,0 +1,152 @@
+{
+    "sdk:voice": [
+        {
+            "$key": "cmskey-sdk:voice",
+            "persona": "gordon-ellis",
+            "keywords": [],
+            "webDisclosure": "",
+            "inactivityTimeoutSeconds": 30,
+            "inactivityMaxCount": 4,
+            "localeConfigs": [
+                {
+                    "greeting": "आज आप कैसे हैं?",
+                    "inactivityHangupMessage": "आपसे बात करके अच्छा लगा",
+                    "inactivityPromptMessage": "आज आप कैसे हैं?",
+                    "keywords": [
+                        "hello",
+                        "good morning",
+                        "biriyani",
+                        "diwali"
+                    ],
+                    "locale": "hi-IN",
+                    "persona": "aditi-baghwani",
+                    "synthesisRewrites": []
+                }
+            ]
+        }
+    ],
+    "sdk:agentConfig": [
+        {
+            "$key": "cmskey-sdk:agentConfig"
+        }
+    ],
+    "sdk:personaConfig": [
+        {
+            "$key": "cmskey-sdk:personaConfig"
+        }
+    ],
+    "brand": [
+        {
+            "$key": "cmskey-brand",
+            "organizationName": "Sierra Outfitters",
+            "agentName": "Cliff",
+            "customerServiceTeamName": "Sierra Outfitters",
+            "customerNoun": "climber",
+            "languageGuidance": "Be friendly, concise, and helpful.",
+            "knowledgeLanguageGuidance": "",
+            "glossary": "",
+            "rules": []
+        }
+    ],
+    "voice": [
+        {
+            "$key": "cmskey-voice",
+            "voiceGreeting": "",
+            "uninterruptibleGreeting": false,
+            "languageGuidance": "You MUST use simple, everyday language and be warm and encouraging in every response. NEVER use jargon, technical terms, or formal business speak. Keep your tone friendly and supportive throughout.\n\nNEVER repeat information you've already provided. If referencing previous information, you MUST briefly summarize it in one phrase, then provide NEW information or next steps. Repetition is strictly prohibited.\n\nALWAYS keep responses concise and conversational. NEVER respond with more than 2 sentences.",
+            "webAccess": "on",
+            "synthesisRewrites": []
+        }
+    ],
+    "errors": [
+        {
+            "$key": "cmskey-errors",
+            "abuseDetectionMode": "observe",
+            "allowedBehaviors": [
+                "OutOfBounds"
+            ],
+            "abuseDetectedTerminationMessage": "I'm sorry, but I can't help you with that.",
+            "abuseDetectedTransferMessage": "I'm sorry, but I can't help you with that. I'm transferring you to a live agent to assist you.",
+            "errorMessage": "I've run into a technical problem. I'm sorry for the inconvenience. I'm transferring you to a live agent to assist you.",
+            "allowedFileUploadTypes": [
+                "image/jpg",
+                "image/jpeg",
+                "image/png",
+                "image/gif"
+            ]
+        }
+    ],
+    "safety": [
+        {
+            "$key": "cmskey-safety",
+            "allowedSensitiveInfo": []
+        }
+    ],
+    "transferSettings": [
+        {
+            "$key": "cmskey-transferSettings",
+            "offerTransferMessage": "Would you like me to transfer you to a live agent to assist you?",
+            "transferMessage": "I'm transferring you to a live agent to assist you."
+        }
+    ],
+    "escalations": [
+        {
+            "$key": "cmskey-escalations-01KM66B9W3FH15FK4RP2WDNRH8",
+            "tag": "customer-request",
+            "description": "Customer explicitly indicated they would like to speak to a real person or a live agent",
+            "escalationAction": "transfer",
+            "offerTransferMessage": "",
+            "transferMessage": ""
+        },
+        {
+            "$key": "cmskey-escalations-01KM66B9WKDW2KK544YB8X2PJ8",
+            "tag": "customer-frustration",
+            "description": "Customer is clearly extremely frustrated with the conversation, and a live agent would be better suited to assist them",
+            "escalationAction": "offer",
+            "offerTransferMessage": "I'm sorry for your frustration. Would you like me to transfer you to a live agent to assist you?",
+            "transferMessage": ""
+        }
+    ],
+    "supportTeamHoursByDay": [
+        {
+            "$key": "cmskey-supportTeamHoursByDay",
+            "timezone": "America/New_York",
+            "afterHoursMessage": "",
+            "sunday": {
+                "enabled": true,
+                "end": "1020",
+                "start": "480"
+            },
+            "monday": {
+                "enabled": true,
+                "end": "1020",
+                "start": "480"
+            },
+            "tuesday": {
+                "enabled": true,
+                "end": "1020",
+                "start": "480"
+            },
+            "wednesday": {
+                "enabled": true,
+                "end": "1020",
+                "start": "480"
+            },
+            "thursday": {
+                "enabled": true,
+                "end": "1020",
+                "start": "480"
+            },
+            "friday": {
+                "enabled": true,
+                "end": "1020",
+                "start": "480"
+            },
+            "saturday": {
+                "enabled": true,
+                "end": "1020",
+                "start": "480"
+            }
+        }
+    ]
+}
