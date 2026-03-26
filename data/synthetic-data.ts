@@ -123,7 +123,7 @@ export const USER_PROFILES: UserProfileRecord[] = [
         email: "select.subscriber@test.com",
         phone: "+15550010005",
         subscriptionTier: "select",
-        topChannels: ["Hits1", "PopRocks", "Venus"],
+        topChannels: ["Hits1", "HowardStern", "PopRocks"],
         topArtists: ["Taylor Swift", "Olivia Rodrigo"],
     },
     {

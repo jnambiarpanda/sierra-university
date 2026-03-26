@@ -76,7 +76,7 @@ describe("Phase 1 — Subscription Awareness", "phase1", () => {
             "Start by saying: Hi, can you tell me about my current subscription?",
         expectedOutcomes: [
             "Agent identifies the customer is on the Select tier.",
-            "Agent mentions Premier tier upgrade and the channels they're missing (e.g., Howard Stern, Liquid Metal).",
+            "Agent mentions Premier tier upgrade and at least one channel the customer is missing (e.g., Howard Stern).",
         ],
         assertions: ["stage:caller-identified-email", "stage:subscription-surfaced"],
     });
@@ -308,6 +308,57 @@ describe("Phase 4 — Trialer Conversion Decision", "phase4", () => {
             "Agent thanks the customer for their time.",
         ],
         assertions: ["stage:subscription-surfaced", "outcome:cancelled"],
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 5 — Live Agent Escalation
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("Phase 5 — Live Agent Escalation", "phase5", () => {
+    // Test: caller explicitly asks for a human → agent records transfer
+    test("phase5-explicit-transfer-request", {
+        name: "Explicit Transfer Request — caller asks for human",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM Select subscriber. " +
+            "When the agent asks for your email, provide: select.subscriber@test.com. " +
+            "After the agent greets you by name, say: Thank you, but I'd really prefer to speak with a live human agent about my account.",
+        expectedOutcomes: [
+            "Agent transfers the customer to a live human agent.",
+            "Agent informs the customer they will be connected shortly.",
+        ],
+        assertions: ["transfer"],
+    });
+
+    // Test: billing dispute → agent cannot resolve, escalates to live agent
+    test("phase5-billing-dispute-escalation", {
+        name: "Billing Dispute — agent escalates to live agent",
+        isSimulation: true,
+        messages:
+            "You are a former SiriusXM subscriber who sees an unexpected charge on your bill. " +
+            "When the agent asks for your email, provide: expired.trialer@test.com. " +
+            "Start by saying: I just got charged for SiriusXM but I cancelled my subscription — I need this resolved.",
+        expectedOutcomes: [
+            "Agent recognises the billing dispute cannot be resolved by a virtual agent.",
+            "Agent transfers the customer to a live agent with their context.",
+        ],
+        assertions: ["outcome:transferred"],
+    });
+
+    // Test: issue fully resolved by agent — no transfer needed
+    test("phase5-self-served", {
+        name: "Self-Served — issue resolved without transfer",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM trial subscriber who just wants to know when your trial ends. " +
+            "When the agent asks for your email, provide: all.access@test.com. " +
+            "Once the agent tells you your trial expiry date, say: Perfect, that's all I needed — thank you so much!",
+        expectedOutcomes: [
+            "Agent provides the trial expiry date.",
+            "Agent acknowledges the issue is resolved without escalating.",
+        ],
+        assertions: ["outcome:self-served"],
     });
 });
 

@@ -414,7 +414,7 @@ const GetRetentionOffer = tools.registerTool({
             if (daysLeft <= 7) {
                 offerType = "upgrade-premier";
                 talkingPoints.push(
-                    `Trial ends in ${daysLeft} day(s) — upgrade now to keep full access.`
+                    `Trial ends in ${daysLeft} day(s) — upgrade to a Premier subscription now to keep full access.`
                 );
             } else {
                 offerType = "extend-trial";
@@ -473,6 +473,47 @@ const AcknowledgeCancellation = tools.registerTool({
         return controls.result({
             data: { recorded: true },
             instructions: "Thank the customer warmly for their time and wish them well.",
+        });
+    },
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Phase 5 — Live Agent Escalation Tools
+// ─────────────────────────────────────────────────────────────────────────────
+
+const RecordTransfer = tools.registerTool({
+    name: "RecordTransfer",
+    type: "lookup",
+    noCodeId: "record-transfer",
+    description:
+        "Record that this conversation is being escalated to a live agent. " +
+        "Call this before initiating any live agent transfer.",
+    params: {},
+    func: (_ctx, _params, controls) => {
+        addAgentTags([TAGS.outcome.transferred]);
+        return controls.result({
+            data: { recorded: true },
+            instructions:
+                "Proceed with transferring the customer to a live agent. " +
+                "Let them know they will be connected shortly.",
+        });
+    },
+});
+
+const RecordSelfServed = tools.registerTool({
+    name: "RecordSelfServed",
+    type: "lookup",
+    noCodeId: "record-self-served",
+    description:
+        "Record that the customer's issue was fully resolved without a live agent transfer. " +
+        "Call this when the customer confirms their question has been answered.",
+    params: {},
+    func: (_ctx, _params, controls) => {
+        addAgentTags([TAGS.outcome.selfServed]);
+        return controls.result({
+            data: { recorded: true },
+            instructions:
+                "Confirm the issue is resolved and ask if there is anything else you can help with.",
         });
     },
 });
@@ -579,7 +620,7 @@ export default createAgent({
                     <Rule content="After identifying the caller, call GetSubscriptionDetails with their userId to understand their subscription." />
                     <Rule content="Always know what the caller has before suggesting what they might want." />
                     <Rule content="If the caller is on a trial, acknowledge the trial and mention the expiry date." />
-                    <Rule content="If the caller is on Select tier, mention that Premier channels (Howard Stern, Liquid Metal) are available as an upgrade." />
+                    <Rule content="If the caller is on Select tier, name ALL excluded channels from GetSubscriptionDetails (Howard Stern, Liquid Metal, and SiriusXM Premier) when explaining the Premier upgrade path." />
                     <Rule content="If the caller's subscription is expired, offer reactivation as the first suggestion." />
                 </Goal>
 
@@ -614,7 +655,19 @@ export default createAgent({
                     <Rule content="After retrieving subscription details, call GetRetentionOffer with the caller's userId." />
                     <Rule content="Only make an offer after you have confirmed their subscription status." />
                     <Rule content="Present the offer naturally as part of the conversation — not as a hard sell." />
+                    <Rule content="When offerType is upgrade-premier, always explicitly name the Premier subscription tier." />
                     <Rule content="If the customer explicitly declines all offers or says they are not interested in continuing, call AcknowledgeCancellation." />
+                </Goal>
+
+                {/* Phase 5: Escalation tools */}
+                <RecordTransfer />
+                <RecordSelfServed />
+
+                {/* Phase 5: Escalate or close with full context */}
+                <Goal description="If the customer needs a human agent, transfer them with full context.">
+                    <Rule content="When the customer asks to speak with a live agent or human representative, your FIRST tool call MUST be RecordTransfer — do not initiate any transfer without calling RecordTransfer first." />
+                    <Rule content="If the customer has a billing dispute, account lock, or an issue that cannot be resolved, call RecordTransfer and initiate the transfer." />
+                    <Rule content="When the customer explicitly confirms their issue is resolved and they have no further questions, call RecordSelfServed." />
                 </Goal>
 
                 <Goal description="Determine why the customer is reaching out to customer support.">
