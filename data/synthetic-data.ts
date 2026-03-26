@@ -197,8 +197,8 @@ export const USER_PROFILES: UserProfileRecord[] = [
         phone: "+15550010012",
         subscriptionTier: "trial",
         trialEndDate: "2026-04-12",
-        topChannels: ["Diplo", "BPM", "Hits1"],
-        topArtists: ["Diplo", "Drake"],
+        topChannels: ["Hits1", "BPM"],
+        topArtists: ["Kendrick Lamar"],
     },
     {
         userId: "USR013",
@@ -208,8 +208,8 @@ export const USER_PROFILES: UserProfileRecord[] = [
         phone: "+15550010013",
         subscriptionTier: "trial",
         trialEndDate: "2026-04-18",
-        topChannels: ["OutlawCountry", "CountryRoads"],
-        topArtists: ["Zach Bryan", "Morgan Wallen"],
+        topChannels: ["BPM", "Chill"],
+        topArtists: ["Calvin Harris"],
     },
     {
         userId: "USR014",

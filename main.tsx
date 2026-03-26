@@ -6,7 +6,7 @@ import { SierraUniversityAbuseDetection } from "./skills/abuse-detection";
 import integrationsRegistry from "./integrations-registry";
 import { DynamicCustomerInfo } from "./dynamic-customer-info";
 import { TAGS } from "./tags";
-import { getUserProfileByPhone, getUserProfileByEmail, getUserProfileById, getChannelByKey } from "./data/synthetic-data";
+import { getUserProfileByPhone, getUserProfileByEmail, getUserProfileById, getChannelByKey, getEventsByArtist, type EventRecord } from "./data/synthetic-data";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Phase 0 — Caller Identification Tools
@@ -299,6 +299,84 @@ const GetAffinityProfile = tools.registerTool({
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Phase 3 — Content Awareness Tool
+// ─────────────────────────────────────────────────────────────────────────────
+
+const GetContentForUser = tools.registerTool({
+    name: "GetContentForUser",
+    type: "lookup",
+    noCodeId: "get-content-for-user",
+    description:
+        "Find SiriusXM events matching the caller's top artists. Returns upcoming live events " +
+        "and past on-demand recordings. Call this after GetAffinityProfile.",
+    params: {
+        customerId: toolParam.string(
+            "The userId of the identified caller."
+        ),
+    },
+    func: (_ctx, params, controls) => {
+        const profile = getUserProfileById(params.customerId);
+        if (!profile) {
+            return controls.error(`No profile found for customerId ${params.customerId}.`);
+        }
+
+        const today = new Date().toISOString().split("T")[0];
+        const upcomingSeen = new Set<string>();
+        const pastSeen = new Set<string>();
+        const upcoming: EventRecord[] = [];
+        const past: EventRecord[] = [];
+
+        for (const artist of profile.topArtists) {
+            for (const event of getEventsByArtist(artist)) {
+                if (event.date > today && !upcomingSeen.has(event.eventId)) {
+                    upcomingSeen.add(event.eventId);
+                    upcoming.push(event);
+                } else if (event.date <= today && !pastSeen.has(event.eventId)) {
+                    pastSeen.add(event.eventId);
+                    past.push(event);
+                }
+            }
+        }
+
+        upcoming.sort((a, b) => a.date.localeCompare(b.date));
+        past.sort((a, b) => b.date.localeCompare(a.date));
+
+        const hasLive = upcoming.length > 0;
+        const hasOnDemand = past.length > 0;
+
+        if (hasLive && hasOnDemand) {
+            addAgentTags([TAGS.response.contentBoth]);
+        } else if (hasLive) {
+            addAgentTags([TAGS.response.contentLive]);
+        } else if (hasOnDemand) {
+            addAgentTags([TAGS.response.contentOnDemand]);
+        } else {
+            addAgentTags([TAGS.response.noContent]);
+        }
+
+        return controls.result({
+            data: {
+                upcomingEvents: upcoming.slice(0, 3).map(e => ({
+                    date: e.date,
+                    artist: e.artistGuest,
+                    channels: e.channels,
+                    startTime: e.startTime,
+                    type: e.eventType,
+                })),
+                onDemandEvents: past.slice(0, 3).map(e => ({
+                    date: e.date,
+                    artist: e.artistGuest,
+                    channels: e.channels,
+                    type: e.eventType,
+                })),
+                hasLive,
+                hasOnDemand,
+            },
+        });
+    },
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Pre-built loyalty tool (day-1 demo)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -412,6 +490,18 @@ export default createAgent({
                     <Rule content="After retrieving subscription details, call GetAffinityProfile with the caller's userId." />
                     <Rule content="Use the returned genres and top artists to personalise your response." />
                     <Rule content="Lead with the caller's dominant genre or artist when recommending content." />
+                </Goal>
+
+                {/* Phase 3: Content awareness tool */}
+                <GetContentForUser />
+
+                {/* Phase 3: Find matching content */}
+                <Goal description="Find content that matches what the caller loves and is actually available.">
+                    <Rule content="After identifying the caller's affinity, call GetContentForUser with their userId." />
+                    <Rule content="Never mention an artist, show, or channel that cannot be confirmed in the content database." />
+                    <Rule content="If upcomingEvents are present, recommend them with specific dates and channel names." />
+                    <Rule content="If only onDemandEvents are present, recommend the on-demand recording." />
+                    <Rule content="If no content is found, pivot to the subscription value proposition instead of inventing content." />
                 </Goal>
 
                 <Goal description="Determine why the customer is reaching out to customer support.">

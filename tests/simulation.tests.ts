@@ -179,6 +179,72 @@ describe("Phase 2 — Audience Affinity Segmentation", "phase2", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Phase 3 — Content Awareness & Recommendations
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("Phase 3 — Content Awareness & Recommendations", "phase3", () => {
+    // Test: upcoming live event found for caller's top artist
+    test("phase3-live-recommendation", {
+        name: "Live Event Match — recommends upcoming event",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM trial subscriber who loves Kendrick Lamar. " +
+            "When the agent asks for your email, provide: live.event@test.com. " +
+            "Start by saying: Hi, I'm hoping to catch some live performances — what's coming up for me?",
+        expectedOutcomes: [
+            "Agent recommends an upcoming live event featuring Kendrick Lamar.",
+            "Agent mentions a specific date or channel for the event.",
+        ],
+        assertions: ["stage:subscription-surfaced", "response:content-live"],
+    });
+
+    // Test: only past events found — recommend on-demand recording
+    test("phase3-on-demand-recommendation", {
+        name: "On Demand Match — recommends recorded session",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM trial subscriber who loves Calvin Harris. " +
+            "When the agent asks for your email, provide: on.demand@test.com. " +
+            "Start by saying: Hi, I missed some shows recently — is there anything I can listen to on demand?",
+        expectedOutcomes: [
+            "Agent recommends on-demand or recorded content.",
+            "Agent mentions a Calvin Harris event that was recently available.",
+        ],
+        assertions: ["stage:subscription-surfaced", "response:content-on-demand"],
+    });
+
+    // Test: both upcoming and past events found — recommend both
+    test("phase3-both-recommendation", {
+        name: "Both Available — recommends live and on-demand",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM trial subscriber who loves Drake. " +
+            "When the agent asks for your email, provide: both.available@test.com. " +
+            "Start by saying: Hi, I'm a huge Drake fan — what Drake content is available for me?",
+        expectedOutcomes: [
+            "Agent mentions both an upcoming live event and a past on-demand recording.",
+            "Agent references specific channels or dates.",
+        ],
+        assertions: ["stage:subscription-surfaced", "response:content-both"],
+    });
+
+    // Test: no matching events — agent pivots to subscription value
+    test("phase3-no-match-pivot", {
+        name: "No Content Match — pivots to subscription value",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM trial subscriber who loves jazz, especially Miles Davis. " +
+            "When the agent asks for your email, provide: no.content@test.com. " +
+            "Start by saying: Hi, I'm a big Miles Davis fan — is there anything available for me?",
+        expectedOutcomes: [
+            "Agent does not fabricate or invent content that does not exist.",
+            "Agent pivots to the subscription value proposition or available jazz channels.",
+        ],
+        assertions: ["stage:subscription-surfaced", "response:no-content"],
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Live Agent Transfer
 // ─────────────────────────────────────────────────────────────────────────────
 
