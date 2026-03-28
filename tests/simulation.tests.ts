@@ -385,6 +385,7 @@ describe("Phase 10 — Genre Discovery, Confidence Gating & Entitlement Filterin
             "Agent does NOT mention 'RapCaviar' (which is a Spotify playlist, not a SiriusXM channel).",
             "Agent does NOT invent channel names not present in the catalog.",
         ],
+        assertions: ["genre:search-called", "genre:genre-found"],
     });
 
     // Test: genre not found — agent must not hallucinate alternatives
@@ -402,6 +403,7 @@ describe("Phase 10 — Genre Discovery, Confidence Gating & Entitlement Filterin
             "Agent does NOT name a specific channel as a bhangra recommendation.",
             "Agent may suggest other available genres as alternatives.",
         ],
+        assertions: ["genre:search-called", "genre:genre-not-found"],
     });
 
     // Test: entitlement filter — Select tier user sees only channels in their plan
@@ -417,6 +419,7 @@ describe("Phase 10 — Genre Discovery, Confidence Gating & Entitlement Filterin
             "Agent returns hip-hop channels that are part of the Select subscription lineup.",
             "Agent does not recommend channels that require a Premier upgrade without acknowledging the upgrade requirement.",
         ],
+        assertions: ["genre:search-called", "genre:genre-found", "genre:entitlement-filtered"],
     });
 
     // Test: expired subscription — agent recognises no channel access
@@ -432,6 +435,7 @@ describe("Phase 10 — Genre Discovery, Confidence Gating & Entitlement Filterin
             "Agent does not list channels as accessible to the expired subscriber.",
             "Agent offers to help reactivate the subscription.",
         ],
+        assertions: ["genre:search-called", "genre:expired-no-access"],
     });
 
     // Test: fuzzy genre match — 'chill' or 'relaxing' matches the Relax genre
@@ -447,6 +451,7 @@ describe("Phase 10 — Genre Discovery, Confidence Gating & Entitlement Filterin
             "Agent returns channels associated with the Relax genre such as The Bridge, Yacht Rock Radio, or Acoustic Guitar Instrumentals.",
             "Agent does not name channels not returned by the search tool.",
         ],
+        assertions: ["genre:search-called", "genre:genre-found"],
     });
 });
 

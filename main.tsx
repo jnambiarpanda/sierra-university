@@ -675,6 +675,21 @@ const SearchChannelsByGenre = tools.registerTool({
             scoreThreshold: 0.5,
         });
 
+        // Observability tags — always emit search-called, then branch on outcome
+        addAgentTags([TAGS.genre.searchCalled]);
+        if (lineupId === null) {
+            addAgentTags([TAGS.genre.expiredNoAccess]);
+        } else {
+            if (genreMatched !== null) {
+                addAgentTags([TAGS.genre.genreFound]);
+            } else {
+                addAgentTags([TAGS.genre.genreNotFound]);
+            }
+            if (lineupId !== undefined) {
+                addAgentTags([TAGS.genre.entitlementFiltered]);
+            }
+        }
+
         // Classify confidence level for each result
         const classified = channels.map(e => ({
             name: e.channel.name,

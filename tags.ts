@@ -78,6 +78,15 @@ export const TAGS = {
         voice: "channel:voice",
         chat:  "channel:chat",
     },
+
+    // ── Phase 10: Genre Discovery & Entitlement Filtering ─────────────────
+    genre: {
+        searchCalled:        "genre:search-called",        // SearchChannelsByGenre was invoked
+        genreFound:          "genre:genre-found",          // genre query matched a catalog entry
+        genreNotFound:       "genre:genre-not-found",      // no catalog genre matched the query
+        entitlementFiltered: "genre:entitlement-filtered", // results filtered to user's lineup
+        expiredNoAccess:     "genre:expired-no-access",    // user subscription expired — no channels
+    },
 } as const;
 
 export type TagValue = (typeof TAGS)[keyof typeof TAGS][keyof (typeof TAGS)[keyof typeof TAGS]];

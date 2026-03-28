@@ -1,0 +1,434 @@
+{
+  "simulations": [
+    {
+      "name": "Phase 0 — Happy Path: Phone Lookup",
+      "groupDescription": "",
+      "categories": ["phase0"],
+      "messages": [
+        "You are a SiriusXM customer named Phone Known. Your phone number is already on file in the system. Start by saying: Hi, I need some help with my SiriusXM account.",
+        "If the agent greets you by name without asking for your email, say: That's right, thanks for recognising me. Can you tell me about my subscription?"
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    },
+    {
+      "name": "Phase 0 — Edge Case: Email Fallback",
+      "groupDescription": "",
+      "categories": ["phase0"],
+      "messages": [
+        "You are a SiriusXM customer named Email Only. You do not have a phone number on file. Start by saying: Hi, I need help with my SiriusXM account.",
+        "When the agent asks for your email address, provide: email.only@test.com",
+        "Once the agent acknowledges you by name, say: Great, can you tell me a bit about my account?"
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    },
+    {
+      "name": "Phase 1 — Happy Path: All Access Trial",
+      "groupDescription": "",
+      "categories": ["phase1"],
+      "messages": [
+        "You are a SiriusXM trial subscriber with full access. When the agent asks for your email, provide: all.access@test.com. Start by saying: I want to know about my trial status.",
+        "When the agent tells you your trial expiry date, say: Good to know. What happens when the trial ends?",
+        "After the agent explains the subscription options, say: Thanks, I'll think about it."
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    },
+    {
+      "name": "Phase 1 — Edge Case: Expired Trial",
+      "groupDescription": "",
+      "categories": ["phase1"],
+      "messages": [
+        "You are a former SiriusXM subscriber whose trial has expired. When the agent asks for your email, provide: expired.trialer@test.com. Start by saying: I'm trying to listen to SiriusXM but I can't access anything.",
+        "When the agent mentions your subscription has expired, say: Yes, it just ran out. Is there any way to get it back?",
+        "If the agent offers a reactivation option, say: What would that cost me per month?"
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    },
+    {
+      "name": "Phase 2 — Happy Path: Hip-Hop Genre Affinity",
+      "groupDescription": "",
+      "categories": ["phase2"],
+      "messages": [
+        "You are a SiriusXM trial subscriber who loves hip-hop music. When the agent asks for your email, provide: hip.hop@test.com. Start by saying: Hi, I love hip-hop — what content do you have for me?",
+        "When the agent mentions hip-hop channels or content, say: That sounds great. Which channel has the most new releases?",
+        "After the agent answers, say: Perfect, I'll check that out."
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    },
+    {
+      "name": "Phase 2 — Edge Case: Balanced Listener",
+      "groupDescription": "",
+      "categories": ["phase2"],
+      "messages": [
+        "You are a SiriusXM Premier subscriber with diverse listening habits across pop, country, jazz, and talk. When the agent asks for your email, provide: balanced.listener@test.com. Start by saying: Hi, I listen to a lot of different music — can you tell me what's available?",
+        "When the agent describes available content across multiple genres, say: I like all of those. Is there a way to set up favourites or presets?",
+        "After the agent responds, say: Thanks, that's helpful."
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    },
+    {
+      "name": "Phase 3 — Happy Path: Live Event Match",
+      "groupDescription": "",
+      "categories": ["phase3"],
+      "messages": [
+        "You are a SiriusXM trial subscriber who loves Kendrick Lamar. When the agent asks for your email, provide: live.event@test.com. Start by saying: Hi, I'm hoping to catch some live performances — what's coming up for me?",
+        "When the agent mentions an upcoming Kendrick Lamar event, say: That's exactly what I wanted to hear. What channel will it be on?",
+        "After the agent provides details, say: I'll make sure to tune in."
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    },
+    {
+      "name": "Phase 3 — Edge Case: No Content Match",
+      "groupDescription": "",
+      "categories": ["phase3"],
+      "messages": [
+        "You are a SiriusXM trial subscriber who loves jazz, especially Miles Davis. When the agent asks for your email, provide: no.content@test.com. Start by saying: Hi, I'm a big Miles Davis fan — is there anything available for me?",
+        "If the agent cannot find a specific Miles Davis event, ask: Are there any jazz channels I should check out?",
+        "After the agent pivots to jazz channels or general content, say: OK, I'll explore those — thanks."
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    },
+    {
+      "name": "Phase 4 — Happy Path: Trial Upgrade Offer",
+      "groupDescription": "",
+      "categories": ["phase4"],
+      "messages": [
+        "You are a SiriusXM trial subscriber whose trial is expiring very soon. When the agent asks for your email, provide: trial.ends@test.com. Start by saying: Hi, I've been enjoying my trial — what happens when it ends?",
+        "When the agent mentions the trial is expiring and offers an upgrade, say: What would I get with a Premier subscription?",
+        "After the agent explains the Premier benefits, say: That sounds worth it. How do I sign up?"
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    },
+    {
+      "name": "Phase 4 — Edge Case: Happy to Cancel",
+      "groupDescription": "",
+      "categories": ["phase4"],
+      "messages": [
+        "You are a SiriusXM trial subscriber who is NOT interested in subscribing. When the agent asks for your email, provide: happy.cancel@test.com. Start by saying: Hi, my trial is ending and I've decided I don't want to continue.",
+        "No matter what offer the agent makes, politely decline: I appreciate the offer but I'm really not interested right now.",
+        "If the agent makes a further offer, say: No thank you, I've made up my mind. I appreciate your time though."
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    },
+    {
+      "name": "Phase 5 — Happy Path: Self-Served",
+      "groupDescription": "",
+      "categories": ["phase5"],
+      "messages": [
+        "You are a SiriusXM trial subscriber who just wants to know when your trial ends. When the agent asks for your email, provide: all.access@test.com. Start by saying: Hi, can you quickly tell me when my trial expires?",
+        "Once the agent tells you your trial expiry date, say: Perfect, that's all I needed — thank you so much!",
+        "If the agent asks if there is anything else, say: No, that was it. Have a great day!"
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    },
+    {
+      "name": "Phase 5 — Edge Case: Billing Dispute Escalation",
+      "groupDescription": "",
+      "categories": ["phase5"],
+      "messages": [
+        "You are a former SiriusXM subscriber who sees an unexpected charge on your bank statement. When the agent asks for your email, provide: expired.trialer@test.com. Start by saying: I just got charged for SiriusXM but I cancelled my subscription months ago — I need this resolved immediately.",
+        "If the agent tries to help, say: I need to speak with someone who can actually process a refund. This needs to be escalated.",
+        "Once the agent indicates it will transfer you, say: Thank you. Please make sure whoever I speak to has my account details."
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    },
+    {
+      "name": "Channel Cards — Select subscriber sees Premier upgrade artwork",
+      "groupDescription": "",
+      "categories": ["channel-cards"],
+      "messages": [
+        "You are a SiriusXM Select subscriber. When the agent asks for your email provide: select.subscriber@test.com. Start by saying: Hi, can you tell me about my current plan?",
+        "When the agent describes your subscription, ask: What channels would I get if I upgraded to Premier?",
+        "After the agent shows the Premier channels, say: Those look great — especially Howard Stern. How do I upgrade?"
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    },
+    {
+      "name": "Missing affinity data exits journey cleanly",
+      "groupDescription": "Trialer Conversion Journey",
+      "categories": ["trialer-conversion"],
+      "messages": [
+        "You are a SiriusXM trialer who just signed up and has not listened to anything yet. If asked about your preferences, say you haven't explored the app yet."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent does not attempt a generic upgrade pitch without personalization data.",
+        "Agent either offers a trial extension or gracefully explains it needs more listening history.",
+        "No conversion attempt is made without affinity data."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Existing subscriber does not receive upgrade pitch",
+      "groupDescription": "Trialer Conversion Journey",
+      "categories": ["trialer-conversion"],
+      "messages": [
+        "You are an existing SiriusXM self-pay subscriber reaching out about a billing question. You are not on a trial and have been a subscriber for two years."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent does not attempt to pitch a subscription upgrade.",
+        "Agent recognizes the user is not a trialer and handles the billing question instead.",
+        "No upgrade offer or trial extension is presented."
+      ],
+      "isCritical": true,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Low confidence affinity triggers trial extension offer",
+      "groupDescription": "Trialer Conversion Journey",
+      "categories": ["trialer-conversion"],
+      "messages": [
+        "You are a brand new SiriusXM trialer who signed up today. You are still exploring and do not have strong opinions about any specific artist or content type yet. Be vague about your preferences."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent does not pressure the user with an upgrade offer.",
+        "Agent offers to extend the trial instead of pushing a full subscription.",
+        "Conversation ends on a positive, low-pressure note."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Deferred user receives correct outcome, not dropped off",
+      "groupDescription": "Trialer Conversion Journey",
+      "categories": ["trialer-conversion"],
+      "messages": [
+        "You are a SiriusXM trialer who enjoys the service but is hesitant to commit financially right now. When the agent presents the offer say something like 'I like it but maybe next month' or 'I need to think about it.'"
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent acknowledges the user's hesitation without applying pressure.",
+        "Agent does not treat the hesitation as a hard decline.",
+        "Conversation ends with a follow-up signal, not a closed door."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": false,
+        "simulateIntegrations": false,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Declined offer is not repeated in the same conversation",
+      "groupDescription": "Trialer Conversion Journey",
+      "categories": ["trialer-conversion"],
+      "messages": [
+        "You are a SiriusXM trialer. When the agent surfaces content or an upgrade offer, decline clearly by saying you are not ready to subscribe right now. If the agent repeats the offer, express frustration."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent presents the upgrade offer only once.",
+        "After the user declines, the agent does not repeat the upgrade pitch.",
+        "Agent closes the conversation gracefully without pressure."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": false,
+        "simulateIntegrations": false,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Phase 10 — Happy Path: Hip-Hop Genre Lookup",
+      "groupDescription": "Phase 10 — Genre Discovery",
+      "categories": ["phase10"],
+      "messages": [
+        "You are a SiriusXM trial subscriber who loves hip-hop. When the agent asks for your email, provide: hip.hop@test.com. After being greeted, say: I love hip-hop — what hip-hop channels do you have for me?",
+        "If the agent names channels, ask: Can you give me the full list of hip-hop channels available?"
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent calls SearchChannelsByGenre to find hip-hop channels.",
+        "Agent names real hip-hop channels from the catalog such as SiriusXM FLY, The Heat, Shade 45, Flex2K, or Hip-Hop Nation.",
+        "Agent does NOT mention 'RapCaviar' (which is a Spotify playlist, not a SiriusXM channel).",
+        "Agent does NOT invent channel names not present in the catalog."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Phase 10 — Edge Case: Genre Not Found",
+      "groupDescription": "Phase 10 — Genre Discovery",
+      "categories": ["phase10"],
+      "messages": [
+        "You are a SiriusXM subscriber. When the agent asks for your email, provide: select.subscriber@test.com. After being greeted, say: Do you have any bhangra music channels?",
+        "If the agent does not find bhangra channels, ask: Are you sure there are no bhangra channels?"
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent calls SearchChannelsByGenre with 'bhangra' and finds no matching genre.",
+        "Agent honestly tells the customer it does not have bhangra channels.",
+        "Agent does NOT name a specific channel as a bhangra recommendation.",
+        "Agent may suggest other available genres as alternatives."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Phase 10 — Entitlement Filter: Select Subscriber",
+      "groupDescription": "Phase 10 — Genre Discovery",
+      "categories": ["phase10"],
+      "messages": [
+        "You are a SiriusXM Select subscriber. When the agent asks for your email, provide: select.subscriber@test.com. After being greeted, say: I want to know what hip-hop channels are included in my plan."
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent calls SearchChannelsByGenre with the user's userId to filter by entitlement.",
+        "Agent returns hip-hop channels that are part of the Select subscription lineup.",
+        "Agent does not recommend channels that require a Premier upgrade without acknowledging the upgrade requirement."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Phase 10 — Edge Case: Expired Subscription",
+      "groupDescription": "Phase 10 — Genre Discovery",
+      "categories": ["phase10"],
+      "messages": [
+        "You are a former SiriusXM subscriber whose trial has expired. When the agent asks for your email, provide: expired.trialer@test.com. After being greeted, say: Can you show me what hip-hop channels I can listen to?"
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent calls SearchChannelsByGenre and recognises the subscription is not active.",
+        "Agent does not list channels as accessible to the expired subscriber.",
+        "Agent offers to help reactivate the subscription."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Phase 10 — Fuzzy Match: Chill/Relax Genre",
+      "groupDescription": "Phase 10 — Genre Discovery",
+      "categories": ["phase10"],
+      "messages": [
+        "You are a SiriusXM trial subscriber. When the agent asks for your email, provide: phone.known@test.com. After being greeted, say: I'd like something relaxing to listen to — any chill channels?"
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent calls SearchChannelsByGenre with a query like 'relax' or 'chill'.",
+        "Agent returns channels associated with the Relax genre such as The Bridge, Yacht Rock Radio, or Acoustic Guitar Instrumentals.",
+        "Agent does not name channels not returned by the search tool."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    }
+  ],
+  "version": 0
+}
