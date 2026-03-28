@@ -410,3 +410,83 @@ type ChannelCardsPayload = {
 - Agent responds to voice calls with correct persona
 - First spoken message combines greeting + content recommendation
 - French persona swap works mid-call
+
+---
+
+## Phase 10 — Genre Discovery, Confidence Gating & Entitlement Filtering
+
+**Goal:** Fix three failure modes exposed by the hip-hop transcript: agent hallucinating channel names
+("RapCaviar"), stalling when it had no catalog results, and recommending channels outside the user's plan.
+
+**Root cause:** The agent had no tool to query the channel catalog by genre — so it improvised from memory.
+
+### Capabilities
+
+1. **Genre/mood-based channel catalog lookup** — query real SiriusXM channels by genre (e.g., "hip-hop",
+   "classic rock", "relax"). Returns channels with name, number, description, and player landing page URL.
+
+2. **Confidence-gated responses** — relevance scores (0–1) from the data determine what the agent surfaces.
+   Only channels with `score >= 0.5` are returned. Channels at `score == 1.0` are "dedicated"; those at
+   `>= 0.7` are "related". If nothing meets the threshold, the tool returns an empty list with a suggestion
+   message — agent must say it doesn't have those channels, not improvise.
+
+3. **Entitlement-aware catalog filter** — when a `userId` is provided, channel results are filtered to
+   channels in the user's subscription lineup. Premier-only channels are invisible to Select/Trial users.
+
+### New data files (in `data/`)
+
+| File | Role |
+|------|------|
+| `sxm_channel_genre_landing_reference.csv` | Flat join: channel × genre with name, description, image, score |
+| `sxm_channel_lineup_bridge.csv` | channel_entity_id → channel_lineup_id (many-to-many) |
+| `sxm_package_reference.csv` | package name → lineup_id + region/platform flags |
+| `sxm_channel_reference.csv` | Master channel catalog (reference, not used at runtime) |
+| `sxm_genre_select_channel_landing_ref.csv` | Genre entity → channels (reference, not used at runtime) |
+
+### New files
+
+| File | Purpose |
+|------|---------|
+| `data/sxm-catalog.ts` | Generated data module: genre index, lineup sets, `searchChannelsByGenre()`, `getAllGenreNames()` |
+| `generate-catalog.mjs` | Generator script — re-run to regenerate `sxm-catalog.ts` from CSVs |
+
+### Tier → Lineup ID mapping
+
+| Tier | Lineup ID | Package |
+|------|-----------|---------|
+| `trial` | 100 | Trial (US sirius, streaming) |
+| `select` | 200 | Select (US sirius, satellite+streaming) |
+| `premier` | 300 | Premier (US sirius, satellite+streaming) |
+| `all-access` | 320 | Elite (US sirius, satellite+streaming) |
+| `expired` | null | No active subscription |
+
+### New tool
+
+- `SearchChannelsByGenre` — lookup; params: `genre: string`, `userId: string`;
+  returns `{ genreMatched, channels[], entitlementFiltered, message }`
+
+### Agent changes (`main.tsx`)
+
+- Import `searchChannelsByGenre`, `getAllGenreNames`, `TIER_TO_LINEUP_ID` from `./data/sxm-catalog`
+- Register `SearchChannelsByGenre` tool
+- Add `Goal`: "When a user asks about a genre/mood, call SearchChannelsByGenre with genre and userId."
+- Add `Rule`: "Never name a channel not returned by SearchChannelsByGenre. If channels array is empty,
+  say you don't have channels for that genre."
+- Add `Rule`: "If the genre query doesn't match, offer alternatives from the message field."
+
+### Simulation tests
+
+| Test ID | Scenario | Assert |
+|---------|---------|--------|
+| `phase10-hip-hop-genre-lookup` | User asks "hip-hop channels" | Agent returns SiriusXM FLY, The Heat, Shade 45 — no "RapCaviar" |
+| `phase10-no-classic-hiphop` | User asks "classic hip-hop channels" | Agent says no dedicated channels found |
+| `phase10-entitlement-filter` | Select tier user; Premier-only channels exist in genre | Agent only lists channels in Select lineup |
+| `phase10-low-confidence-excluded` | Genre with no channels >= 0.5 score | Agent says no channels found |
+| `phase10-genre-fuzzy-match` | User says "chill" or "relaxing music" | Agent returns channels for "Relax" genre |
+
+### Done when
+- `pnpm sierra build` passes
+- `pnpm sierra test --categories phase10` passes
+- Manual: "hip-hop channels" → returns SiriusXM FLY, The Heat, Shade 45, Flex2K, Hip-Hop Nation — NOT "RapCaviar"
+- Manual: "classic hip-hop" → "I don't have dedicated classic hip-hop channels"
+- Manual: Select user + hip-hop → only channels in lineup 200

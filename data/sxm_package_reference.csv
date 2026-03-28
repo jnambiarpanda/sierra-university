@@ -1,0 +1,66 @@
+package_name,channel_lineup_id,content_region,content_platform,is_us_satellite,is_us_sdars_comparable,is_us_streaming,is_us_business,is_ca_satellite,is_ca_streaming,is_ca_business,is_thales
+All Streaming Channels (5000),5000,us,sirius,false,false,true,false,false,false,false,false
+Audio Quality (5300),5300,us,sirius,false,false,true,false,false,false,false,false
+Automotive FAST (6700),6700,us,xm,false,false,true,false,false,false,false,false
+Automotive FAST (7700),7700,ca,xm,false,false,false,false,false,true,false,false
+Automotive Mostly Music (6270),6270,us,xm,false,false,true,false,false,false,false,false
+Automotive Mostly Music (7270),7270,ca,xm,false,false,false,false,false,true,false,false
+Automotive Premier (6350),6350,us,xm,false,false,true,false,false,false,false,false
+Automotive Premier (7350),7350,ca,xm,false,false,false,false,false,true,false,false
+Automotive Select (6250),6250,us,xm,false,false,true,false,false,false,false,false
+Automotive Select (7250),7250,ca,xm,false,false,false,false,false,true,false,false
+Business (2200),2200,us,sirius,false,false,true,true,false,false,false,false
+Business (3200),3200,ca,sirius,false,false,false,false,false,true,true,false
+Business Family Friendly (2210),2210,us,sirius,false,false,true,true,false,false,false,false
+Elite (1320),1320,ca,sirius,false,false,false,false,false,true,false,false
+Elite (1370),1370,ca,xm,false,false,false,false,false,true,false,false
+Elite (320),320,us,sirius,false,false,true,false,false,false,false,false
+Elite (370),370,us,xm,false,false,true,false,false,false,false,false
+Essential Standalone (1440),1440,ca,sirius,false,false,false,false,false,true,false,false
+Essential Standalone (440),440,us,sirius,false,false,true,false,false,false,false,false
+FAST (1700),1700,ca,xm,true,true,false,false,true,false,false,false
+FAST (700),700,us,xm,true,true,false,false,false,false,false,false
+Free Tier (1140),1140,ca,sirius,false,false,false,false,false,true,false,false
+Free Tier (140),140,us,sirius,false,false,true,false,false,false,false,false
+Mostly Music (1220),1220,ca,sirius,true,true,false,false,true,true,false,false
+Mostly Music (1270),1270,ca,xm,true,true,false,false,true,true,false,false
+Mostly Music (220),220,us,sirius,true,true,true,false,false,false,false,false
+Mostly Music (270),270,us,xm,true,true,true,false,false,false,false,false
+"News, Sports & Talk (230)",230,us,sirius,true,true,true,false,false,false,false,false
+"News, Sports & Talk (280)",280,us,xm,true,true,true,false,false,false,false,false
+Premier (1300),1300,ca,sirius,true,true,false,false,true,true,false,false
+Premier (1350),1350,ca,xm,true,true,false,false,true,true,false,false
+Premier (300),300,us,sirius,true,true,true,false,false,false,false,false
+Premier (350),350,us,xm,true,true,true,false,false,false,false,false
+Premier Family Friendly (1310),1310,ca,sirius,true,true,false,false,true,true,false,false
+Premier Family Friendly (1360),1360,ca,xm,true,true,false,false,true,true,false,false
+Premier Family Friendly (310),310,us,sirius,true,true,true,false,false,false,false,false
+Premier Family Friendly (360),360,us,xm,true,true,true,false,false,false,false,false
+Select (1200),1200,ca,sirius,true,true,false,false,true,true,false,false
+Select (1250),1250,ca,xm,true,true,false,false,true,true,false,false
+Select (200),200,us,sirius,true,true,true,false,false,false,false,false
+Select (250),250,us,xm,true,true,true,false,false,false,false,false
+Select Family Friendly (1210),1210,ca,sirius,true,true,false,false,true,true,false,false
+Select Family Friendly (1260),1260,ca,xm,true,true,false,false,true,true,false,false
+Select Family Friendly (210),210,us,sirius,true,true,true,false,false,false,false,false
+Select Family Friendly (260),260,us,xm,true,true,true,false,false,false,false,false
+Special Trial (1130),1130,ca,xm,false,false,false,false,false,true,false,false
+Special Trial (130),130,us,xm,false,false,true,false,false,false,false,false
+Standalone (1400),1400,ca,sirius,false,false,false,false,false,true,false,false
+Standalone (400),400,us,sirius,false,false,true,false,false,false,false,false
+Trial (100),100,us,sirius,false,false,true,false,false,false,false,false
+Trial (1100),1100,ca,sirius,false,false,false,false,false,true,false,false
+Vega Music & Comedy (904),904,us,sirius,true,true,true,false,false,false,false,false
+Vega Music & Comedy (954),954,us,xm,true,true,true,false,false,false,false,false
+Vega Music & News & Comedy (906),906,us,sirius,true,true,true,false,false,false,false,false
+Vega Music & News & Comedy (956),956,us,xm,true,true,true,false,false,false,false,false
+Vega Music & News (902),902,us,sirius,true,true,true,false,false,false,false,false
+Vega Music & News (952),952,us,xm,true,true,true,false,false,false,false,false
+Vega Music & Sports & Comedy (905),905,us,sirius,true,true,true,false,false,false,false,false
+Vega Music & Sports & Comedy (955),955,us,xm,true,true,true,false,false,false,false,false
+Vega Music & Sports & News (903),903,us,sirius,true,true,true,false,false,false,false,false
+Vega Music & Sports & News (953),953,us,xm,true,true,true,false,false,false,false,false
+Vega Music & Sports (901),901,us,sirius,true,true,true,false,false,false,false,false
+Vega Music & Sports (951),951,us,xm,true,true,true,false,false,false,false,false
+Vega Music (900),900,us,sirius,true,true,true,false,false,false,false,false
+Vega Music (950),950,us,xm,true,true,true,false,false,false,false,false

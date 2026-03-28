@@ -366,6 +366,91 @@ describe("Phase 5 — Live Agent Escalation", "phase5", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Phase 10 — Genre Discovery, Confidence Gating & Entitlement Filtering
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("Phase 10 — Genre Discovery, Confidence Gating & Entitlement Filtering", "phase10", () => {
+    // Test: hip-hop genre lookup — agent must return real catalog channels, never hallucinate
+    test("phase10-hip-hop-genre-lookup", {
+        name: "Hip-Hop Genre Lookup — returns real channels, no hallucination",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM trial subscriber who loves hip-hop. " +
+            "When the agent asks for your email, provide: hip.hop@test.com. " +
+            "After being greeted, say: I love hip-hop — what hip-hop channels do you have for me? " +
+            "If the agent names any channels, ask: Can you give me the full list of hip-hop channels available?",
+        expectedOutcomes: [
+            "Agent calls SearchChannelsByGenre to find hip-hop channels.",
+            "Agent names real hip-hop channels from the catalog such as SiriusXM FLY, The Heat, Shade 45, Flex2K, or Hip-Hop Nation.",
+            "Agent does NOT mention 'RapCaviar' (which is a Spotify playlist, not a SiriusXM channel).",
+            "Agent does NOT invent channel names not present in the catalog.",
+        ],
+    });
+
+    // Test: genre not found — agent must not hallucinate alternatives
+    test("phase10-genre-no-match", {
+        name: "Genre Not Found — no hallucinated channel names",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM subscriber. " +
+            "When the agent asks for your email, provide: select.subscriber@test.com. " +
+            "After being greeted, say: Do you have any bhangra music channels? " +
+            "If the agent does not find bhangra channels, ask: Are you sure there are no bhangra channels?",
+        expectedOutcomes: [
+            "Agent calls SearchChannelsByGenre with 'bhangra' and finds no matching genre.",
+            "Agent honestly tells the customer it does not have bhangra channels.",
+            "Agent does NOT name a specific channel as a bhangra recommendation.",
+            "Agent may suggest other available genres as alternatives.",
+        ],
+    });
+
+    // Test: entitlement filter — Select tier user sees only channels in their plan
+    test("phase10-entitlement-filter", {
+        name: "Entitlement Filter — Select subscriber sees only their plan's channels",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM Select subscriber. " +
+            "When the agent asks for your email, provide: select.subscriber@test.com. " +
+            "After being greeted, say: I want to know what hip-hop channels are included in my plan.",
+        expectedOutcomes: [
+            "Agent calls SearchChannelsByGenre with the user's userId to filter by entitlement.",
+            "Agent returns hip-hop channels that are part of the Select subscription lineup.",
+            "Agent does not recommend channels that require a Premier upgrade without acknowledging the upgrade requirement.",
+        ],
+    });
+
+    // Test: expired subscription — agent recognises no channel access
+    test("phase10-expired-no-channels", {
+        name: "Expired Subscription — no channels accessible",
+        isSimulation: true,
+        messages:
+            "You are a former SiriusXM subscriber whose trial has expired. " +
+            "When the agent asks for your email, provide: expired.trialer@test.com. " +
+            "After being greeted, say: Can you show me what hip-hop channels I can listen to?",
+        expectedOutcomes: [
+            "Agent calls SearchChannelsByGenre and recognises the subscription is not active.",
+            "Agent does not list channels as accessible to the expired subscriber.",
+            "Agent offers to help reactivate the subscription.",
+        ],
+    });
+
+    // Test: fuzzy genre match — 'chill' or 'relaxing' matches the Relax genre
+    test("phase10-genre-fuzzy-match", {
+        name: "Fuzzy Genre Match — 'chill' maps to Relax genre channels",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM trial subscriber. " +
+            "When the agent asks for your email, provide: phone.known@test.com. " +
+            "After being greeted, say: I'd like something relaxing to listen to — any chill channels?",
+        expectedOutcomes: [
+            "Agent calls SearchChannelsByGenre with a query like 'relax' or 'chill'.",
+            "Agent returns channels associated with the Relax genre such as The Bridge, Yacht Rock Radio, or Acoustic Guitar Instrumentals.",
+            "Agent does not name channels not returned by the search tool.",
+        ],
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Live Agent Transfer
 // ─────────────────────────────────────────────────────────────────────────────
 

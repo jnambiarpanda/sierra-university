@@ -8,6 +8,7 @@ import { DynamicCustomerInfo } from "./dynamic-customer-info";
 import { DynamicLanguageSwitching } from "./voice-swapper";
 import { TAGS } from "./tags";
 import { getUserProfileByPhone, getUserProfileByEmail, getUserProfileById, getChannelByKey, getEventsByArtist, type EventRecord } from "./data/synthetic-data";
+import { searchChannelsByGenre, getAllGenreNames, TIER_TO_LINEUP_ID } from "./data/sxm-catalog";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Phase 0 — Caller Identification Tools
@@ -640,6 +641,88 @@ tools.registerTool({
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Phase 10 — Genre Discovery, Confidence Gating & Entitlement Filtering
+// ─────────────────────────────────────────────────────────────────────────────
+
+const SearchChannelsByGenre = tools.registerTool({
+    name: "SearchChannelsByGenre",
+    type: "lookup",
+    noCodeId: "search-channels-by-genre",
+    description:
+        "Search the SiriusXM channel catalog by genre or mood (e.g. 'hip-hop', 'classic rock', 'relax'). " +
+        "Returns only channels that exist in the catalog, filtered by the user's subscription entitlement " +
+        "when a userId is provided. Never fabricates channel names — if the list is empty, there are no matches.",
+    params: {
+        genre: toolParam.string(
+            "The genre or mood the user is looking for (e.g. 'hip-hop', 'country', 'relax', 'workout')."
+        ),
+        userId: toolParam.string(
+            "The userId of the identified caller. Pass the resolved userId to filter results to channels the user can access. Pass an empty string for anonymous / unidentified callers."
+        ),
+    },
+    func: (_ctx, params, controls) => {
+        // Resolve entitlement lineup ID from the user's subscription tier
+        let lineupId: number | null | undefined;
+        if (params.userId) {
+            const profile = getUserProfileById(params.userId);
+            if (profile) {
+                lineupId = TIER_TO_LINEUP_ID[profile.subscriptionTier];
+            }
+        }
+
+        const { channels, genreMatched } = searchChannelsByGenre(params.genre, {
+            lineupId,
+            scoreThreshold: 0.5,
+        });
+
+        // Classify confidence level for each result
+        const classified = channels.map(e => ({
+            name: e.channel.name,
+            channelNumber: e.channel.number,
+            description: e.channel.description,
+            playerLandingPage: e.channel.playerLandingPage,
+            score: e.score,
+            relevance: e.score === 1.0 ? "dedicated" : e.score >= 0.7 ? "related" : "partial",
+        }));
+
+        // Determine if user has no subscription access (null = expired)
+        const isExpired = params.userId && lineupId === null;
+
+        // Build a human-readable message for the agent
+        let message: string;
+        if (isExpired) {
+            message = `This user's subscription is not active — no channels are accessible. Offer reactivation.`;
+        } else if (classified.length === 0) {
+            const available = getAllGenreNames().slice(0, 8).join(", ");
+            if (!genreMatched) {
+                message = `No genre matching "${params.genre}" found in the catalog. Available genres include: ${available}.`;
+            } else {
+                message = `No channels for "${genreMatched}" are available in this user's subscription. Channels may require an upgrade.`;
+            }
+        } else {
+            const names = classified.map(c => c.name).join(", ");
+            const filtered = lineupId != null ? " in this user's plan" : "";
+            message = `Found ${classified.length} channel(s)${filtered} for "${genreMatched}": ${names}.`;
+        }
+
+        return controls.result({
+            data: {
+                genreMatched,
+                channels: classified,
+                entitlementFiltered: lineupId != null,
+                message,
+            },
+            instructions:
+                "Present only the channels listed in the `channels` array. " +
+                "If `channels` is empty, tell the user you don't have dedicated channels for that genre — do not suggest channels from memory or make up names. " +
+                "Use the `playerLandingPage` URL when providing a link to a channel. " +
+                "Channels with relevance='dedicated' are the primary channels for that genre; " +
+                "'related' channels have significant overlap with the genre.",
+        });
+    },
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Agent
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -771,6 +854,16 @@ export default createAgent({
 
                 <Goal description="Determine why the customer is reaching out to customer support.">
                     <Rule content="If unclear, ask the customer why they are reaching out to customer support." />
+                </Goal>
+
+                {/* Phase 10: Genre catalog search tool */}
+                <SearchChannelsByGenre />
+
+                {/* Phase 10: Genre-based channel discovery */}
+                <Goal description="When a user asks about a genre, mood, or content type, look up matching channels from the catalog.">
+                    <Rule content="When a user asks about channels for a genre or mood (e.g. 'hip-hop channels', 'something relaxing', 'classic rock'), call SearchChannelsByGenre with the genre and the user's userId. Always pass the resolved userId so results are filtered to what the user can actually access." />
+                    <Rule content="Never name a channel that was not returned in the SearchChannelsByGenre result. If the channels array is empty, tell the user you don't have dedicated channels for that genre — do not improvise names from memory." />
+                    <Rule content="If SearchChannelsByGenre returns no match for the genre query, offer the closest available genre alternatives from the message field rather than guessing." />
                 </Goal>
             </>
         );
