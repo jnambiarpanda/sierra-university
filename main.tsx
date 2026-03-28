@@ -675,7 +675,7 @@ const SearchChannelsByGenre = tools.registerTool({
             }
         }
 
-        const { channels, genreMatched } = searchChannelsByGenre(params.genre, {
+        const { channels, genreMatched, genreLandingPage } = searchChannelsByGenre(params.genre, {
             lineupId,
             scoreThreshold: 0.5,
         });
@@ -695,6 +695,10 @@ const SearchChannelsByGenre = tools.registerTool({
                 // Debug: emit lineup ID so it's visible in the agent trace
                 addAgentTags([`entitlement:lineup:${lineupId}`]);
             }
+        }
+        // Landing page is independent of entitlement — emit even for expired users
+        if (genreLandingPage) {
+            addAgentTags([TAGS.genre.landingPageFound]);
         }
 
         // Classify confidence level for each result
@@ -741,19 +745,32 @@ const SearchChannelsByGenre = tools.registerTool({
                   }))
             : [];
 
-        const attachments = channelCards.length > 0
+        // Genre landing page card — shown when the genre matched a catalog entry
+        const genreLandingCard = !isVoice && genreLandingPage && genreMatched
             ? {
-                  id: "channel-cards",
-                  description: "SiriusXM channel artwork",
-                  data: [{
-                      type: "custom" as const,
-                      data: {
-                          type: "channel-cards" as const,
-                          title: genreMatched ? `${genreMatched} channels` : "Channels for you",
-                          channels: channelCards,
-                      },
-                  }],
+                  type: "custom" as const,
+                  data: {
+                      type: "genre-landing" as const,
+                      genreName: genreMatched,
+                      landingPage: genreLandingPage,
+                  },
               }
+            : null;
+
+        const attachmentData = [
+            ...(channelCards.length > 0 ? [{
+                type: "custom" as const,
+                data: {
+                    type: "channel-cards" as const,
+                    title: genreMatched ? `${genreMatched} channels` : "Channels for you",
+                    channels: channelCards,
+                },
+            }] : []),
+            ...(genreLandingCard ? [genreLandingCard] : []),
+        ];
+
+        const attachments = attachmentData.length > 0
+            ? { id: "channel-cards", description: "SiriusXM channel artwork", data: attachmentData }
             : undefined;
 
         return controls.result({
@@ -761,12 +778,14 @@ const SearchChannelsByGenre = tools.registerTool({
                 genreMatched,
                 channels: classified,
                 entitlementFiltered: lineupId != null,
+                genreLandingPage,
                 message,
             },
             instructions:
                 "Present only the channels listed in the `channels` array. " +
                 "If `channels` is empty, tell the user you don't have dedicated channels for that genre — do not suggest channels from memory or make up names. " +
                 "Use the `playerLandingPage` URL when providing a link to a channel. " +
+                "When `genreLandingPage` is set, include it as a direct link to browse all content in that genre. " +
                 "Channels with relevance='dedicated' are the primary channels for that genre; " +
                 "'related' channels have significant overlap with the genre.",
             ...(attachments ? { attachments } : {}),

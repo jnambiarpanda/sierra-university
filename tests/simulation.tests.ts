@@ -385,7 +385,7 @@ describe("Phase 10 — Genre Discovery, Confidence Gating & Entitlement Filterin
             "Agent does NOT mention 'RapCaviar' (which is a Spotify playlist, not a SiriusXM channel).",
             "Agent does NOT invent channel names not present in the catalog.",
         ],
-        assertions: ["genre:search-called", "genre:genre-found"],
+        assertions: ["genre:search-called", "genre:genre-found", "genre:landing-page-found"],
     });
 
     // Test: genre not found — agent must not hallucinate alternatives
@@ -419,7 +419,7 @@ describe("Phase 10 — Genre Discovery, Confidence Gating & Entitlement Filterin
             "Agent returns hip-hop channels that are part of the Select subscription lineup.",
             "Agent does not recommend channels that require a Premier upgrade without acknowledging the upgrade requirement.",
         ],
-        assertions: ["genre:search-called", "genre:genre-found", "genre:entitlement-filtered"],
+        assertions: ["genre:search-called", "genre:genre-found", "genre:entitlement-filtered", "genre:landing-page-found", "entitlement:lineup:200"],
     });
 
     // Test: expired subscription — agent recognises no channel access
@@ -435,7 +435,7 @@ describe("Phase 10 — Genre Discovery, Confidence Gating & Entitlement Filterin
             "Agent does not list channels as accessible to the expired subscriber.",
             "Agent offers to help reactivate the subscription.",
         ],
-        assertions: ["genre:search-called", "genre:expired-no-access"],
+        assertions: ["genre:search-called", "genre:expired-no-access", "genre:landing-page-found"],
     });
 
     // Test: fuzzy genre match — 'chill' or 'relaxing' matches the Relax genre
@@ -451,7 +451,7 @@ describe("Phase 10 — Genre Discovery, Confidence Gating & Entitlement Filterin
             "Agent returns channels associated with the Relax genre such as The Bridge, Yacht Rock Radio, or Acoustic Guitar Instrumentals.",
             "Agent does not name channels not returned by the search tool.",
         ],
-        assertions: ["genre:search-called", "genre:genre-found"],
+        assertions: ["genre:search-called", "genre:genre-found", "genre:landing-page-found"],
     });
 });
 

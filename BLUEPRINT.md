@@ -440,15 +440,15 @@ type ChannelCardsPayload = {
 | `sxm_channel_genre_landing_reference.csv` | Flat join: channel × genre with name, description, image, score |
 | `sxm_channel_lineup_bridge.csv` | channel_entity_id → channel_lineup_id (many-to-many) |
 | `sxm_package_reference.csv` | package name → lineup_id + region/platform flags |
-| `sxm_channel_reference.csv` | Master channel catalog (reference, not used at runtime) |
-| `sxm_genre_select_channel_landing_ref.csv` | Genre entity → channels (reference, not used at runtime) |
+| `sxm_channel_reference.csv` | Master channel catalog (reference only) |
+| `sxm_genre_select_channel_landing_ref.csv` | Genre entity IDs and names — used for genre landing page URLs |
 
 ### New files
 
 | File | Purpose |
 |------|---------|
-| `data/sxm-catalog.ts` | Generated data module: genre index, lineup sets, `searchChannelsByGenre()`, `getAllGenreNames()` |
-| `generate-catalog.mjs` | Generator script — re-run to regenerate `sxm-catalog.ts` from CSVs |
+| `data/sxm-catalog.ts` | Generated data module: genre index, lineup sets, genre landing pages, `searchChannelsByGenre()`, `getAllGenreNames()` |
+| `generate-catalog.mjs` | Generator script — re-run to regenerate `sxm-catalog.ts` from CSVs. Parses both channel-genre and genre-select CSVs. Computes full CDN image URLs at build time (Node.js `Buffer`). |
 
 ### Tier → Lineup ID mapping
 
@@ -460,10 +460,41 @@ type ChannelCardsPayload = {
 | `all-access` | 320 | Elite (US sirius, satellite+streaming) |
 | `expired` | null | No active subscription |
 
+### `searchChannelsByGenre` return shape
+
+```typescript
+{
+  channels: ChannelGenreEntry[];   // filtered by score + entitlement
+  genreMatched: string | null;     // canonical genre name if matched, else null
+  genreLandingPage: string | null; // https://www.siriusxm.com/player/genre/{name}/{entityId}
+}
+```
+
+`genreLandingPage` is resolved from `GENRE_LANDING_PAGES` (built from `sxm_genre_select_channel_landing_ref.csv`). It is independent of entitlement — expired users still receive it so they can see what they'd access on reactivation.
+
 ### New tool
 
-- `SearchChannelsByGenre` — lookup; params: `genre: string`, `userId: string`;
-  returns `{ genreMatched, channels[], entitlementFiltered, message }`
+- `SearchChannelsByGenre` — lookup; params: `genre: string`, `userId: string`
+- Returns: `{ genreMatched, channels[], entitlementFiltered, genreLandingPage, message }`
+- Attachments (chat only, not voice):
+  - `type: "channel-cards"` — artwork cards for each matched channel with `playerLandingPage` link
+  - `type: "genre-landing"` — `{ genreName, landingPage }` — direct link to browse the genre on SiriusXM player
+- Image URLs are full CDN URLs pre-computed at catalog generation time
+
+### Observability tags (`TAGS.genre.*`)
+
+| Tag | Emitted when |
+|-----|-------------|
+| `genre:search-called` | Always — tool was invoked |
+| `genre:genre-found` | Genre query matched a catalog entry (non-expired path) |
+| `genre:genre-not-found` | No catalog genre matched the query |
+| `genre:entitlement-filtered` | Results were filtered to user's lineup |
+| `genre:expired-no-access` | User subscription is expired — channel array forced empty |
+| `genre:landing-page-found` | Genre landing page URL resolved (independent of entitlement) |
+
+### Debug tag
+
+`entitlement:lineup:NNN` (e.g., `entitlement:lineup:200`) — emitted alongside `genre:entitlement-filtered` so the specific lineup is visible in the agent trace. Not in the `TAGS` schema (dynamic value).
 
 ### Agent changes (`main.tsx`)
 
@@ -473,20 +504,28 @@ type ChannelCardsPayload = {
 - Add `Rule`: "Never name a channel not returned by SearchChannelsByGenre. If channels array is empty,
   say you don't have channels for that genre."
 - Add `Rule`: "If the genre query doesn't match, offer alternatives from the message field."
+- Add `Rule`: "When genreLandingPage is set, include it as a direct link to browse all content in that genre."
 
 ### Simulation tests
 
-| Test ID | Scenario | Assert |
-|---------|---------|--------|
-| `phase10-hip-hop-genre-lookup` | User asks "hip-hop channels" | Agent returns SiriusXM FLY, The Heat, Shade 45 — no "RapCaviar" |
-| `phase10-no-classic-hiphop` | User asks "classic hip-hop channels" | Agent says no dedicated channels found |
-| `phase10-entitlement-filter` | Select tier user; Premier-only channels exist in genre | Agent only lists channels in Select lineup |
-| `phase10-low-confidence-excluded` | Genre with no channels >= 0.5 score | Agent says no channels found |
-| `phase10-genre-fuzzy-match` | User says "chill" or "relaxing music" | Agent returns channels for "Relax" genre |
+| Test ID | Assertions |
+|---------|-----------|
+| `phase10-hip-hop-genre-lookup` | `genre:search-called`, `genre:genre-found`, `genre:landing-page-found` |
+| `phase10-genre-no-match` | `genre:search-called`, `genre:genre-not-found` |
+| `phase10-entitlement-filter` | `genre:search-called`, `genre:genre-found`, `genre:entitlement-filtered`, `genre:landing-page-found`, `entitlement:lineup:200` |
+| `phase10-expired-no-channels` | `genre:search-called`, `genre:expired-no-access`, `genre:landing-page-found` |
+| `phase10-genre-fuzzy-match` | `genre:search-called`, `genre:genre-found`, `genre:landing-page-found` |
+
+### Simulations (in `simulations/trialer-journey-simulator.json`)
+
+| Simulation | Behavioral check |
+|-----------|-----------------|
+| Phase 10 — Genre Landing: Channel Cards and Browse Link | Agent returns channel cards AND references genre browse link |
+| Phase 10 — Genre Landing: Expired User Sees Link Without Channel Cards | Agent blocks channel access, surfaces genre landing, offers reactivation |
 
 ### Done when
 - `pnpm sierra build` passes
 - `pnpm sierra test --categories phase10` passes
-- Manual: "hip-hop channels" → returns SiriusXM FLY, The Heat, Shade 45, Flex2K, Hip-Hop Nation — NOT "RapCaviar"
-- Manual: "classic hip-hop" → "I don't have dedicated classic hip-hop channels"
-- Manual: Select user + hip-hop → only channels in lineup 200
+- Manual: "hip-hop channels" (select user) → SiriusXM FLY, The Heat, Shade 45 channel cards + genre landing attachment; trace shows `entitlement:lineup:200`
+- Manual: "2000s channels" (expired user) → no channel cards, genre landing present, reactivation offered
+- Manual: "bhangra channels" → no channels, no landing page, alternative genres suggested

@@ -403,6 +403,62 @@
       }
     },
     {
+      "name": "Phase 10 — Genre Landing: Channel Cards and Browse Link",
+      "groupDescription": "Phase 10 — Genre Discovery",
+      "categories": ["phase10"],
+      "messages": [
+        "You are a SiriusXM Select subscriber. When the agent asks for your email, provide: select.subscriber@test.com. After being greeted, say: What hip-hop channels are included in my plan?",
+        "When the agent lists channels, ask: Is there a place I can browse all hip-hop content on SiriusXM?"
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent calls SearchChannelsByGenre and returns real hip-hop channels with artwork cards.",
+        "Agent provides or references a direct link to browse the Hip-Hop genre on the SiriusXM player.",
+        "Agent does not invent channel names not returned by the search tool."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
+      "name": "Phase 10 — Genre Landing: Expired User Sees Link Without Channel Cards",
+      "groupDescription": "Phase 10 — Genre Discovery",
+      "categories": ["phase10"],
+      "messages": [
+        "You are a former SiriusXM subscriber whose trial has expired. When the agent asks for your email, provide: expired.trialer@test.com. After being greeted, say: Can you show me what 2000s channels are available?",
+        "If the agent says your subscription is not active, ask: Is there a page where I can see what I'd get if I reactivated?"
+      ],
+      "origin": "UI_SIMULATION",
+      "device": "DESKTOP_WEB",
+      "expectedOutcomes": [
+        "Agent recognises the subscription is expired and does not list channels as accessible.",
+        "Agent surfaces a genre landing page link or browse link for 2000s content.",
+        "Agent offers to help the user reactivate their subscription."
+      ],
+      "isCritical": false,
+      "conversationInfo": {
+        "locale": "en-US"
+      },
+      "simulationOptions": {
+        "languageCode": "en-US"
+      },
+      "systemsSimulationOptions": {
+        "simulateTools": true,
+        "simulateIntegrations": true,
+        "accountState": ""
+      }
+    },
+    {
       "name": "Phase 10 — Fuzzy Match: Chill/Relax Genre",
       "groupDescription": "Phase 10 — Genre Discovery",
       "categories": ["phase10"],

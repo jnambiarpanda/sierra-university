@@ -26,6 +26,13 @@ export type ChannelGenreEntry = {
 export type GenreSearchResult = {
     channels: ChannelGenreEntry[];
     genreMatched: string | null;
+    genreLandingPage: string | null;
+};
+
+export type GenreLandingEntry = {
+    entityId: string;
+    name: string;
+    landingPage: string;
 };
 
 // Maps subscription tier to channel_lineup_id from sxm_package_reference.csv
@@ -131,6 +138,49 @@ const CHANNEL_DETAILS: Record<string, SxmChannelDetail> = {
     "56605cc5-88b8-557b-fc3c-dae7eb41bf56": { entityId: "56605cc5-88b8-557b-fc3c-dae7eb41bf56", entityType: "channel-linear", name: "Radio Andy", number: "102", superCategory: "Talk", category: "Entertainment", description: "Andy & pop culture (explicit)", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJpZi8yYS8yYWQ4ZGVhNWNhYmEzMDI0YjdiMjJhNmRmNTQ3OTNmOV8xNzY5NDU4Mzk0LnBuZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjYwMCwiaGVpZ2h0Ijo2MDB9fV19", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/56605cc5-88b8-557b-fc3c-dae7eb41bf56" },
     "b96d76d6-935a-3b90-c22d-e0bc7ba11543": { entityId: "b96d76d6-935a-3b90-c22d-e0bc7ba11543", entityType: "channel-linear", name: "SiriusXM K-Pop", number: "705", superCategory: "Music", category: "Pop", description: "K-pop hits (explicit)", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJhZW0vZjAvZjAyZTRlOTFhN2MxY2FhODNmYjMxM2RiYmYzNWE5MGJfMTcxODAyNzA2NS5qcGVnIiwiZWRpdHMiOlt7ImZvcm1hdCI6eyJ0eXBlIjoianBlZyJ9fSx7InJlc2l6ZSI6eyJ3aWR0aCI6NjAwLCJoZWlnaHQiOjYwMH19XX0=", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/b96d76d6-935a-3b90-c22d-e0bc7ba11543" },
     "bffe40f0-1688-dbba-e420-ef894d49d17d": { entityId: "bffe40f0-1688-dbba-e420-ef894d49d17d", entityType: "channel-linear", name: "BTS Radio", number: "501", superCategory: "Music", category: "Pop", description: "Every BTS song since their debut", imageUrl: "https://imgsrv-sxm-prod-device.streaming.siriusxm.com/eyJrZXkiOiJpZi9mNi9mNjRlYTA4NGExNDUzOGI2YWZiNDQwYWM3YmUzMTk2OV8xNzczOTkyMzc3LnBuZyIsImVkaXRzIjpbeyJmb3JtYXQiOnsidHlwZSI6ImpwZWcifX0seyJyZXNpemUiOnsid2lkdGgiOjYwMCwiaGVpZ2h0Ijo2MDB9fV19", playerLandingPage: "https://www.siriusxm.com/player/channel-linear/entity/bffe40f0-1688-dbba-e420-ef894d49d17d" },
+};
+
+// Genre landing pages indexed by lowercased genre name
+const GENRE_LANDING_PAGES: Record<string, GenreLandingEntry> = {
+    "50s": { entityId: "01fb7922-67c8-44db-86f0-bd989290841d", name: "50s", landingPage: "https://www.siriusxm.com/player/genre/50s/01fb7922-67c8-44db-86f0-bd989290841d" },
+    "hip-hop": { entityId: "026f7d27-5e9b-42c9-b9a5-aafb4ad27565", name: "Hip-Hop", landingPage: "https://www.siriusxm.com/player/genre/Hip-Hop/026f7d27-5e9b-42c9-b9a5-aafb4ad27565" },
+    "reggae": { entityId: "03a7dd65-dc18-4569-93ed-70cc2fdc938f", name: "Reggae", landingPage: "https://www.siriusxm.com/player/genre/Reggae/03a7dd65-dc18-4569-93ed-70cc2fdc938f" },
+    "latin": { entityId: "1026ee80-f147-4d7a-aaed-92337aebd343", name: "Latin", landingPage: "https://www.siriusxm.com/player/genre/Latin/1026ee80-f147-4d7a-aaed-92337aebd343" },
+    "r&b": { entityId: "152c138f-15ec-4514-9129-0e8be5bcaf0c", name: "R&B", landingPage: "https://www.siriusxm.com/player/genre/R%26B/152c138f-15ec-4514-9129-0e8be5bcaf0c" },
+    "2000s": { entityId: "1d81e9dc-073c-40b8-add4-2d4d8dda1c0f", name: "2000s", landingPage: "https://www.siriusxm.com/player/genre/2000s/1d81e9dc-073c-40b8-add4-2d4d8dda1c0f" },
+    "alternative & indie": { entityId: "1f98046d-cbcd-4e14-8a66-c7544152cfe7", name: "Alternative & Indie", landingPage: "https://www.siriusxm.com/player/genre/Alternative%20%26%20Indie/1f98046d-cbcd-4e14-8a66-c7544152cfe7" },
+    "rock": { entityId: "301267c3-52d7-4f5e-85c4-cea88b12a34f", name: "Rock", landingPage: "https://www.siriusxm.com/player/genre/Rock/301267c3-52d7-4f5e-85c4-cea88b12a34f" },
+    "comedy": { entityId: "328cd004-dc61-4a11-ae08-14a468959ff0", name: "Comedy", landingPage: "https://www.siriusxm.com/player/genre/Comedy/328cd004-dc61-4a11-ae08-14a468959ff0" },
+    "sports talk": { entityId: "364d2811-9199-4b92-8409-3b2f823bcc65", name: "Sports Talk", landingPage: "https://www.siriusxm.com/player/genre/Sports%20Talk/364d2811-9199-4b92-8409-3b2f823bcc65" },
+    "business": { entityId: "3653b422-22b0-448e-bd38-85060f77a8c1", name: "Business", landingPage: "https://www.siriusxm.com/player/genre/Business/3653b422-22b0-448e-bd38-85060f77a8c1" },
+    "classical": { entityId: "3d587e0b-48a9-4a30-b549-03478112e368", name: "Classical", landingPage: "https://www.siriusxm.com/player/genre/Classical/3d587e0b-48a9-4a30-b549-03478112e368" },
+    "2010s": { entityId: "3f825bad-54c8-4078-b17e-84893e7683ad", name: "2010s", landingPage: "https://www.siriusxm.com/player/genre/2010s/3f825bad-54c8-4078-b17e-84893e7683ad" },
+    "focus": { entityId: "42f88a7f-0cc5-437c-bdd3-748687a7b153", name: "Focus", landingPage: "https://www.siriusxm.com/player/genre/Focus/42f88a7f-0cc5-437c-bdd3-748687a7b153" },
+    "hard rock & metal": { entityId: "52151af9-8314-441d-a39e-e9d941e726d7", name: "Hard Rock & Metal", landingPage: "https://www.siriusxm.com/player/genre/Hard%20Rock%20%26%20Metal/52151af9-8314-441d-a39e-e9d941e726d7" },
+    "90s": { entityId: "53e4aa09-ced2-425f-85ba-b5071fd151fc", name: "90s", landingPage: "https://www.siriusxm.com/player/genre/90s/53e4aa09-ced2-425f-85ba-b5071fd151fc" },
+    "happy": { entityId: "56e650c5-122e-4a7e-9329-ecbd8a3be5be", name: "Happy", landingPage: "https://www.siriusxm.com/player/genre/Happy/56e650c5-122e-4a7e-9329-ecbd8a3be5be" },
+    "pop": { entityId: "6404c339-d813-4045-abfb-f6f9b7a30a68", name: "Pop", landingPage: "https://www.siriusxm.com/player/genre/Pop/6404c339-d813-4045-abfb-f6f9b7a30a68" },
+    "relax": { entityId: "660eb821-c4f9-46a5-9bc6-ca55ea9a835f", name: "Relax", landingPage: "https://www.siriusxm.com/player/genre/Relax/660eb821-c4f9-46a5-9bc6-ca55ea9a835f" },
+    "family & kids": { entityId: "6ba0d57b-07f0-4f05-a2d8-740fcac32ff8", name: "Family & Kids", landingPage: "https://www.siriusxm.com/player/genre/Family%20%26%20Kids/6ba0d57b-07f0-4f05-a2d8-740fcac32ff8" },
+    "dance & electronic": { entityId: "6bdecae4-c0e6-4447-a26a-f80c9f34b29f", name: "Dance & Electronic", landingPage: "https://www.siriusxm.com/player/genre/Dance%20%26%20Electronic/6bdecae4-c0e6-4447-a26a-f80c9f34b29f" },
+    "sleep": { entityId: "769576b0-97c6-4b74-9979-1c35c34619c5", name: "Sleep", landingPage: "https://www.siriusxm.com/player/genre/Sleep/769576b0-97c6-4b74-9979-1c35c34619c5" },
+    "classic rock": { entityId: "7b4103be-57b9-4c22-9e79-e20659bb5542", name: "Classic Rock", landingPage: "https://www.siriusxm.com/player/genre/Classic%20Rock/7b4103be-57b9-4c22-9e79-e20659bb5542" },
+    "country": { entityId: "80200e3f-1c13-41e7-8ed4-0c517f37fef9", name: "Country", landingPage: "https://www.siriusxm.com/player/genre/Country/80200e3f-1c13-41e7-8ed4-0c517f37fef9" },
+    "today's hits": { entityId: "8c124dc1-d4ec-4e78-87f5-f4c9124f3afe", name: "Today's Hits", landingPage: "https://www.siriusxm.com/player/genre/Today's%20Hits/8c124dc1-d4ec-4e78-87f5-f4c9124f3afe" },
+    "workout": { entityId: "93722e6d-ca40-4714-8a17-da27b9981794", name: "Workout", landingPage: "https://www.siriusxm.com/player/genre/Workout/93722e6d-ca40-4714-8a17-da27b9981794" },
+    "news & politics": { entityId: "9abff2e5-762a-44fb-a683-2773b899ca5d", name: "News & Politics", landingPage: "https://www.siriusxm.com/player/genre/News%20%26%20Politics/9abff2e5-762a-44fb-a683-2773b899ca5d" },
+    "70s": { entityId: "9adc7a68-1299-4fb5-a98d-1c59ec63f8c8", name: "70s", landingPage: "https://www.siriusxm.com/player/genre/70s/9adc7a68-1299-4fb5-a98d-1c59ec63f8c8" },
+    "80s": { entityId: "b92eb966-b242-479c-92a4-3aa222c52871", name: "80s", landingPage: "https://www.siriusxm.com/player/genre/80s/b92eb966-b242-479c-92a4-3aa222c52871" },
+    "true crime": { entityId: "c39c25bc-60d8-4289-9e08-dd6137b76b64", name: "True Crime", landingPage: "https://www.siriusxm.com/player/genre/True%20Crime/c39c25bc-60d8-4289-9e08-dd6137b76b64" },
+    "standards": { entityId: "c57eefe8-55e9-43c2-9e64-517fcd0585f6", name: "Standards", landingPage: "https://www.siriusxm.com/player/genre/Standards/c57eefe8-55e9-43c2-9e64-517fcd0585f6" },
+    "60s": { entityId: "c7c68b4e-f482-4ec8-abaa-874acca0ad8d", name: "60s", landingPage: "https://www.siriusxm.com/player/genre/60s/c7c68b4e-f482-4ec8-abaa-874acca0ad8d" },
+    "party": { entityId: "d14b1f14-5b1c-44fe-b7bd-65e9614d7fb8", name: "Party", landingPage: "https://www.siriusxm.com/player/genre/Party/d14b1f14-5b1c-44fe-b7bd-65e9614d7fb8" },
+    "christian": { entityId: "e2c2153a-3bcc-4ebf-999c-7346014c0b8a", name: "Christian", landingPage: "https://www.siriusxm.com/player/genre/Christian/e2c2153a-3bcc-4ebf-999c-7346014c0b8a" },
+    "religious music & talk": { entityId: "efc6c8ef-3722-46d4-9f02-bdd243b26dc8", name: "Religious Music & Talk", landingPage: "https://www.siriusxm.com/player/genre/Religious%20Music%20%26%20Talk/efc6c8ef-3722-46d4-9f02-bdd243b26dc8" },
+    "stage & screen": { entityId: "f0908966-ea6e-44ca-8928-a1d390a7f443", name: "Stage & Screen", landingPage: "https://www.siriusxm.com/player/genre/Stage%20%26%20Screen/f0908966-ea6e-44ca-8928-a1d390a7f443" },
+    "jazz": { entityId: "f15279ab-4f1c-4bea-83e9-3e27a09eaa42", name: "Jazz", landingPage: "https://www.siriusxm.com/player/genre/Jazz/f15279ab-4f1c-4bea-83e9-3e27a09eaa42" },
+    "pop culture": { entityId: "fa3bd237-8755-487c-8ef2-fd23130a8bcf", name: "Pop Culture", landingPage: "https://www.siriusxm.com/player/genre/Pop%20Culture/fa3bd237-8755-487c-8ef2-fd23130a8bcf" },
+    "k-pop": { entityId: "fc63da33-29ef-43e4-b4fe-896e31bc9096", name: "K-Pop", landingPage: "https://www.siriusxm.com/player/genre/K-Pop/fc63da33-29ef-43e4-b4fe-896e31bc9096" },
 };
 
 // Genre index: lowercased genre name → sorted channel entries (score desc)
@@ -700,7 +750,7 @@ export function searchChannelsByGenre(
         }
     }
 
-    if (!matched || matched.length === 0) return { channels: [], genreMatched: null };
+    if (!matched || matched.length === 0) return { channels: [], genreMatched: null, genreLandingPage: null };
 
     // 2. Confidence gate
     let results = matched.filter(e => e.score >= threshold);
@@ -716,7 +766,11 @@ export function searchChannelsByGenre(
         }
     }
 
-    return { channels: results, genreMatched: matchedGenreName };
+    // 4. Genre landing page
+    const genreKey = matchedGenreName?.toLowerCase() ?? query;
+    const genreLandingPage = GENRE_LANDING_PAGES[genreKey]?.landingPage ?? null;
+
+    return { channels: results, genreMatched: matchedGenreName, genreLandingPage };
 }
 
 /** Returns all known genre names — used to suggest alternatives when a query does not match. */

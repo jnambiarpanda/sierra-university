@@ -86,6 +86,7 @@ export const TAGS = {
         genreNotFound:       "genre:genre-not-found",      // no catalog genre matched the query
         entitlementFiltered: "genre:entitlement-filtered", // results filtered to user's lineup
         expiredNoAccess:     "genre:expired-no-access",    // user subscription expired — no channels
+        landingPageFound:    "genre:landing-page-found",   // genre landing page URL resolved from catalog
     },
 } as const;
 

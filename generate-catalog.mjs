@@ -58,6 +58,20 @@ for (const k of Object.keys(genreIndex)) {
     genreIndex[k].sort((a, b) => b.score - a.score);
 }
 
+// ── Parse genre select landing reference (genre entity IDs + landing pages) ──
+const genreSelectCSV = readFileSync("data/sxm_genre_select_channel_landing_ref.csv", "utf-8");
+const genreSelectLines = genreSelectCSV.split("\n").filter(l => l.trim());
+const genreEntities = {}; // lowercased genre name → { entityId, name, landingPage }
+
+for (const line of genreSelectLines.slice(1)) {
+    const fields = parseCSVLine(line);
+    if (fields.length < 3) continue;
+    const [entityId, , name] = fields;
+    if (!entityId || !name) continue;
+    const landingPage = `https://www.siriusxm.com/player/genre/${encodeURIComponent(name)}/${entityId}`;
+    genreEntities[name.toLowerCase()] = { entityId, name, landingPage };
+}
+
 // ── Parse lineup bridge ───────────────────────────────────────────────────────
 const LINEUP_IDS = [100, 200, 300, 320];
 const lineupSets = {};
@@ -106,6 +120,13 @@ export type ChannelGenreEntry = {
 export type GenreSearchResult = {
     channels: ChannelGenreEntry[];
     genreMatched: string | null;
+    genreLandingPage: string | null;
+};
+
+export type GenreLandingEntry = {
+    entityId: string;
+    name: string;
+    landingPage: string;
 };
 
 // Maps subscription tier to channel_lineup_id from sxm_package_reference.csv
@@ -123,6 +144,16 @@ const CHANNEL_DETAILS: Record<string, SxmChannelDetail> = {
 
 for (const [id, d] of Object.entries(channelDetails)) {
     ts += `    "${esc(id)}": { entityId: "${esc(d.entityId)}", entityType: "${esc(d.entityType)}", name: "${esc(d.name)}", number: "${esc(d.number)}", superCategory: ${q(d.superCat)}, category: ${q(d.category)}, description: "${esc(d.description)}", imageUrl: "${esc(buildCdnImageUrl(d.imageUrl))}", playerLandingPage: "${esc(d.playerPage)}" },\n`;
+}
+
+ts += `};
+
+// Genre landing pages indexed by lowercased genre name
+const GENRE_LANDING_PAGES: Record<string, GenreLandingEntry> = {
+`;
+
+for (const [key, g] of Object.entries(genreEntities)) {
+    ts += `    "${esc(key)}": { entityId: "${esc(g.entityId)}", name: "${esc(g.name)}", landingPage: "${esc(g.landingPage)}" },\n`;
 }
 
 ts += `};
@@ -188,7 +219,7 @@ export function searchChannelsByGenre(
         }
     }
 
-    if (!matched || matched.length === 0) return { channels: [], genreMatched: null };
+    if (!matched || matched.length === 0) return { channels: [], genreMatched: null, genreLandingPage: null };
 
     // 2. Confidence gate
     let results = matched.filter(e => e.score >= threshold);
@@ -204,7 +235,11 @@ export function searchChannelsByGenre(
         }
     }
 
-    return { channels: results, genreMatched: matchedGenreName };
+    // 4. Genre landing page
+    const genreKey = matchedGenreName?.toLowerCase() ?? query;
+    const genreLandingPage = GENRE_LANDING_PAGES[genreKey]?.landingPage ?? null;
+
+    return { channels: results, genreMatched: matchedGenreName, genreLandingPage };
 }
 
 /** Returns all known genre names — used to suggest alternatives when a query does not match. */
