@@ -858,10 +858,14 @@ export default createAgent({
                 <RecordTransfer />
                 <RecordSelfServed />
 
+                {/* Phase 5: Billing disputes — always escalate, never resolve inline */}
+                <Goal description="Billing disputes, unexpected charges, and refund requests cannot be resolved by the virtual agent.">
+                    <Rule content="If the customer reports an unexpected charge, a billing error, or requests a refund: you cannot process this. Call RecordTransfer with reason='billing-dispute' and saveAttempted='false' immediately. Never tell the customer 'the team will follow up' without having first called RecordTransfer." />
+                </Goal>
+
                 {/* Phase 5: Speed bump — understand concern before transferring */}
-                <Goal description="When a customer requests a live agent, apply the speed bump: gather context, attempt resolution, then transfer only if necessary.">
+                <Goal description="When a customer explicitly requests a live agent, apply the speed bump: gather context, attempt resolution, then transfer only if necessary.">
                     <Rule content="When a customer requests a live agent or human representative, call RecordSaveAttempt FIRST, then acknowledge their request warmly and ask what they are hoping to get resolved. Attempt to help using available tools before escalating." />
-                    <Rule content="If the customer has a billing dispute or a charge they cannot explain — an issue you cannot resolve — call RecordTransfer with reason='billing-dispute' and saveAttempted='true'." />
                     <Rule content="If the customer explicitly insists on speaking with a human after you have tried to help, call RecordTransfer with reason='explicit-request' and saveAttempted='true'." />
                     <Rule content="If you cannot resolve the issue through any available tool, call RecordTransfer with reason='unresolved' and set saveAttempted based on whether you called RecordSaveAttempt." />
                     <Rule content="When the customer confirms their issue is fully resolved, call RecordSelfServed and set saveAttempted='true' if you called RecordSaveAttempt during this conversation, otherwise 'false'." />

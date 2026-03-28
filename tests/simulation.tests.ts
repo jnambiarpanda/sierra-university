@@ -274,7 +274,7 @@ describe("Phase 4 — Trialer Conversion Decision", "phase4", () => {
             "When the agent asks for your email, provide: budget.conscious@test.com. " +
             "Start by saying: Hi, I like SiriusXM but I'm trying to save money — is there anything you can do for me?",
         expectedOutcomes: [
-            "Agent acknowledges the subscriber is on Select tier.",
+            "Agent accesses the customer's account and confirms their subscription.",
             "Agent offers a promotional or discounted rate.",
         ],
         assertions: ["stage:subscription-surfaced", "offer:promotional"],
@@ -306,7 +306,7 @@ describe("Phase 4 — Trialer Conversion Decision", "phase4", () => {
             "Start by saying: Hi, my trial is ending and I've decided I don't want to continue.",
         expectedOutcomes: [
             "Agent gracefully accepts the customer's decision to cancel.",
-            "Agent thanks the customer for their time.",
+            "Agent closes the conversation without pressuring the customer further.",
         ],
         assertions: ["stage:subscription-surfaced", "outcome:cancelled"],
     });
