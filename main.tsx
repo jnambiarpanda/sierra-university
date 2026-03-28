@@ -644,6 +644,7 @@ tools.registerTool({
 // Phase 10 — Genre Discovery, Confidence Gating & Entitlement Filtering
 // ─────────────────────────────────────────────────────────────────────────────
 
+
 const SearchChannelsByGenre = tools.registerTool({
     name: "SearchChannelsByGenre",
     type: "lookup",
@@ -660,13 +661,17 @@ const SearchChannelsByGenre = tools.registerTool({
             "The userId of the identified caller. Pass the resolved userId to filter results to channels the user can access. Pass an empty string for anonymous / unidentified callers."
         ),
     },
-    func: (_ctx, params, controls) => {
+    func: (ctx, params, controls) => {
+        const isVoice = ctx.conversationInfo.isVoice;
+
         // Resolve entitlement lineup ID from the user's subscription tier
         let lineupId: number | null | undefined;
+        let tier: string | undefined;
         if (params.userId) {
             const profile = getUserProfileById(params.userId);
             if (profile) {
                 lineupId = TIER_TO_LINEUP_ID[profile.subscriptionTier];
+                tier = profile.subscriptionTier;
             }
         }
 
@@ -687,6 +692,8 @@ const SearchChannelsByGenre = tools.registerTool({
             }
             if (lineupId !== undefined) {
                 addAgentTags([TAGS.genre.entitlementFiltered]);
+                // Debug: emit lineup ID so it's visible in the agent trace
+                addAgentTags([`entitlement:lineup:${lineupId}`]);
             }
         }
 
@@ -720,6 +727,35 @@ const SearchChannelsByGenre = tools.registerTool({
             message = `Found ${classified.length} channel(s)${filtered} for "${genreMatched}": ${names}.`;
         }
 
+        // Build channel card attachments (chat only; skip on voice)
+        const channelCards = !isVoice
+            ? channels
+                  .filter(e => e.channel.imageUrl)
+                  .map(e => ({
+                      channelKey: e.channel.entityId,
+                      channelName: e.channel.name,
+                      channelNumber: e.channel.number,
+                      imageUrl: e.channel.imageUrl,
+                      playerLandingPage: e.channel.playerLandingPage,
+                      description: e.channel.description,
+                  }))
+            : [];
+
+        const attachments = channelCards.length > 0
+            ? {
+                  id: "channel-cards",
+                  description: "SiriusXM channel artwork",
+                  data: [{
+                      type: "custom" as const,
+                      data: {
+                          type: "channel-cards" as const,
+                          title: genreMatched ? `${genreMatched} channels` : "Channels for you",
+                          channels: channelCards,
+                      },
+                  }],
+              }
+            : undefined;
+
         return controls.result({
             data: {
                 genreMatched,
@@ -733,6 +769,7 @@ const SearchChannelsByGenre = tools.registerTool({
                 "Use the `playerLandingPage` URL when providing a link to a channel. " +
                 "Channels with relevance='dedicated' are the primary channels for that genre; " +
                 "'related' channels have significant overlap with the genre.",
+            ...(attachments ? { attachments } : {}),
         });
     },
 });

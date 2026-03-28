@@ -3,6 +3,16 @@
 
 import { readFileSync, writeFileSync, statSync } from "fs";
 
+// Convert AEM-relative image path → full SiriusXM CDN URL (matches format in synthetic-data.ts)
+function buildCdnImageUrl(aemPath) {
+    if (!aemPath) return "";
+    const json = JSON.stringify({
+        key: aemPath,
+        edits: [{ format: { type: "jpeg" } }, { resize: { width: 600, height: 600 } }],
+    });
+    return `https://imgsrv-sxm-prod-device.streaming.siriusxm.com/${Buffer.from(json).toString("base64")}`;
+}
+
 function parseCSVLine(line) {
     const fields = [];
     let field = "";
@@ -112,7 +122,7 @@ const CHANNEL_DETAILS: Record<string, SxmChannelDetail> = {
 `;
 
 for (const [id, d] of Object.entries(channelDetails)) {
-    ts += `    "${esc(id)}": { entityId: "${esc(d.entityId)}", entityType: "${esc(d.entityType)}", name: "${esc(d.name)}", number: "${esc(d.number)}", superCategory: ${q(d.superCat)}, category: ${q(d.category)}, description: "${esc(d.description)}", imageUrl: "${esc(d.imageUrl)}", playerLandingPage: "${esc(d.playerPage)}" },\n`;
+    ts += `    "${esc(id)}": { entityId: "${esc(d.entityId)}", entityType: "${esc(d.entityType)}", name: "${esc(d.name)}", number: "${esc(d.number)}", superCategory: ${q(d.superCat)}, category: ${q(d.category)}, description: "${esc(d.description)}", imageUrl: "${esc(buildCdnImageUrl(d.imageUrl))}", playerLandingPage: "${esc(d.playerPage)}" },\n`;
 }
 
 ts += `};
@@ -185,9 +195,13 @@ export function searchChannelsByGenre(
 
     // 3. Entitlement filter
     const lineupId = options?.lineupId;
-    if (lineupId != null) {
-        const allowed = LINEUP_MAP.get(lineupId);
-        results = allowed ? results.filter(e => allowed.has(e.channel.entityId)) : [];
+    if (lineupId !== undefined) {
+        if (lineupId === null) {
+            results = []; // expired subscription — no channel access
+        } else {
+            const allowed = LINEUP_MAP.get(lineupId);
+            results = allowed ? results.filter(e => allowed.has(e.channel.entityId)) : [];
+        }
     }
 
     return { channels: results, genreMatched: matchedGenreName };
