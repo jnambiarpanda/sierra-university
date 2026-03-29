@@ -8,7 +8,7 @@ import { DynamicCustomerInfo } from "./dynamic-customer-info";
 import { DynamicLanguageSwitching } from "./voice-swapper";
 import { TAGS } from "./tags";
 import { getUserProfileByPhone, getUserProfileByEmail, getUserProfileById, getChannelByKey, getEventsByArtist, type EventRecord } from "./data/synthetic-data";
-import { searchChannelsByGenre, getAllGenreNames, TIER_TO_LINEUP_ID } from "./data/sxm-catalog";
+import { searchChannelsByGenre, getAllGenreNames, TIER_TO_LINEUP_ID, getTalentBySlug } from "./data/sxm-catalog";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Phase 0 — Caller Identification Tools
@@ -185,39 +185,6 @@ const GetSubscriptionDetails = tools.registerTool({
 
         const upgradeAvailable = tier === "select" || tier === "trial" || tier === "expired";
 
-        // Build channel card attachment for channels with artwork
-        const channelKeysToShow: string[] =
-            tier === "select"
-                ? PREMIER_PLUS_CHANNELS                      // show what they're missing
-                : profile.topChannels.slice(0, 5);           // show their top channels
-
-        const channelCards = channelKeysToShow
-            .map(key => getChannelByKey(key))
-            .filter((ch): ch is NonNullable<typeof ch> => !!ch && !!ch.imageUrl)
-            .map(ch => ({
-                channelKey: ch.channelKey,
-                channelName: ch.channelName,
-                channelNumber: ch.channelNumber,
-                imageUrl: ch.imageUrl as string,
-                playerLandingPage: ch.playerLandingPage,
-                description: ch.description,
-            }));
-
-        const attachments = (!isVoice && channelCards.length > 0)
-            ? {
-                  id: "channel-cards",
-                  description: "SiriusXM channel artwork",
-                  data: [{
-                      type: "custom" as const,
-                      data: {
-                          type: "channel-cards" as const,
-                          title: tier === "select" ? "Channels unlocked with Premier" : "Your channels",
-                          channels: channelCards,
-                      },
-                  }],
-              }
-            : undefined;
-
         return controls.result({
             data: {
                 tier,
@@ -231,7 +198,6 @@ const GetSubscriptionDetails = tools.registerTool({
                           ? "Paid subscription to keep access"
                           : null,
             },
-            ...(attachments ? { attachments } : {}),
         });
     },
 });
@@ -272,7 +238,8 @@ const GetAffinityProfile = tools.registerTool({
             "The userId of the identified caller, as returned by ResolveCallerByPhone or ResolveCallerByEmail."
         ),
     },
-    func: (_ctx, params, controls) => {
+    func: (ctx, params, controls) => {
+        const isVoice = ctx.channel === "voice_phone";
         const profile = getUserProfileById(params.customerId);
         if (!profile) {
             return controls.error(`No profile found for customerId ${params.customerId}.`);
@@ -322,6 +289,59 @@ const GetAffinityProfile = tools.registerTool({
             addAgentTags(["affinity:artist:" + artist.toLowerCase().replace(/\s+/g, "-")]);
         }
 
+        // Build combined attachment (chat only): talent circles + channel squares in one block
+        const tier = profile.subscriptionTier;
+        const talentCards = !isVoice
+            ? profile.topArtists
+                .map(artist => getTalentBySlug(artist.toLowerCase().replace(/\s+/g, "-")))
+                .filter((t): t is NonNullable<typeof t> => t !== null)
+                .map(t => ({
+                    entityId: t.entityId,
+                    name: t.name,
+                    imageUrl: t.imageUrl,
+                    playerLandingPage: t.playerLandingPage,
+                    imageShape: "circle" as const,
+                }))
+            : [];
+
+        const channelKeysToShow: string[] =
+            tier === "select"
+                ? PREMIER_PLUS_CHANNELS
+                : profile.topChannels.slice(0, 5);
+        const channelCards = !isVoice
+            ? channelKeysToShow
+                .map(key => getChannelByKey(key))
+                .filter((ch): ch is NonNullable<typeof ch> => !!ch && !!ch.imageUrl)
+                .map(ch => ({
+                    channelKey: ch.channelKey,
+                    channelName: ch.channelName,
+                    channelNumber: ch.channelNumber,
+                    imageUrl: ch.imageUrl as string,
+                    playerLandingPage: ch.playerLandingPage,
+                    description: ch.description,
+                    imageShape: "square" as const,
+                }))
+            : [];
+
+        // Both talent and channel cards use "channel-cards" type (registered Sierra renderer).
+        // imageShape: "circle" → talent  |  imageShape: "square" → channel
+        const talentAsCards = talentCards.map(t => ({
+            channelKey: t.entityId,
+            channelName: t.name,
+            channelNumber: "",
+            imageUrl: t.imageUrl,
+            playerLandingPage: t.playerLandingPage,
+            description: "",
+            imageShape: "circle" as const,
+        }));
+        const attachmentData = [
+            ...(talentAsCards.length > 0 ? [{ type: "custom" as const, data: { type: "channel-cards" as const, title: "Talent you might like", channels: talentAsCards } }] : []),
+            ...(channelCards.length > 0 ? [{ type: "custom" as const, data: { type: "channel-cards" as const, title: tier === "select" ? "Channels unlocked with Premier" : "Your channels", channels: channelCards } }] : []),
+        ];
+        const attachments = attachmentData.length > 0
+            ? { id: "profile-cards", description: "SiriusXM talent and channel artwork", data: attachmentData }
+            : undefined;
+
         return controls.result({
             data: {
                 genres,
@@ -329,6 +349,7 @@ const GetAffinityProfile = tools.registerTool({
                 topArtists: profile.topArtists,
                 topChannels: profile.topChannels,
             },
+            ...(attachments ? { attachments } : {}),
         });
     },
 });
@@ -468,7 +489,7 @@ const GetRetentionOffer = tools.registerTool({
                 talkingPoints.push(`Upgrade to Premier to unlock: ${missingChannels.join(", ")}.`);
             } else {
                 offerType = "promotional";
-                talkingPoints.push("Special promotional rate available for you today.");
+                talkingPoints.push("Promotional rate available: Select plan at $4.99/month for the first 3 months (regular price $9.99/month). This is a confirmed offer — present it directly and ask the customer if they would like to proceed.");
             }
         } else if (tier === "expired") {
             offerType = "upgrade-premier";
@@ -485,12 +506,17 @@ const GetRetentionOffer = tools.registerTool({
         };
         addAgentTags([tagMap[offerType]]);
 
+        const instructions = offerType === "promotional"
+            ? "Present the promotional rate from talkingPoints directly to the customer. State the price clearly, confirm you can apply this offer today, and ask if they would like to proceed. Do NOT say someone will follow up or transfer the call."
+            : undefined;
+
         return controls.result({
             data: {
                 offerType,
                 talkingPoints,
                 missingChannels: missingChannels.length > 0 ? missingChannels : undefined,
             },
+            ...(instructions ? { instructions } : {}),
         });
     },
 });
@@ -717,7 +743,10 @@ const SearchChannelsByGenre = tools.registerTool({
         // Build a human-readable message for the agent
         let message: string;
         if (isExpired) {
-            message = `This user's subscription is not active — no channels are accessible. Offer reactivation.`;
+            const browseLink = genreLandingPage
+                ? ` Browse the ${genreMatched ?? params.genre} genre page here: ${genreLandingPage}`
+                : "";
+            message = `Subscription expired — no channels currently accessible. Actively offer to help the user reactivate today. ${browseLink ? `You can still share this genre page so they can explore: ${genreLandingPage}` : ""}`;
         } else if (classified.length === 0) {
             const available = getAllGenreNames().slice(0, 8).join(", ");
             if (!genreMatched) {
@@ -727,8 +756,14 @@ const SearchChannelsByGenre = tools.registerTool({
             }
         } else {
             const names = classified.map(c => c.name).join(", ");
-            const filtered = lineupId != null ? " in this user's plan" : "";
-            message = `Found ${classified.length} channel(s)${filtered} for "${genreMatched}": ${names}.`;
+            const filtered = lineupId != null ? " in your plan" : "";
+            const hasCards = !isVoice && channels.some(e => e.channel.imageUrl);
+            // Lead with artwork cards so agent includes them; follow with URL
+            const cardsIntro = hasCards
+                ? `I've pulled up the ${genreMatched} channels${filtered} and attached artwork cards above for visual browsing`
+                : `Here are the ${genreMatched} channels available${filtered}`;
+            const browseLink = genreLandingPage ? ` Browse the full ${genreMatched} lineup: ${genreLandingPage}` : "";
+            message = `${cardsIntro}: ${names}.${browseLink}`;
         }
 
         // Build channel card attachments (chat only; skip on voice)
@@ -742,6 +777,7 @@ const SearchChannelsByGenre = tools.registerTool({
                       imageUrl: e.channel.imageUrl,
                       playerLandingPage: e.channel.playerLandingPage,
                       description: e.channel.description,
+                      imageShape: "square" as const,
                   }))
             : [];
 
@@ -773,21 +809,39 @@ const SearchChannelsByGenre = tools.registerTool({
             ? { id: "channel-cards", description: "SiriusXM channel artwork", data: attachmentData }
             : undefined;
 
+        // Build talkingPoints following the PromotionalOffer pattern — agent presents these directly
+        let talkingPoints: string;
+        if (isExpired) {
+            const browseNote = genreLandingPage ? ` You can explore the genre here: ${genreLandingPage}` : "";
+            talkingPoints = `Your subscription is currently expired so I can't show you live channels right now. I'd love to help you reactivate today — shall I walk you through the options?${browseNote}`;
+        } else if (classified.length === 0) {
+            const available = getAllGenreNames().slice(0, 6).join(", ");
+            talkingPoints = genreMatched
+                ? `No ${genreMatched} channels are available in your current plan. Available genres include: ${available}.`
+                : `I couldn't find a genre matching "${params.genre}". Available genres include: ${available}.`;
+        } else {
+            const names = classified.map(c => c.name).join(", ");
+            const filtered = lineupId != null ? " in your plan" : "";
+            const cardsText = channelCards.length > 0
+                ? "I've attached channel artwork cards above so you can browse each channel visually. "
+                : "";
+            const browseText = genreLandingPage
+                ? ` Browse the full ${genreMatched} lineup here: ${genreLandingPage}`
+                : "";
+            talkingPoints = `${cardsText}Here are the ${genreMatched} channels available${filtered}: ${names}.${browseText}`;
+        }
+
+        const instructions = `Present the talkingPoints directly to the customer. Do not paraphrase or omit any part, including URLs.`;
+
         return controls.result({
             data: {
                 genreMatched,
-                channels: classified,
-                entitlementFiltered: lineupId != null,
+                talkingPoints,
+                hasArtworkCards: channelCards.length > 0,
                 genreLandingPage,
-                message,
+                // channels and message excluded so agent uses talkingPoints as primary content
             },
-            instructions:
-                "Present only the channels listed in the `channels` array. " +
-                "If `channels` is empty, tell the user you don't have dedicated channels for that genre — do not suggest channels from memory or make up names. " +
-                "Use the `playerLandingPage` URL when providing a link to a channel. " +
-                "When `genreLandingPage` is set, include it as a direct link to browse all content in that genre. " +
-                "Channels with relevance='dedicated' are the primary channels for that genre; " +
-                "'related' channels have significant overlap with the genre.",
+            instructions,
             ...(attachments ? { attachments } : {}),
         });
     },
@@ -867,7 +921,7 @@ export default createAgent({
 
                 {/* Phase 1: Understand subscription before suggesting anything */}
                 <Goal description="Understand the customer's current subscription and identify upgrade paths.">
-                    <Rule content="After identifying the caller, call GetSubscriptionDetails with their userId to understand their subscription." />
+                    <Rule content="After identifying the caller, call GetSubscriptionDetails with their userId to understand their subscription. Always use the userId value returned in the data field of ResolveCallerByEmail or ResolveCallerByPhone — do not call GetSubscriptionDetails until that tool has returned successfully. You MUST call GetSubscriptionDetails for every identified caller, even if the customer has already stated their intent (e.g. to cancel)." />
                     <Rule content="Always know what the caller has before suggesting what they might want." />
                     <Rule content="If the caller is on a trial, acknowledge the trial and mention the expiry date." />
                     <Rule content="If the caller is on Select tier, name ALL excluded channels from GetSubscriptionDetails (Howard Stern, Liquid Metal, and SiriusXM Premier) when explaining the Premier upgrade path." />
@@ -882,6 +936,7 @@ export default createAgent({
                     <Rule content="After retrieving subscription details, call GetAffinityProfile with the caller's userId." />
                     <Rule content="Use the returned genres and top artists to personalise your response." />
                     <Rule content="Lead with the caller's dominant genre or artist when recommending content." />
+                    <Rule content="GetAffinityProfile returns personal listening HISTORY. The topChannels field lists the user's personal favourite channels — it is NOT a complete list of SiriusXM channels for any genre. When the user asks 'what [genre] channels do you have?', do NOT cite topChannels from this result — call SearchChannelsByGenre." />
                 </Goal>
 
                 {/* Phase 3: Content awareness tool */}
@@ -906,6 +961,7 @@ export default createAgent({
                     <Rule content="Only make an offer after you have confirmed their subscription status." />
                     <Rule content="Present the offer naturally as part of the conversation — not as a hard sell." />
                     <Rule content="When offerType is upgrade-premier, always explicitly name the Premier subscription tier." />
+                    <Rule content="When offerType is promotional, you have the authority to confirm the promotional rate directly — state the price from talkingPoints and ask the customer if they would like to proceed. Do NOT say someone will follow up or transfer the call for a promotional rate offer." />
                     <Rule content="If the customer explicitly declines all offers or says they are not interested in continuing, call AcknowledgeCancellation." />
                 </Goal>
 
@@ -923,22 +979,28 @@ export default createAgent({
                 <Goal description="When a customer explicitly requests a live agent, apply the speed bump: gather context, attempt resolution, then transfer only if necessary.">
                     <Rule content="When a customer requests a live agent or human representative, call RecordSaveAttempt FIRST, then acknowledge their request warmly and ask what they are hoping to get resolved. Attempt to help using available tools before escalating." />
                     <Rule content="If the customer explicitly insists on speaking with a human after you have tried to help, call RecordTransfer with reason='explicit-request' and saveAttempted='true'." />
-                    <Rule content="If you cannot resolve the issue through any available tool, call RecordTransfer with reason='unresolved' and set saveAttempted based on whether you called RecordSaveAttempt." />
+                    <Rule content="If you cannot resolve the issue through any available tool, call RecordTransfer with reason='unresolved' and set saveAttempted based on whether you called RecordSaveAttempt. NOTE: A customer asking which channels SiriusXM has for a genre is resolvable via SearchChannelsByGenre — do NOT transfer for channel availability questions." />
                     <Rule content="When the customer confirms their issue is fully resolved, call RecordSelfServed and set saveAttempted='true' if you called RecordSaveAttempt during this conversation, otherwise 'false'." />
+                </Goal>
+
+                {/* Phase 10: Genre catalog search tool — placed before the generic "why are you calling" goal so genre questions are routed here first */}
+                <SearchChannelsByGenre />
+
+                {/* Phase 10: Genre-based channel discovery */}
+                <Goal description="When the user mentions a music genre or asks about channel availability — including 'what hip-hop channels do you have for me?', 'what hip-hop channels are included in my plan?', 'what channels are available for [genre]?', 'show me [genre] channels', or any mention of a genre name — your immediate next action MUST be to call SearchChannelsByGenre before saying anything else.">
+                    <Rule content="When the user mentions a music genre or asks about channel availability, your immediate next action MUST be to call SearchChannelsByGenre. Do this before saying anything else to the customer. This is required for ALL genres including: hip-hop, country, rock, bhangra, bossanova, tropical house, relax, workout, or any other genre. Pass the resolved userId." />
+                    <Rule content="Never skip the SearchChannelsByGenre tool call based on your training knowledge. Even if you believe a genre may not exist on SiriusXM, you MUST call the tool first — your knowledge may be outdated." />
+                    <Rule content="You always have access to the SiriusXM channel catalog via SearchChannelsByGenre. Do NOT tell the user you cannot access the channel list — call SearchChannelsByGenre instead." />
+                    <Rule content="If account lookup fails or you cannot identify the user's account, this does NOT prevent you from answering genre questions. Call SearchChannelsByGenre immediately — without userId if needed — to answer channel availability questions. Never transfer a user to a live agent because of a failed account lookup when they asked about genre/channel availability." />
+                    <Rule content="Do NOT use SearchPoliciesReference, GetSubscriptionDetails, or any other tool to answer channel availability questions. Do NOT use topChannels from GetAffinityProfile (those are personal favorites, not the full genre catalog). SearchChannelsByGenre is the ONLY authoritative source for what channels are available for a genre." />
+                    <Rule content="When SearchChannelsByGenre returns results, read the `talkingPoints` field to the customer. The talkingPoints already contains all required text including any artwork card mentions and URLs — do not rewrite or summarize it." />
+                    <Rule content="Never name a channel that was not in the talkingPoints returned by SearchChannelsByGenre. If talkingPoints says no channels were found, do not suggest channel names." />
+                    <Rule content="The SearchChannelsByGenre talkingPoints includes a direct URL when available. Read talkingPoints directly to the customer — do not paraphrase or omit the URL." />
+                    <Rule content="Do NOT call SearchChannelsByGenre for individual artist or talent names (e.g. 'Morgan Wallen', 'Rachel Maddow'). For artist queries use GetAffinityProfile and GetContentForUser." />
                 </Goal>
 
                 <Goal description="Determine why the customer is reaching out to customer support.">
                     <Rule content="If unclear, ask the customer why they are reaching out to customer support." />
-                </Goal>
-
-                {/* Phase 10: Genre catalog search tool */}
-                <SearchChannelsByGenre />
-
-                {/* Phase 10: Genre-based channel discovery */}
-                <Goal description="When a user asks about a genre, mood, or content type, look up matching channels from the catalog.">
-                    <Rule content="When a user asks about channels for a genre or mood (e.g. 'hip-hop channels', 'something relaxing', 'classic rock'), call SearchChannelsByGenre with the genre and the user's userId. Always pass the resolved userId so results are filtered to what the user can actually access." />
-                    <Rule content="Never name a channel that was not returned in the SearchChannelsByGenre result. If the channels array is empty, tell the user you don't have dedicated channels for that genre — do not improvise names from memory." />
-                    <Rule content="If SearchChannelsByGenre returns no match for the genre query, offer the closest available genre alternatives from the message field rather than guessing." />
                 </Goal>
             </>
         );

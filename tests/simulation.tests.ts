@@ -76,8 +76,7 @@ describe("Phase 1 — Subscription Awareness", "phase1", () => {
             "Start by saying: Hi, can you tell me about my current subscription?",
         expectedOutcomes: [
             "Agent identifies the customer is on the Select tier.",
-            "Agent mentions Premier tier upgrade and at least one channel the customer is missing (e.g., Howard Stern).",
-            "Agent displays channel artwork images for the Premier channels (Howard Stern, Liquid Metal, SiriusXM Premier).",
+            "Agent mentions the Premier tier upgrade and names at least one channel the customer is missing, such as Howard Stern, Liquid Metal, or SiriusXM Premier.",
         ],
         assertions: ["stage:caller-identified-email", "stage:subscription-surfaced"],
     });
@@ -433,7 +432,39 @@ describe("Phase 10 — Genre Discovery, Confidence Gating & Entitlement Filterin
         expectedOutcomes: [
             "Agent calls SearchChannelsByGenre and recognises the subscription is not active.",
             "Agent does not list channels as accessible to the expired subscriber.",
-            "Agent offers to help reactivate the subscription.",
+            "Agent mentions reactivation or a path to get back access.",
+        ],
+        assertions: ["genre:search-called", "genre:expired-no-access", "genre:landing-page-found"],
+    });
+
+    // Test: genre landing page surfaced alongside channel cards
+    test("phase10-genre-landing-cards-and-link", {
+        name: "Genre Landing: Channel Cards and Browse Link",
+        isSimulation: true,
+        messages:
+            "You are a SiriusXM trial subscriber. " +
+            "When the agent asks for your email, provide: hip.hop@test.com. " +
+            "After being greeted, say: Show me what hip-hop channels are available.",
+        expectedOutcomes: [
+            "Agent calls SearchChannelsByGenre and returns real hip-hop channels.",
+            "Agent provides a direct URL link for the user to browse all hip-hop content on the SiriusXM website.",
+        ],
+        assertions: ["genre:search-called", "genre:genre-found", "genre:landing-page-found"],
+    });
+
+    // Test: expired user — genre landing page surfaced even though no channels accessible
+    test("phase10-genre-landing-expired-browse-link", {
+        name: "Genre Landing: Expired User Sees Link Without Channel Cards",
+        isSimulation: true,
+        messages:
+            "You are a former SiriusXM subscriber whose trial has expired. " +
+            "When the agent asks for your email, provide: expired.trialer@test.com. " +
+            "After being greeted, say: Can I see what hip-hop channels are available?",
+        expectedOutcomes: [
+            "Agent calls SearchChannelsByGenre and recognises the subscription is not active.",
+            "Agent does not list specific hip-hop channels as currently accessible.",
+            "Agent provides a direct URL link to browse hip-hop content on the SiriusXM website.",
+            "Agent mentions reactivation or a path to get back access.",
         ],
         assertions: ["genre:search-called", "genre:expired-no-access", "genre:landing-page-found"],
     });

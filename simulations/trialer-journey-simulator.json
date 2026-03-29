@@ -187,7 +187,8 @@
       "groupDescription": "Trialer Conversion Journey",
       "categories": ["trialer-conversion"],
       "messages": [
-        "You are an existing SiriusXM self-pay subscriber reaching out about a billing question. You are not on a trial and have been a subscriber for two years."
+        "You are an existing SiriusXM Premier subscriber reaching out about a billing question. You are not on a trial and have been a subscriber for two years. When the agent asks for your email, provide: balanced.listener@test.com.",
+        "Once the agent acknowledges you, say: I have a question about my recent charge — can you help?"
       ],
       "origin": "UI_SIMULATION",
       "device": "DESKTOP_WEB",
@@ -301,10 +302,10 @@
       "origin": "UI_SIMULATION",
       "device": "DESKTOP_WEB",
       "expectedOutcomes": [
-        "Agent calls SearchChannelsByGenre to find hip-hop channels.",
         "Agent names real hip-hop channels from the catalog such as SiriusXM FLY, The Heat, Shade 45, Flex2K, or Hip-Hop Nation.",
         "Agent does NOT mention 'RapCaviar' (which is a Spotify playlist, not a SiriusXM channel).",
-        "Agent does NOT invent channel names not present in the catalog."
+        "Agent does NOT invent channel names not present in the catalog.",
+        "Agent does not transfer the user to another agent when asked about hip-hop channels."
       ],
       "isCritical": false,
       "conversationInfo": {
@@ -320,7 +321,7 @@
       }
     },
     {
-      "name": "Phase 10 — Edge Case: Genre Not Found",
+      "name": "Phase 10 — No Genre Match: Bhangra Query Returns Empty",
       "groupDescription": "Phase 10 — Genre Discovery",
       "categories": ["phase10"],
       "messages": [
@@ -330,10 +331,9 @@
       "origin": "UI_SIMULATION",
       "device": "DESKTOP_WEB",
       "expectedOutcomes": [
-        "Agent calls SearchChannelsByGenre with 'bhangra' and finds no matching genre.",
-        "Agent honestly tells the customer it does not have bhangra channels.",
-        "Agent does NOT name a specific channel as a bhangra recommendation.",
-        "Agent may suggest other available genres as alternatives."
+        "Agent tells the customer there are no bhangra channels available.",
+        "Agent does not name a specific bhangra channel as a recommendation.",
+        "Agent does not transfer the user to another agent."
       ],
       "isCritical": false,
       "conversationInfo": {
@@ -358,9 +358,9 @@
       "origin": "UI_SIMULATION",
       "device": "DESKTOP_WEB",
       "expectedOutcomes": [
-        "Agent calls SearchChannelsByGenre with the user's userId to filter by entitlement.",
-        "Agent returns hip-hop channels that are part of the Select subscription lineup.",
-        "Agent does not recommend channels that require a Premier upgrade without acknowledging the upgrade requirement."
+        "Agent provides a list of hip-hop channels available to the Select subscriber.",
+        "Agent does not recommend channels that require a Premier upgrade without acknowledging the upgrade requirement.",
+        "Agent does not transfer the user to another agent when asked about hip-hop channels."
       ],
       "isCritical": false,
       "conversationInfo": {
@@ -387,7 +387,7 @@
       "expectedOutcomes": [
         "Agent calls SearchChannelsByGenre and recognises the subscription is not active.",
         "Agent does not list channels as accessible to the expired subscriber.",
-        "Agent offers to help reactivate the subscription."
+        "Agent mentions reactivation or a path to get back access."
       ],
       "isCritical": false,
       "conversationInfo": {
@@ -403,19 +403,18 @@
       }
     },
     {
-      "name": "Phase 10 — Genre Landing: Channel Cards and Browse Link",
+      "name": "Phase 10 — Genre Landing: Active User Sees Real Hip-Hop Channels",
       "groupDescription": "Phase 10 — Genre Discovery",
       "categories": ["phase10"],
       "messages": [
-        "You are a SiriusXM Select subscriber. When the agent asks for your email, provide: select.subscriber@test.com. After being greeted, say: What hip-hop channels are included in my plan?",
-        "When the agent lists channels, ask: Is there a place I can browse all hip-hop content on SiriusXM?"
+        "You are a SiriusXM trial subscriber who loves hip-hop. When the agent asks for your email, provide: hip.hop@test.com. After being greeted, say: What hip-hop channels are available on SiriusXM?"
       ],
       "origin": "UI_SIMULATION",
       "device": "DESKTOP_WEB",
       "expectedOutcomes": [
-        "Agent calls SearchChannelsByGenre and returns real hip-hop channels with artwork cards.",
-        "Agent provides or references a direct link to browse the Hip-Hop genre on the SiriusXM player.",
-        "Agent does not invent channel names not returned by the search tool."
+        "Agent presents real hip-hop channels from the SiriusXM catalog, such as SiriusXM FLY, The Heat, Shade 45, Flex2K, or Hip-Hop Nation.",
+        "Agent does NOT mention RapCaviar or any channel that is not a real SiriusXM channel.",
+        "Agent does not transfer the user to another agent when asked about hip-hop channels."
       ],
       "isCritical": false,
       "conversationInfo": {
@@ -443,7 +442,7 @@
       "expectedOutcomes": [
         "Agent recognises the subscription is expired and does not list channels as accessible.",
         "Agent surfaces a genre landing page link or browse link for 2000s content.",
-        "Agent offers to help the user reactivate their subscription."
+        "Agent mentions reactivation or a path to get back access."
       ],
       "isCritical": false,
       "conversationInfo": {

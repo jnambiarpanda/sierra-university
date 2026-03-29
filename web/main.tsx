@@ -107,7 +107,9 @@ const ChannelCardsAttachment = reactDeclaration<ChannelCardsPayload>({
                                 >
                                     {ch.channelName}
                                 </span>
-                                <span style={{ fontSize: 9, color: "#999" }}>Ch. {ch.channelNumber}</span>
+                                {ch.channelNumber && (
+                                    <span style={{ fontSize: 9, color: "#999" }}>Ch. {ch.channelNumber}</span>
+                                )}
                             </div>
                         </a>
                     ))}

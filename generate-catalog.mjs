@@ -63,6 +63,19 @@ for (const line of genreSelectLines.slice(1)) {
     genreEntities[name.toLowerCase()] = { entityId, name, landingPage };
 }
 
+// ── Parse talent reference ────────────────────────────────────────────────────
+// Only include talents that have an image URL (i.e., have a dedicated player page)
+const talentBySlug = {}; // slug → { entityId, name, imageUrl, playerLandingPage }
+
+const talentCSV = readFileSync("data/sxm_talent_reference.csv", "utf-8").replace(/\r/g, "");
+for (const line of talentCSV.split("\n").slice(1)) {
+    const fields = parseCSVLine(line);
+    if (fields.length < 5) continue;
+    const [entityId, name, slug, imageUrl, playerLandingPage] = fields;
+    if (!entityId || !slug || !imageUrl) continue; // skip entries with no image
+    talentBySlug[slug] = { entityId, name, slug, imageUrl, playerLandingPage };
+}
+
 // ── Parse lineup bridge ───────────────────────────────────────────────────────
 const LINEUP_IDS = [100, 200, 300, 320];
 const lineupSets = {};
@@ -84,8 +97,8 @@ const esc = s => (s ?? "").replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 const q = s => s == null ? "null" : `"${esc(s)}"`;
 
 let ts = `// Copyright Sierra
-// SXM channel catalog — genre index, lineup membership, and search function.
-// Generated from: sxm_channel_genre_landing_reference.csv + sxm_channel_lineup_bridge.csv
+// SXM channel catalog — genre index, lineup membership, talent reference, and search function.
+// Generated from: sxm_channel_genre_landing_reference.csv + sxm_channel_lineup_bridge.csv + sxm_talent_reference.csv
 // Do not edit by hand — re-run generate-catalog.mjs to regenerate.
 
 import type { SubscriptionTier } from "./synthetic-data";
@@ -120,6 +133,14 @@ export type GenreLandingEntry = {
     landingPage: string;
 };
 
+export type SxmTalentDetail = {
+    entityId: string;
+    name: string;
+    slug: string;
+    imageUrl: string;
+    playerLandingPage: string;
+};
+
 // Maps subscription tier to channel_lineup_id from sxm_package_reference.csv
 export const TIER_TO_LINEUP_ID: Record<SubscriptionTier, number | null> = {
     "trial":      100,  // Trial (100) — US sirius streaming
@@ -148,6 +169,21 @@ for (const [key, g] of Object.entries(genreEntities)) {
 }
 
 ts += `};
+
+// Talent reference indexed by slug — only entries with a resolved image URL
+const TALENT_BY_SLUG: Record<string, SxmTalentDetail> = {
+`;
+
+for (const [slug, t] of Object.entries(talentBySlug)) {
+    ts += `    "${esc(slug)}": { entityId: "${esc(t.entityId)}", name: "${esc(t.name)}", slug: "${esc(t.slug)}", imageUrl: "${esc(t.imageUrl)}", playerLandingPage: "${esc(t.playerLandingPage)}" },\n`;
+}
+
+ts += `};
+
+/** Look up a talent by their URL slug (e.g. "rachel-maddow"). Returns null if not found or no image. */
+export function getTalentBySlug(slug: string): SxmTalentDetail | null {
+    return TALENT_BY_SLUG[slug] ?? null;
+}
 
 // Genre index: lowercased genre name → sorted channel entries (score desc)
 const GENRE_RAW: Record<string, Array<{entityId: string; score: number; genreName: string}>> = {
