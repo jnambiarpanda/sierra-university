@@ -530,11 +530,39 @@ type ChannelCardsPayload = {
 ### New tool
 
 - `SearchChannelsByGenre` — lookup; params: `genre: string`, `userId: string`
-- Returns: `{ genreMatched, channels[], entitlementFiltered, genreLandingPage, message }`
+- Returns via `controls.result`: `{ genreMatched, talkingPoints, hasArtworkCards, genreLandingPage }`
+  - **`channels[]` is intentionally excluded from the data object** — see talkingPoints pattern below
 - Attachments (chat only, not voice):
   - `type: "channel-cards"` — artwork cards for each matched channel with `playerLandingPage` link
-- `genreLandingPage` is surfaced via the `message` field (embedded as `Browse all: [URL]` for active subscribers; `"Include this browse link... [URL]"` for expired) and via the tool `instructions`. The agent is instructed to include it as a direct hyperlink in every response where it is set.
 - Image URLs are full CDN URLs pre-computed at catalog generation time
+
+### talkingPoints-first response pattern (IMPORTANT)
+
+**Finding:** When `controls.result({ data })` contains BOTH a structured array (e.g., `channels[]`) AND a
+`talkingPoints` string, the agent treats the array as primary content and ignores `talkingPoints` and any
+`instructions` string — even with "MUST"/"REQUIRED" language. This causes the agent to omit artwork card
+mentions and URLs embedded in instructions.
+
+**Solution:** Remove competing arrays from data. Return `talkingPoints` as the sole human-readable content
+field, following the same pattern as `PromotionalOffer` (which works reliably for the same reason).
+
+```typescript
+// What the agent receives
+data: {
+    genreMatched,
+    talkingPoints,       // sole content field — agent presents this directly
+    hasArtworkCards,     // boolean hint, not content
+    genreLandingPage,    // URL hint, not content
+    // channels[] excluded — would become primary content and suppress talkingPoints
+}
+```
+
+`talkingPoints` construction:
+- **Expired:** `"Your subscription is currently expired... You can explore the genre here: {URL}"`
+- **No match / empty:** `"No {genre} channels are available... Available genres: {list}"`
+- **Success:** `"{cardsText}Here are the {genre} channels available{filtered}: {names}.{browseText}"`
+  where `cardsText = "I've attached channel artwork cards above so you can browse each channel visually. "`
+  only when `!isVoice && channelCards.length > 0`
 
 ### Observability tags (`TAGS.genre.*`)
 
