@@ -487,6 +487,76 @@ describe("Phase 10 — Genre Discovery, Confidence Gating & Entitlement Filterin
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Phase N-1 — Named Profile Loading (P1)
+// Tests that named SiriusXM employee profiles load correctly from users.csv.
+// All tests FAIL until Phase 3 (Impl-1) generates users.csv with named profiles.
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("Phase N-1 — Named Profile Loading", "phase-named-profiles-p1", () => {
+    // Test: named profile resolved by SiriusXM employee email address
+    test("named-profile-p1-email-lookup", {
+        name: "Named Profile — resolved by SiriusXM employee email",
+        isSimulation: true,
+        messages:
+            "You are Rory Belfi, a SiriusXM employee. " +
+            "When the agent asks for your email, provide: rory.belfi@siriusxm.com. " +
+            "Start by saying: Hi, I need help with my account.",
+        expectedOutcomes: [
+            "Agent asks for the caller's email address.",
+            "After email is provided, agent identifies and greets the caller as Rory.",
+        ],
+        assertions: ["stage:caller-identified-email"],
+    });
+
+    // Test: named profile subscription tier is premier (no trial, no expiry)
+    test("named-profile-p1-premier-tier", {
+        name: "Named Profile — subscription tier is premier with no trial end date",
+        isSimulation: true,
+        messages:
+            "You are Rory Belfi, a SiriusXM employee. " +
+            "When the agent asks for your email, provide: rory.belfi@siriusxm.com. " +
+            "After being greeted, ask: Can you tell me about my subscription?",
+        expectedOutcomes: [
+            "Agent identifies the caller as Rory.",
+            "Agent confirms the caller has a Premier subscription.",
+            "Agent does not mention a trial end date or expiry.",
+        ],
+        assertions: ["stage:caller-identified-email", "subscription:premier"],
+    });
+
+    // Test: named profile with team affinities is loadable by email
+    test("named-profile-p1-top-teams-loadable", {
+        name: "Named Profile — profile with team affinities resolves by email",
+        isSimulation: true,
+        messages:
+            "You are Michal Draminski, a SiriusXM employee. " +
+            "When the agent asks for your email, provide: michal.draminski@siriusxm.com. " +
+            "Start by saying: Hi, I'd like to check my account.",
+        expectedOutcomes: [
+            "Agent asks for the caller's email address.",
+            "Agent identifies and greets the caller as Michal.",
+        ],
+        assertions: ["stage:caller-identified-email"],
+    });
+
+    // Regression: existing test user still resolves by email after UUID migration
+    // (chat simulation mode doesn't inject clientPhoneNumber; email is the reliable path)
+    test("named-profile-p1-existing-user-survives", {
+        name: "Existing Test User — still resolves by email after UUID migration",
+        isSimulation: true,
+        messages:
+            "You are an existing SiriusXM customer. " +
+            "When the agent asks for your email, provide: phone.known@test.com. " +
+            "Start by saying: Hi, I'd like to check my account.",
+        expectedOutcomes: [
+            "Agent asks for the caller's email address.",
+            "Agent identifies and greets the caller by first name after the email is provided.",
+        ],
+        assertions: ["stage:caller-identified-email"],
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Live Agent Transfer
 // ─────────────────────────────────────────────────────────────────────────────
 
