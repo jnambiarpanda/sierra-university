@@ -194,30 +194,10 @@ The agent must have confirmed data before acting on any fact. If the required da
 
 ---
 
-## 7. Data Dependencies & Ownership
-
-| Source | Owner | Freshness | What it provides | If unavailable |
-|--------|-------|-----------|-----------------|----------------|
-| `data/users.csv` | Engineering | Deployed with build | 83 user profiles — identity, tier, affinities | Agent proceeds anonymous; no affinity path |
-| `data/events.csv` | Engineering | Deployed with build (static, March 2026) | 179 events | `GetContentForUser` returns no-content; agent pivots to value prop |
-| `data/sxm-catalog.ts` | Generated (`generate-catalog.mjs`) | Deployed with build | 872 channels, 39 genres, talent catalog | `SearchChannelsByGenre` disabled; channel cards suppressed |
-| `data/named_profile_*.csv` | Databricks / Data Engineering | One-time POC export | Real HMF recommendations + artist affinities for 63 employee profiles | Named profiles fall back to empty affinity arrays |
-| `data/sxm_channel_reference.csv` | SiriusXM Catalog team | Deployed with build | Channel metadata + image URLs (source for card display) | Cards suppressed for IDs not in reference |
-
-**POC data flags:**
-- Events data (March 2026) is static and will become stale. Refresh cadence must be defined before any production deployment.
-- Named profile Databricks feed is a one-time CSV export. Production requires a live API integration with a defined freshness SLA.
-- Entity ID mapping between Databricks HMF and local channel reference assumes shared UUID standards. Drift in ID format between sources will silently break channel card display with no error surfaced.
-
----
-
-## 8. Conversation Design & UX Behavior
+## 7. Conversation Design & UX Behavior
 
 **Tone and style**
 - Warm, direct, knowledgeable — like a music-savvy friend who happens to work at SiriusXM
-- Response length: concise. One idea per turn. No multiple questions in a single response.
-- Always offer a concrete next step — never end a turn with an open question the agent cannot answer itself
-- Confirm before presenting an offer; never lead with an offer as the opening move
 - On voice: no card references, no URLs, no "I've attached" language — all responses must be audio-safe
 
 **Happy path — trial subscriber, hip-hop fan**
@@ -233,8 +213,8 @@ The agent must have confirmed data before acting on any fact. If the required da
 
 **Edge case — genre question**
 > User: What hip-hop channels do you have?
-> Agent: [calls SearchChannelsByGenre immediately, before any other response]
-> Agent: Here are the hip-hop channels on your plan: [reads talkingPoints]. I've attached the channel artwork above so you can browse them.
+> Agent: [queries genre catalog immediately, before any other response]
+> Agent: Here are the hip-hop channels on your plan: [reads confirmed channel list]. I've attached the channel artwork above so you can browse them.
 
 **Edge case — expired subscription**
 > User: Can I listen to Howard Stern?
@@ -243,35 +223,31 @@ The agent must have confirmed data before acting on any fact. If the required da
 
 ---
 
-## 9. Tagging & Observability
+## 8. Observability Requirements
 
-| Tag | Trigger | Purpose |
-|-----|---------|---------|
-| `stage:email-requested` | Agent asks for email | Funnel drop-off tracking |
-| `stage:caller-identified-phone` | Phone lookup succeeds | Identification method split |
-| `stage:caller-identified-email` | Email lookup succeeds | Identification method split |
-| `stage:caller-unidentified` | Both lookups fail | Anonymous path rate |
-| `stage:subscription-surfaced` | GetSubscriptionDetails returns | Funnel completion |
-| `subscription:[tier]` | Tier confirmed | Segment routing |
-| `affinity:genre:[value]` | Genre mapped from top channels | Personalization signal |
-| `affinity:super-category:[value]` | Super-category mapped | Segment classification |
-| `affinity:artist:[slug]` | Artist resolved via entity ID | Content matching signal |
-| `response:content-live` | Live event match found | Content quality tracking |
-| `response:content-on-demand` | On-demand match found | Content quality tracking |
-| `response:content-both` | Both found | Content quality tracking |
-| `response:no-content` | No match found | Content gap signal |
-| `offer:upgrade-premier` | Premier upgrade offered | Conversion funnel |
-| `offer:promotional` | Promo offer presented | Offer type split |
-| `offer:extend-trial` | Trial extension offered | Offer type split |
-| `offer:no-offer` | No offer available | Coverage gap |
-| `outcome:self-served` | RecordSelfServed called | Containment rate |
-| `outcome:transferred` | RecordTransfer called | Escalation rate |
-| `lineup:in` | Channel confirmed in user's lineup | Accuracy guard |
-| `lineup:not-in` | Channel not in user's lineup | Accuracy guard |
+The agent must emit structured signals sufficient to measure every metric defined in Section 3. The specific signal schema is an engineering design decision; the requirements below define what must be measurable, not how.
+
+**Containment and escalation** *(targets: containment rate, escalation rate)*
+Every conversation must close with a distinguishable outcome — self-served or transferred — with the reason for transfer captured. Speed bump attempts before transfer must be trackable separately from transfers with no save attempt.
+
+**Conversion funnel** *(target: trial-to-paid conversion rate)*
+Conversations where a retention offer was presented must be identifiable by offer type (upgrade / promotional pricing / trial extension / no offer available), so conversion rates can be measured per offer type.
+
+**Identification method** *(target: resolution accuracy)*
+Each conversation must record how the subscriber was identified — by phone, by email, or anonymous — to enable funnel drop-off analysis and accuracy sampling by identification path.
+
+**Subscription tier and affinity** *(targets: resolution accuracy, segmentation)*
+The subscription tier at conversation start and the affinity categories surfaced (genre, super-category, top artists) must be capturable per conversation, so personalization quality can be correlated with retention outcomes.
+
+**Content match quality** *(target: catalog coverage)*
+Whether the agent surfaced a live event, on-demand content, both, or neither must be distinguishable — to measure catalog recommendation coverage over time and identify gaps.
+
+**Hallucination monitoring** *(target: 0% hallucination rate)*
+Any conversation where pricing, channel availability, or specific content was mentioned must be available for post-hoc sampling and audit. Channel lineup confirmation (whether a specific channel was confirmed as included in the subscriber's plan) must be observable per conversation.
 
 ---
 
-## 10. Escalation & Handoff Design
+## 9. Escalation & Handoff Design
 
 **Escalation triggers**
 - Explicit: user says "I want to speak to someone" / "transfer me" / "talk to a person"
@@ -299,7 +275,7 @@ The agent must have confirmed data before acting on any fact. If the required da
 
 ---
 
-## 11. Failure Handling & Anti-Hallucination Rules
+## 10. Failure Handling & Anti-Hallucination Rules
 
 | Failure scenario | Required behavior |
 |-----------------|------------------|
@@ -320,7 +296,7 @@ The agent must have confirmed data before acting on any fact. If the required da
 
 ---
 
-## 12. Evaluation, Testing & Red-Teaming
+## 11. Evaluation, Testing & Red-Teaming
 
 **A. Deterministic tests (tag assertions — always pass or build fails)**
 
@@ -364,7 +340,7 @@ Named profile canary: Rory Belfi (rory.belfi@siriusxm.com) must display ≥4 cha
 
 ---
 
-## 13. Acceptance Criteria
+## 12. Acceptance Criteria
 
 ```
 1. Identified user — affinity-first greeting
@@ -410,7 +386,7 @@ Named profile canary: Rory Belfi (rory.belfi@siriusxm.com) must display ≥4 cha
 
 ---
 
-## 14. Dependencies & Assumptions
+## 13. Dependencies & Assumptions
 
 | Dependency | Owner | Status | Blocking |
 |-----------|-------|--------|----------|
@@ -428,7 +404,7 @@ Named profile canary: Rory Belfi (rory.belfi@siriusxm.com) must display ≥4 cha
 
 ---
 
-## 15. Open Questions
+## 14. Open Questions
 
 | Question | Owner | Impact if unresolved |
 |----------|-------|---------------------|
@@ -440,7 +416,7 @@ Named profile canary: Rory Belfi (rory.belfi@siriusxm.com) must display ≥4 cha
 
 ---
 
-## 16. Governance & Post-Launch Oversight
+## 15. Governance & Post-Launch Oversight
 
 > *This section describes the target governance model. POC monitoring is manual and ad-hoc.*
 
