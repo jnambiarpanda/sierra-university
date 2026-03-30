@@ -557,6 +557,47 @@ describe("Phase N-1 — Named Profile Loading", "phase-named-profiles-p1", () =>
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Phase N-3 — topChannels → topRecommendation Rename (P3)
+// Regression tests: super-category affinity tags derived from profile.topChannels
+// (soon to be topRecommendation) still emit correctly after the Phase 9 rename.
+// Tests PASS now and MUST CONTINUE PASSING after Phase 9 renames the field in
+// UserProfileRecord and all main.tsx references.
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("Phase N-3 — topChannels → topRecommendation Rename", "phase-named-profiles-p3", () => {
+    // Test: Music super-category tag emitted from topChannels/topRecommendation
+    // USR008 (hip.hop@test.com) has Hip-Hop Nation (194adbca-..., superCategory: Music)
+    // in topChannels — after rename still topRecommendation, same tag must fire.
+    test("named-profile-p3-music-super-category-tag", {
+        name: "Channel super-category tag — Music emitted from top recommendation channels",
+        isSimulation: true,
+        messages:
+            "You are a hip-hop fan. " +
+            "When the agent asks for your email, provide: hip.hop@test.com. " +
+            "Start by saying: Hi, I'd like to check my account.",
+        expectedOutcomes: [
+            "Agent identifies and greets the caller by first name.",
+        ],
+        assertions: ["stage:caller-identified-email", "affinity:super-category:music"],
+    });
+
+    // Test: Talk super-category tag emitted from topChannels/topRecommendation
+    // USR009 (talk.radio@test.com) has CNN/Talk channels (superCategory: Talk).
+    test("named-profile-p3-talk-super-category-tag", {
+        name: "Channel super-category tag — Talk emitted from top recommendation channels",
+        isSimulation: true,
+        messages:
+            "You are a talk radio fan. " +
+            "When the agent asks for your email, provide: talk.radio@test.com. " +
+            "Start by saying: Hi, I'd like to check my account.",
+        expectedOutcomes: [
+            "Agent identifies and greets the caller by first name.",
+        ],
+        assertions: ["stage:caller-identified-email", "affinity:super-category:talk"],
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Phase N-2 — Artist Entity ID Migration (P2)
 // Regression tests: artist affinity tags and talent cards work correctly when
 // topArtists holds entity IDs (Phase 6) instead of artist names (Phase 5).

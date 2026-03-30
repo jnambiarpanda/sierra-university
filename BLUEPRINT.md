@@ -697,30 +697,29 @@ Imports `GENERATED_USER_PROFILES` from `data/users-data.ts` (the TypeScript-embe
 All existing accessor functions (`getUserProfileById`, `getUserProfileByPhone`, `getUserProfileByEmail`)
 are unchanged — `getUserProfileById` now matches on the UUID `profile_id` column.
 
-### Phase 2 — Artist entity ID lookup (`getTalentById`)
+### Phase 2 — Artist entity ID lookup (`getTalentById`) ✅
 
-The current `topArtists` field holds **artist names** used to generate affinity tags and talent cards via
-`getTalentBySlug(name → slug)`. Phase 2 migrates this to entity ID lookups.
+`topArtists` now holds entity IDs for all users. `getTalentById` added to `sxm-catalog.ts`.
 
-**New function added to `sxm-catalog.ts` (via `generate-catalog.mjs`):**
-```typescript
-export function getTalentById(entityId: string): SxmTalentDetail | null
-```
-
-**`main.tsx` updates (3 locations):**
+**`main.tsx` updates (3 locations) — COMPLETE:**
 
 | Location | Before | After |
 |----------|--------|-------|
 | Affinity tag generation | `"affinity:artist:" + name.toLowerCase().replace(/\s+/g, "-")` | `const t = getTalentById(id); if (t) tag("affinity:artist:" + t.slug)` |
 | Talent card building | `.map(name => getTalentBySlug(name → slug))` | `.map(id => getTalentById(id))` |
-| Event lookup | `getEventsByArtist(name)` | resolve entity ID → talent name first, then `getEventsByArtist(name)` |
+| Event lookup | `getEventsByArtist(name)` | `const t = getTalentById(id); if (t) getEventsByArtist(t.name)` |
+
+**Artist entity ID migration notes:**
+- Artists with entity IDs in any source CSV: Drake, Kendrick Lamar, Morgan Wallen, Howard Stern, Diplo, Luke Combs, Foo Fighters, Rachel Maddow, Metallica, Sean Hannity, Taylor Swift, Zach Bryan, Olivia Rodrigo, Tool, Calvin Harris, Future, Miles Davis
+- Dropped (no entity ID found): Doja Cat, 21 Savage, John Coltrane
 
 ### Phase 3 — Field rename (`topChannels` → `topRecommendation`)
 
-Cosmetic/semantic cleanup once Phases 1 and 2 are stable:
+Phases 1 and 2 are stable. This is a pure TypeScript rename — no data changes required:
 - `UserProfileRecord.topChannels` → `topRecommendation`
-- All `profile.topChannels` references in `main.tsx` updated
+- All `profile.topChannels` references in `main.tsx` updated to `profile.topRecommendation`
 - `data/users.csv` column header `top_recommendation` already matches — only TS-side rename needed
+- `users-data.ts` generated field name `topChannels` → `topRecommendation` (update emitter in `generate-users-csv.mjs`)
 
 ### Entity ID resolution at runtime
 
