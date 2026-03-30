@@ -1,0 +1,48 @@
+{
+  "simulations": [
+    {
+      "name": "Named Profile — Greeting and Premier Tier",
+      "groupDescription": "Verifies that a real SiriusXM employee profile loads correctly: agent greets by first name and surfaces the premier subscription tier.",
+      "categories": ["phase-named-profiles"],
+      "messages": [
+        "You are Rory Belfi, a SiriusXM employee. When the agent asks for your email, provide: rory.belfi@siriusxm.com. Start by saying: Hi, I need help with my SiriusXM account.",
+        "When the agent greets you by name, say: Thanks! Can you tell me about my subscription?"
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    },
+    {
+      "name": "Named Profile — Channel Recommendations from For-You Data",
+      "groupDescription": "Verifies that a named profile's real recommendation data (topRecommendation entity IDs from Databricks) is used when the agent discusses the caller's listening preferences.",
+      "categories": ["phase-named-profiles"],
+      "messages": [
+        "You are Rory Belfi, a SiriusXM employee. When the agent asks for your email, provide: rory.belfi@siriusxm.com. Start by saying: Hi, I'd love to hear what channels you'd recommend for me.",
+        "After the agent responds with recommendations, say: Great, that sounds exactly like what I'd enjoy."
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    },
+    {
+      "name": "Named Profile — Artist Affinity Tags from Entity IDs",
+      "groupDescription": "Verifies that topArtists entity IDs for existing test users (post-Phase 6 migration) still produce correct artist affinity context and Drake talent card in chat mode.",
+      "categories": ["phase-named-profiles"],
+      "messages": [
+        "You are a hip-hop fan. When the agent asks for your email, provide: hip.hop@test.com. Start by saying: Hi, I'm looking for music recommendations.",
+        "When the agent responds, say: I'm really into hip-hop. What do you have for me?"
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    },
+    {
+      "name": "Named Profile — Existing Test User Regression",
+      "groupDescription": "Regression: existing test user USR001 (phone.known@test.com) still resolves correctly after the full named-profile migration (UUID profile_id, topRecommendation rename, topArtists entity IDs).",
+      "categories": ["phase-named-profiles"],
+      "messages": [
+        "You are a SiriusXM customer. When the agent asks for your email, provide: phone.known@test.com. Start by saying: Hi, I need help with my account.",
+        "When the agent greets you by first name, say: Thanks! Can you tell me about my trial?"
+      ],
+      "origin": "UNSPECIFIED_LOCATION",
+      "isCritical": false
+    }
+  ]
+}

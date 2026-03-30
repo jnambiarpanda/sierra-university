@@ -8,7 +8,7 @@ import { DynamicCustomerInfo } from "./dynamic-customer-info";
 import { DynamicLanguageSwitching } from "./voice-swapper";
 import { TAGS } from "./tags";
 import { getUserProfileByPhone, getUserProfileByEmail, getUserProfileById, getChannelByKey, getEventsByArtist, type EventRecord } from "./data/synthetic-data";
-import { searchChannelsByGenre, getAllGenreNames, TIER_TO_LINEUP_ID, getTalentBySlug, getTalentById } from "./data/sxm-catalog";
+import { searchChannelsByGenre, getAllGenreNames, TIER_TO_LINEUP_ID, getTalentBySlug, getTalentById, getChannelDetailById } from "./data/sxm-catalog";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Phase 0 — Caller Identification Tools
@@ -311,17 +311,14 @@ const GetAffinityProfile = tools.registerTool({
                 : profile.topRecommendation.slice(0, 5);
         const channelCards = !isVoice
             ? channelKeysToShow
-                .map(key => getChannelByKey(key))
-                .filter((ch): ch is NonNullable<typeof ch> => !!ch && !!ch.imageUrl)
-                .map(ch => ({
-                    channelKey: ch.channelKey,
-                    channelName: ch.channelName,
-                    channelNumber: ch.channelNumber,
-                    imageUrl: ch.imageUrl as string,
-                    playerLandingPage: ch.playerLandingPage,
-                    description: ch.description,
-                    imageShape: "square" as const,
-                }))
+                .map(key => {
+                    const c = getChannelByKey(key);
+                    if (c && c.imageUrl) return { channelKey: c.channelKey, channelName: c.channelName, channelNumber: c.channelNumber, imageUrl: c.imageUrl as string, playerLandingPage: c.playerLandingPage, description: c.description, imageShape: "square" as const };
+                    const d = getChannelDetailById(key);
+                    if (d && d.imageUrl) return { channelKey: d.entityId, channelName: d.name, channelNumber: d.number, imageUrl: d.imageUrl, playerLandingPage: d.playerLandingPage, description: d.description, imageShape: "square" as const };
+                    return null;
+                })
+                .filter((ch): ch is NonNullable<typeof ch> => ch !== null)
             : [];
 
         // Both talent and channel cards use "channel-cards" type (registered Sierra renderer).
@@ -991,6 +988,7 @@ export default createAgent({
 
                 {/* Phase 10: Genre-based channel discovery */}
                 <Goal description="When the user mentions a music genre or asks about channel availability — including 'what hip-hop channels do you have for me?', 'what hip-hop channels are included in my plan?', 'what channels are available for [genre]?', 'show me [genre] channels', or any mention of a genre name — your immediate next action MUST be to call SearchChannelsByGenre before saying anything else.">
+                    <Rule content="Only call SearchChannelsByGenre when the user's current message explicitly asks about a specific genre or channel availability. Do NOT call it proactively during account login, immediately after identifying a user's account, or as an unsolicited first response. Wait for the user to ask." />
                     <Rule content="When the user mentions a music genre or asks about channel availability, your immediate next action MUST be to call SearchChannelsByGenre. Do this before saying anything else to the customer. This is required for ALL genres including: hip-hop, country, rock, bhangra, bossanova, tropical house, relax, workout, or any other genre. Pass the resolved userId." />
                     <Rule content="Never skip the SearchChannelsByGenre tool call based on your training knowledge. Even if you believe a genre may not exist on SiriusXM, you MUST call the tool first — your knowledge may be outdated." />
                     <Rule content="You always have access to the SiriusXM channel catalog via SearchChannelsByGenre. Do NOT tell the user you cannot access the channel list — call SearchChannelsByGenre instead." />

@@ -49,6 +49,22 @@ for (const k of Object.keys(genreIndex)) {
     genreIndex[k].sort((a, b) => b.score - a.score);
 }
 
+// ── Expand channelDetails from full channel reference (for named profile entity IDs) ─
+// sxm_channel_reference.csv has ~869 channels with name, number, image, description.
+// Genre landing reference only has 92. Populate missing entries here so GetAffinityProfile
+// can build channel cards for named-profile topRecommendation IDs from Databricks.
+const channelRefCSV = readFileSync("data/sxm_channel_reference.csv", "utf-8");
+for (const line of channelRefCSV.split("\n").slice(1)) {
+    if (!line.trim()) continue;
+    const row = parseCSVLine(line);
+    if (row.length < 9) continue;
+    const [entityId, entityType, name, number, superCat, category, description, imageUrl, playerPage] = row;
+    if (!entityId || !name || !imageUrl) continue;
+    if (!channelDetails[entityId]) {
+        channelDetails[entityId] = { entityId, entityType, name, number, superCat: superCat || null, category: category || null, description, imageUrl, playerPage };
+    }
+}
+
 // ── Parse genre select landing reference (genre entity IDs + landing pages) ──
 const genreSelectCSV = readFileSync("data/sxm_genre_select_channel_landing_ref.csv", "utf-8");
 const genreSelectLines = genreSelectCSV.split("\n").filter(l => l.trim());
@@ -93,7 +109,7 @@ for (const line of bridgeCSV.split("\n").slice(1)) {
 }
 
 // ── Generate TypeScript ───────────────────────────────────────────────────────
-const esc = s => (s ?? "").replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+const esc = s => (s ?? "").replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\r/g, "").replace(/\n/g, " ");
 const q = s => s == null ? "null" : `"${esc(s)}"`;
 
 let ts = `// Copyright Sierra
@@ -188,6 +204,11 @@ export function getTalentBySlug(slug: string): SxmTalentDetail | null {
 /** Look up a talent by their entity ID. Returns null if not in the catalog. */
 export function getTalentById(entityId: string): SxmTalentDetail | null {
     return Object.values(TALENT_BY_SLUG).find(t => t.entityId === entityId) ?? null;
+}
+
+/** Look up a channel by its entity ID. Returns null if not in the catalog. */
+export function getChannelDetailById(entityId: string): SxmChannelDetail | null {
+    return CHANNEL_DETAILS[entityId] ?? null;
 }
 
 // Genre index: lowercased genre name → sorted channel entries (score desc)
