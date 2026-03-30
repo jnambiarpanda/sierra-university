@@ -14,8 +14,8 @@ export type UserProfileRecord = {
     phone: string; // E.164 format, empty string if unknown
     subscriptionTier: SubscriptionTier;
     trialEndDate?: string; // ISO date string, present when tier = "trial"
-    topChannels: string[]; // top_recommendation entity IDs from users.csv
-    topArtists: string[];  // artist names (test users) or entity IDs (named profiles) — Phase 1
+    topRecommendation: string[]; // top_recommendation entity IDs from users.csv
+    topArtists: string[];        // talent entity IDs
     topTeams: string[];    // team entity IDs from users.csv
 };
 
@@ -301,7 +301,7 @@ export function getEventsForUser(userId: string): ScoredEvent[] {
     }
 
     // Channel overlap: 20 points per matching channel
-    for (const channelKey of profile.topChannels) {
+    for (const channelKey of profile.topRecommendation) {
         for (const event of getEventsByChannel(channelKey)) {
             const existing = scored.get(event.eventId);
             if (existing) {

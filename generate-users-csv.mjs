@@ -48,7 +48,7 @@ function csvCell(value) {
 
 // ── Existing 20 test users — source of truth is data/synthetic-data.ts ───────
 // topArtists remain as names in Phase 1 (entity ID migration is Phase 6).
-// topChannels are already entity IDs (unchanged from synthetic-data.ts).
+// topChannels (local var) holds entity IDs written to the top_recommendation CSV column.
 
 // topArtists are now talent entity IDs (migrated from names in Phase 6).
 // Artists without a known entity ID in our data sources were dropped (Doja Cat, 21 Savage, John Coltrane).
@@ -230,7 +230,7 @@ export const GENERATED_USER_PROFILES: UserProfileRecord[] = [
 `;
 
 for (const u of allUsers) {
-    ts += `    { userId: "${esc(u.profile_id)}", firstName: "${esc(u.first_name)}", lastName: "${esc(u.last_name)}", email: "${esc(u.email_address)}", phone: "${esc(u.phone)}", subscriptionTier: "${esc(u.subscription_tier)}" as SubscriptionTier, trialEndDate: ${u.trial_end_date ? `"${esc(u.trial_end_date)}"` : "undefined"}, topChannels: ${qArr(u.topChannels)}, topArtists: ${qArr(u.topArtistsArr)}, topTeams: ${qArr(u.topTeamsArr)} },\n`;
+    ts += `    { userId: "${esc(u.profile_id)}", firstName: "${esc(u.first_name)}", lastName: "${esc(u.last_name)}", email: "${esc(u.email_address)}", phone: "${esc(u.phone)}", subscriptionTier: "${esc(u.subscription_tier)}" as SubscriptionTier, trialEndDate: ${u.trial_end_date ? `"${esc(u.trial_end_date)}"` : "undefined"}, topRecommendation: ${qArr(u.topChannels)}, topArtists: ${qArr(u.topArtistsArr)}, topTeams: ${qArr(u.topTeamsArr)} },\n`;
 }
 
 ts += `];\n`;

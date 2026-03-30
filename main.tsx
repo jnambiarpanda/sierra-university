@@ -248,7 +248,7 @@ const GetAffinityProfile = tools.registerTool({
         const genreCounts: Record<string, number> = {};
         const superCategoryCounts: Record<string, number> = {};
 
-        for (const key of profile.topChannels) {
+        for (const key of profile.topRecommendation) {
             const channel = getChannelByKey(key);
             if (!channel) continue;
 
@@ -308,7 +308,7 @@ const GetAffinityProfile = tools.registerTool({
         const channelKeysToShow: string[] =
             tier === "select"
                 ? PREMIER_PLUS_CHANNELS
-                : profile.topChannels.slice(0, 5);
+                : profile.topRecommendation.slice(0, 5);
         const channelCards = !isVoice
             ? channelKeysToShow
                 .map(key => getChannelByKey(key))
@@ -348,7 +348,7 @@ const GetAffinityProfile = tools.registerTool({
                 genres,
                 dominantSuperCategory,
                 topArtists: profile.topArtists,
-                topChannels: profile.topChannels,
+                topRecommendation: profile.topRecommendation,
             },
             ...(attachments ? { attachments } : {}),
         });
@@ -480,10 +480,10 @@ const GetRetentionOffer = tools.registerTool({
                 talkingPoints.push(`Extend your trial to keep exploring before committing.`);
             }
         } else if (tier === "select") {
-            const wantsPremier = profile.topChannels.some(ch => PREMIER_PLUS_KEYS.includes(ch));
+            const wantsPremier = profile.topRecommendation.some(ch => PREMIER_PLUS_KEYS.includes(ch));
             if (wantsPremier) {
                 offerType = "upgrade-premier";
-                for (const ch of profile.topChannels) {
+                for (const ch of profile.topRecommendation) {
                     if (PREMIER_PLUS_KEYS.includes(ch)) {
                         const record = getChannelByKey(ch);
                         if (record) missingChannels.push(record.channelName);
@@ -939,7 +939,7 @@ export default createAgent({
                     <Rule content="After retrieving subscription details, call GetAffinityProfile with the caller's userId." />
                     <Rule content="Use the returned genres and top artists to personalise your response." />
                     <Rule content="Lead with the caller's dominant genre or artist when recommending content." />
-                    <Rule content="GetAffinityProfile returns personal listening HISTORY. The topChannels field lists the user's personal favourite channels — it is NOT a complete list of SiriusXM channels for any genre. When the user asks 'what [genre] channels do you have?', do NOT cite topChannels from this result — call SearchChannelsByGenre." />
+                    <Rule content="GetAffinityProfile returns personal listening HISTORY. The topRecommendation field lists the user's personal favourite channels — it is NOT a complete list of SiriusXM channels for any genre. When the user asks 'what [genre] channels do you have?', do NOT cite topRecommendation from this result — call SearchChannelsByGenre." />
                 </Goal>
 
                 {/* Phase 3: Content awareness tool */}
@@ -995,7 +995,7 @@ export default createAgent({
                     <Rule content="Never skip the SearchChannelsByGenre tool call based on your training knowledge. Even if you believe a genre may not exist on SiriusXM, you MUST call the tool first — your knowledge may be outdated." />
                     <Rule content="You always have access to the SiriusXM channel catalog via SearchChannelsByGenre. Do NOT tell the user you cannot access the channel list — call SearchChannelsByGenre instead." />
                     <Rule content="If account lookup fails or you cannot identify the user's account, this does NOT prevent you from answering genre questions. Call SearchChannelsByGenre immediately — without userId if needed — to answer channel availability questions. Never transfer a user to a live agent because of a failed account lookup when they asked about genre/channel availability." />
-                    <Rule content="Do NOT use SearchPoliciesReference, GetSubscriptionDetails, or any other tool to answer channel availability questions. Do NOT use topChannels from GetAffinityProfile (those are personal favorites, not the full genre catalog). SearchChannelsByGenre is the ONLY authoritative source for what channels are available for a genre." />
+                    <Rule content="Do NOT use SearchPoliciesReference, GetSubscriptionDetails, or any other tool to answer channel availability questions. Do NOT use topRecommendation from GetAffinityProfile (those are personal favorites, not the full genre catalog). SearchChannelsByGenre is the ONLY authoritative source for what channels are available for a genre." />
                     <Rule content="When SearchChannelsByGenre returns results, read the `talkingPoints` field to the customer. The talkingPoints already contains all required text including any artwork card mentions and URLs — do not rewrite or summarize it." />
                     <Rule content="Never name a channel that was not in the talkingPoints returned by SearchChannelsByGenre. If talkingPoints says no channels were found, do not suggest channel names." />
                     <Rule content="The SearchChannelsByGenre talkingPoints includes a direct URL when available. Read talkingPoints directly to the customer — do not paraphrase or omit the URL." />
