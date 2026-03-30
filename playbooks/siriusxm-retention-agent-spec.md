@@ -125,11 +125,11 @@ Emit: response:content-live / response:content-on-demand / response:content-both
 
 **Genre discovery** (only when user explicitly asks)
 ```
-If user message explicitly asks about a genre or channel availability → call SearchChannelsByGenre immediately
-If SearchChannelsByGenre returns results   → read talkingPoints verbatim, display channel cards
-If SearchChannelsByGenre returns no match → inform user, offer available genre list from talkingPoints
+If user message explicitly asks about a genre or channel availability → query the genre catalog immediately, before any other response
+If genre query returns results   → present matching channels with artwork cards and a direct browse link
+If genre query returns no match  → offer the user the list of available genres; never suggest channel names from general knowledge
 
-Never call SearchChannelsByGenre proactively at login or without an explicit user ask
+Never query the genre catalog proactively at login or without an explicit user ask
 ```
 
 **Retention offer**
@@ -141,103 +141,56 @@ If no offer available             → pivot to content value prop, emit offer:no
 
 **Escalation**
 ```
-If user explicitly requests human           → transfer immediately with full context
+If user explicitly requests human           → apply speed bump: acknowledge the request warmly, ask what they
+                                              need resolved, attempt one resolution before transferring
+If user insists after save attempt          → transfer with full context and save-attempted flag
+If hard boundary hit (billing, legal)       → bypass speed bump, transfer immediately
 If same intent fails resolution twice       → offer transfer
-If request hits hard boundary              → explain scope, offer transfer
 If sentiment degrades across 3+ turns      → proactively offer transfer
-If tool failure with no fallback path      → explain limitation, offer transfer
+If capability gap with no fallback path    → acknowledge limitation gracefully, offer transfer
 ```
 
 ---
 
-## 6. Tool Contracts
+## 6. Agent Capabilities & Data Access Requirements
 
-**ResolveCallerByPhone**
-```
-Input:  { } — reads clientPhoneNumber from conversation info automatically
-Output: { found: bool, profile: UserProfile | null }
-On success:    store profile in root store, emit stage:caller-identified-phone
-On null:       emit stage:phone-not-found, prompt for email
-On failure:    treat as null — never surface error language to user
-```
+The agent must have confirmed data before acting on any fact. If the required data is unavailable, the specified fallback applies. The agent must never fill data gaps through inference or general knowledge.
 
-**ResolveCallerByEmail**
-```
-Input:  { email: string }
-Output: { found: bool, profile: UserProfile | null }
-On success:    store profile, emit stage:caller-identified-email
-On null:       proceed anonymous, emit stage:caller-unidentified
+**Caller Identification**
+- Data accessed: subscriber identity matched by phone number (from call metadata) or by email address (subscriber-provided)
+- If unavailable: proceed anonymous — reduced personalization, no affinity data, no content recommendations
+- Anti-hallucination: agent must never infer a subscriber's name, account status, or preferences from the email format or phone number alone
 
-Hallucination risk:    agent infers name from email string ("you must be John")
-Structural prevention: agent only uses name from confirmed profile object, never from email format
-```
+**Subscription Status**
+- Data accessed: current subscription tier, trial end date (if applicable), channels included in the subscriber's plan by tier
+- If unavailable: do not surface or imply any tier — ask the subscriber to confirm their account
+- Anti-hallucination: channel availability must always derive from the confirmed subscription tier; agent must never quote channel access from general knowledge
 
-**GetSubscriptionDetails**
-```
-Input:  { customerId: string }
-Output: { tier, trialEndDate?, channelsIncluded[], channelsExcluded[] }
-On success:    emit subscription:[tier], stage:subscription-surfaced
-On null:       do not surface tier — ask user to confirm, do not assume
+**Affinity Profile**
+- Data accessed: top recommended channels, dominant genre, super-category (Music / Talk / Sports), top artists, top sports teams; channel and artist cards rendered in chat
+- If unavailable: omit the personalization layer entirely — proceed with a generic content conversation; do not invent listening preferences
+- On voice: suppress all card attachments; all responses must be audio-safe
+- Anti-hallucination: agent must only reference artists, genres, and channels confirmed in the returned profile; must never infer preferences from a subscriber's name, location, or tier
 
-Hallucination risk:    agent quotes channel availability from model training knowledge
-Structural prevention: channel availability always derived from tier + lineup data in tool response
-```
+**Content Recommendations**
+- Data accessed: upcoming live events and on-demand recordings matched to the subscriber's affinity profile, with date, channel, and description
+- If unavailable: pivot to subscription value proposition — do not name specific artists, events, or recordings not confirmed in the response
+- Anti-hallucination: agent must never recall artist tour dates, show schedules, or on-demand recordings from training knowledge
 
-**GetAffinityProfile**
-```
-Input:  { customerId: string }
-Output: { topRecommendation[], genres[], dominantSuperCategory, topArtists[], topTeams[],
-          talkingPoints, attachments }
-On success:    emit affinity:genre:*, affinity:super-category:*, affinity:artist:*
-               render channel + talent cards (chat only)
-On null:       omit affinity section — do not invent preferences; use generic content path
-On voice:      suppress card attachments entirely
+**Personalized Retention Offer**
+- Data accessed: offer type (upgrade / promotional pricing / trial extension), confirmed terms, and pre-approved offer language
+- If unavailable: do not present any specific offer; pivot to content value proposition
+- Anti-hallucination: agent must present offer terms verbatim from the confirmed offer — never paraphrase pricing, discount percentages, or extension lengths
 
-Note: topArtists contains talent entity IDs (not names). Cards resolved via getTalentById().
-      If entity ID not in local catalog, card is silently suppressed — no fallback name invented.
-```
+**Genre Catalog Discovery**
+- Data accessed: channel list and artwork cards for the queried genre, filtered to the subscriber's active lineup, with a direct browse link
+- If unavailable: present the list of available genres — never suggest channel names from general knowledge
+- Anti-hallucination: agent must never name a channel that was not in the confirmed genre catalog response for this conversation
 
-**GetContentForUser**
-```
-Input:  { customerId: string }
-Output: { events[], contentType: live|on-demand|both|none, talkingPoints }
-On success:    emit response:content-[type], use talkingPoints for agent response
-On null/none:  emit response:no-content, pivot to value prop
-
-Hallucination risk:    agent recalls artist tour dates from training data
-Structural prevention: rule — never mention an artist, show, or channel not confirmed in this response
-```
-
-**GetRetentionOffer**
-```
-Input:  { customerId: string }
-Output: { offerType, talkingPoints, terms }
-On success:    present offer using talkingPoints verbatim — do not paraphrase pricing or terms
-On null:       emit offer:no-offer, pivot to content value prop
-
-Hallucination risk:    agent invents discount percentages or trial extension lengths
-Structural prevention: talkingPoints is the only authorized offer language; rules prohibit paraphrasing
-```
-
-**SearchChannelsByGenre**
-```
-Input:  { genre: string, userId?: string }
-Output: { talkingPoints, channels[], genreMatched, genreLandingPage }
-On match:      read talkingPoints verbatim; display channel cards
-               never name channels not present in talkingPoints
-On no match:   talkingPoints contains available genre list — read it verbatim
-On failure:    inform user catalog is temporarily unavailable, offer to transfer
-
-Hallucination risk:    agent names channels from training knowledge when tool returns empty
-Structural prevention: explicit rule — never name a channel not in talkingPoints returned by this tool
-```
-
-**RecordTransfer / RecordSelfServed / RecordSaveAttempt**
-```
-Output-only tools — emit outcome tags, no return value used by agent
-Must be called before every conversation end — no silent exits permitted
-saveAttempted flag on RecordTransfer: true if GetRetentionOffer was called, false otherwise
-```
+**Conversation Outcome Recording**
+- Three outcome states must be tracked: self-served (issue resolved without transfer), transferred (escalated to live agent), save attempted (speed bump completed before transfer)
+- One outcome record must be emitted before every conversation end — no silent exits permitted
+- The save-attempted flag must accurately reflect whether a speed bump was attempted in the session
 
 ---
 
