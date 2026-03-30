@@ -52,7 +52,6 @@ Success from the operator seat: the agent handles the majority of trial-period s
 - Resolution accuracy: agent surfaces correct subscription tier and content in ≥95% of identified-user conversations
 - Escalation rate: ≤20% of conversations trigger live agent transfer
 - Hallucination rate: 0% tolerance for fabricated channel names, event dates, pricing, or account facts — enforced structurally, not by instruction
-- Simulation pass rate: ≥90% across all test scenarios (POC baseline: 87% / 94 tests)
 
 **System Metrics**
 - First token latency: ≤4 seconds
@@ -73,9 +72,7 @@ Success from the operator seat: the agent handles the majority of trial-period s
 - Genre catalog discovery: full channel search by genre with artwork cards and browse links
 - Channel artwork card display for top personal recommendations at login
 - Talent/artist card display for top affinity artists
-- Live agent transfer with full context handoff
 - Self-service resolution tracking
-- Abuse detection and graceful handling
 - Voice channel support (phone-aware behavior, no card attachments on voice)
 - Named profile support: real Databricks HMF entity IDs for channels and artists
 
@@ -83,16 +80,13 @@ Success from the operator seat: the agent handles the majority of trial-period s
 - Billing changes or payment processing
 - Password reset or account access issues
 - Device or vehicle activation support
-- Family plan management
 - Outbound proactive retention (agent initiates contact)
-- Real-time content scheduling (events data is static, refreshed on deploy cycle)
 
 **Hard Boundaries**
-- Agent must never quote a specific price or discount without a confirmed offer from `GetRetentionOffer`
+- Agent must never quote a specific price or discount without a confirmed promotional offer loaded for the subscriber's account
 - Agent must never name a channel, artist, or event not confirmed in the current tool response
 - Agent must never tell an expired subscriber they have active access to channels
 - Any request involving account deletion, legal dispute, or billing refund above threshold → immediate escalation
-- Abuse signals detected → immediate graceful exit, no re-engagement in same session
 
 ---
 
@@ -110,7 +104,7 @@ If email provided AND no match        → proceed anonymous, reduced personaliza
 
 **Subscription and affinity loading** (runs on every identified caller)
 ```
-If profile resolved → call GetSubscriptionDetails + GetAffinityProfile + GetContentForUser in parallel
+If profile resolved → load subscription details, affinity profile, and relevant content simultaneously
 
 If tier = expired     → surface re-activation offer immediately, do not present channel content as available
 If tier = select      → surface Premier upgrade path with affinity-relevant examples
@@ -121,10 +115,10 @@ If tier = premier
 
 **Content recommendation**
 ```
-If GetContentForUser returns live event match  → lead with live event, mention date and channel
-If GetContentForUser returns on-demand only   → recommend recording
-If GetContentForUser returns both             → recommend both, live first
-If GetContentForUser returns no match         → pivot to subscription value prop, do not fabricate content
+If content lookup returns a live event match  → lead with live event, mention date and channel
+If content lookup returns on-demand only      → recommend recording
+If content lookup returns both                → recommend both, live first
+If content lookup returns no match            → pivot to subscription value prop, do not fabricate content
 
 Emit: response:content-live / response:content-on-demand / response:content-both / response:no-content
 ```
@@ -140,8 +134,8 @@ Never call SearchChannelsByGenre proactively at login or without an explicit use
 
 **Retention offer**
 ```
-If trial within conversion window → call GetRetentionOffer, present offer using talkingPoints only
-If promo offer available          → present with specific terms from tool response, never invent terms
+If trial within conversion window → retrieve personalized offer, present using confirmed terms only
+If promo offer available          → present with specific terms from the offer response, never invent terms
 If no offer available             → pivot to content value prop, emit offer:no-offer
 ```
 
