@@ -557,6 +557,52 @@ describe("Phase N-1 — Named Profile Loading", "phase-named-profiles-p1", () =>
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Phase N-2 — Artist Entity ID Migration (P2)
+// Regression tests: artist affinity tags and talent cards work correctly when
+// topArtists holds entity IDs (Phase 6) instead of artist names (Phase 5).
+// Tests PASS with artist names (current) and MUST CONTINUE PASSING after
+// Phase 6 migrates topArtists to entity IDs and switches main.tsx to use
+// getTalentById(entityId) instead of getTalentBySlug(name → slug).
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe("Phase N-2 — Artist Entity ID Migration", "phase-named-profiles-p2", () => {
+    // Test: artist affinity tag uses correct slug (not a raw UUID)
+    // USR001 topArtists: ["Drake", ...] → Phase 6: ["26b2073d-...", ...] (Drake entity ID)
+    // Current code: getTalentBySlug("drake") → slug "drake" → tag affinity:artist:drake
+    // Phase 6 code: getTalentById("26b2073d-...") → slug "drake" → tag affinity:artist:drake
+    test("named-profile-p2-artist-affinity-tag", {
+        name: "Artist affinity tag — correct slug emitted for catalog artist",
+        isSimulation: true,
+        messages:
+            "You are an existing SiriusXM customer. " +
+            "When the agent asks for your email, provide: phone.known@test.com. " +
+            "Start by saying: Hi, I'd like to check my account.",
+        expectedOutcomes: [
+            "Agent identifies the caller and greets them by first name.",
+        ],
+        assertions: ["stage:caller-identified-email", "affinity:artist:drake"],
+    });
+
+    // Test: talent card returned for profile with catalog-mapped artist
+    // USR008 topArtists: ["Drake", "Kendrick Lamar", "21 Savage"]
+    // → Phase 6: entity IDs for Drake (26b2073d-...) and Kendrick (bf1ece95-...)
+    // Both are in sxm-catalog.ts; talent cards should appear via getTalentById after Phase 6.
+    test("named-profile-p2-talent-card", {
+        name: "Talent card — artist card shown for profile with catalog-mapped artist",
+        isSimulation: true,
+        messages:
+            "You are a hip-hop fan. " +
+            "When the agent asks for your email, provide: hip.hop@test.com. " +
+            "After being greeted, ask: What music do you recommend for me?",
+        expectedOutcomes: [
+            "Agent identifies the caller and greets them by first name.",
+            "Agent makes a music recommendation or mentions an artist the caller likes (e.g., Drake or Kendrick Lamar).",
+        ],
+        assertions: ["stage:caller-identified-email", "affinity:artist:drake"],
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Live Agent Transfer
 // ─────────────────────────────────────────────────────────────────────────────
 

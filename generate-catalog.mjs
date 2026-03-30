@@ -185,6 +185,11 @@ export function getTalentBySlug(slug: string): SxmTalentDetail | null {
     return TALENT_BY_SLUG[slug] ?? null;
 }
 
+/** Look up a talent by their entity ID. Returns null if not in the catalog. */
+export function getTalentById(entityId: string): SxmTalentDetail | null {
+    return Object.values(TALENT_BY_SLUG).find(t => t.entityId === entityId) ?? null;
+}
+
 // Genre index: lowercased genre name → sorted channel entries (score desc)
 const GENRE_RAW: Record<string, Array<{entityId: string; score: number; genreName: string}>> = {
 `;

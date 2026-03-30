@@ -692,6 +692,11 @@ export function getTalentBySlug(slug: string): SxmTalentDetail | null {
     return TALENT_BY_SLUG[slug] ?? null;
 }
 
+/** Look up a talent by their entity ID. Returns null if not in the catalog. */
+export function getTalentById(entityId: string): SxmTalentDetail | null {
+    return Object.values(TALENT_BY_SLUG).find(t => t.entityId === entityId) ?? null;
+}
+
 // Genre index: lowercased genre name → sorted channel entries (score desc)
 const GENRE_RAW: Record<string, Array<{entityId: string; score: number; genreName: string}>> = {
     "50s": [{entityId:"a62ffa9f-e016-5693-adcb-c76c328e1bee",score:1,genreName:"50s"},{entityId:"38dccb7c-6e3c-1473-d0db-0b3b8b999707",score:1,genreName:"50s"},{entityId:"c4406844-de06-901b-6b4f-02420e2bd2d6",score:0.7016151493517555,genreName:"50s"},{entityId:"a96c9390-313c-3a51-5dac-953504f4f237",score:0.6978995045188734,genreName:"50s"}],
@@ -1238,30 +1243,12 @@ const GENRE_INDEX: Map<string, ChannelGenreEntry[]> = new Map(
 
 const CONFIDENCE_THRESHOLD = 0.5;
 
-// Common colloquial terms → canonical genre names
-const GENRE_SYNONYMS: Record<string, string> = {
-    "chill": "relax",
-    "chillout": "relax",
-    "relaxing": "relax",
-    "mellow": "relax",
-    "soothing": "relax",
-    "easy listening": "relax",
-    "workout": "workout",
-    "exercise": "workout",
-    "fitness": "workout",
-    "r&b": "r&b/soul",
-    "soul": "r&b/soul",
-    "rhythm and blues": "r&b/soul",
-};
-
 export function searchChannelsByGenre(
     genreQuery: string,
     options?: { lineupId?: number | null; scoreThreshold?: number }
 ): GenreSearchResult {
     const threshold = options?.scoreThreshold ?? CONFIDENCE_THRESHOLD;
-    const rawQuery = genreQuery.toLowerCase().trim();
-    // Normalize colloquial terms to canonical genre names
-    const query = GENRE_SYNONYMS[rawQuery] ?? rawQuery;
+    const query = genreQuery.toLowerCase().trim();
 
     // 1. Exact match, then substring match
     let matched = GENRE_INDEX.get(query) ?? null;

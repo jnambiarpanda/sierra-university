@@ -8,7 +8,7 @@ import { DynamicCustomerInfo } from "./dynamic-customer-info";
 import { DynamicLanguageSwitching } from "./voice-swapper";
 import { TAGS } from "./tags";
 import { getUserProfileByPhone, getUserProfileByEmail, getUserProfileById, getChannelByKey, getEventsByArtist, type EventRecord } from "./data/synthetic-data";
-import { searchChannelsByGenre, getAllGenreNames, TIER_TO_LINEUP_ID, getTalentBySlug } from "./data/sxm-catalog";
+import { searchChannelsByGenre, getAllGenreNames, TIER_TO_LINEUP_ID, getTalentBySlug, getTalentById } from "./data/sxm-catalog";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Phase 0 — Caller Identification Tools
@@ -285,15 +285,16 @@ const GetAffinityProfile = tools.registerTool({
         }
 
         // Emit artist affinity tags
-        for (const artist of profile.topArtists) {
-            addAgentTags(["affinity:artist:" + artist.toLowerCase().replace(/\s+/g, "-")]);
+        for (const artistId of profile.topArtists) {
+            const talent = getTalentById(artistId);
+            if (talent) addAgentTags(["affinity:artist:" + talent.slug]);
         }
 
         // Build combined attachment (chat only): talent circles + channel squares in one block
         const tier = profile.subscriptionTier;
         const talentCards = !isVoice
             ? profile.topArtists
-                .map(artist => getTalentBySlug(artist.toLowerCase().replace(/\s+/g, "-")))
+                .map(artistId => getTalentById(artistId))
                 .filter((t): t is NonNullable<typeof t> => t !== null)
                 .map(t => ({
                     entityId: t.entityId,
@@ -382,8 +383,10 @@ const GetContentForUser = tools.registerTool({
         const upcoming: EventRecord[] = [];
         const past: EventRecord[] = [];
 
-        for (const artist of profile.topArtists) {
-            for (const event of getEventsByArtist(artist)) {
+        for (const artistId of profile.topArtists) {
+            const talent = getTalentById(artistId);
+            if (!talent) continue;
+            for (const event of getEventsByArtist(talent.name)) {
                 if (event.date > today && !upcomingSeen.has(event.eventId)) {
                     upcomingSeen.add(event.eventId);
                     upcoming.push(event);
